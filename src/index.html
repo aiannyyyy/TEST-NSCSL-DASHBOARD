@@ -730,64 +730,26 @@
                             </div>
                           </div>
                           <div class="row flex-grow">
-                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body card-rounded">
-                                  <h4 class="card-title  card-title-dash">Recent Events</h4>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Change in Directors </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                              <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="card-title card-title-dash">Events</h4>
+                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: blac;">Add New Event</button>
                                         </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Other Events </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                                        <div id="eventsList">
+                                            <!-- Event items will be dynamically added here -->
                                         </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Quarterly Report </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
+                                        <div class="list align-items-center pt-3">
+                                            <div class="wrapper w-100">
+                                                <p class="mb-0">
+                                                    <a href="#" class="fw-bold text-primary" data-bs-toggle="modal" data-bs-target="#viewAllEventsModal" onclick="showAllEvents()">Show all</a>
+                                                </p>
+                                            </div>
                                         </div>
-                                      </div>
                                     </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Change in Directors </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center pt-3">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-0">
-                                        <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
-                                      </p>
-                                    </div>
-                                  </div>
                                 </div>
                               </div>
-                            </div>
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
@@ -851,7 +813,60 @@
                             </div>
                           </div>
                         </div>
-                        <!--
+                        <!-- Add Event Modal -->
+                        <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <form id="eventForm">
+                                          <div class="mb-3">
+                                              <label class="form-label">Event Name</label>
+                                              <input type="text" class="form-control" id="eventName" required>
+                                          </div>
+                                          <div class="mb-3">
+                                              <label class="form-label">Location</label>
+                                              <input type="text" class="form-control" id="eventLocation" required>
+                                          </div>
+                                          <div class="mb-3">
+                                              <label class="form-label">Date & Time</label>
+                                              <input type="datetime-local" class="form-control" id="eventDateTime" required>
+                                          </div>
+                                          <div class="mb-3">
+                                              <label class="form-label">Description</label>
+                                              <textarea class="form-control" id="eventDescription" required></textarea>
+                                          </div>
+                                          <div class="mb-3">
+                                              <label class="form-label">Event Host</label>
+                                              <input type="text" class="form-control" id="eventHost" required>
+                                          </div>
+                                          <button type="button" class="btn btn-white text-dark fw-bold" onclick="addEvent()">Add Event</button>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+
+                        <!-- View All Events Modal -->
+                        <div class="modal fade" id="viewAllEventsModal" tabindex="-1" aria-labelledby="viewAllEventsModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="viewAllEventsModalLabel">All Events</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div id="allEventsList">
+                                          <!-- All events will be dynamically displayed here -->
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                                                                        <!--
                         <div class="col-lg-4 d-flex flex-column">
                           <div class="row flex-grow">
                             <div class="col-12 grid-margin stretch-card">
@@ -1096,13 +1111,15 @@
             </div>
           </div>
           <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
+
+          <!-- partial:partials/_footer.html 
           <footer class="footer">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
               <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
               <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
             </div>
           </footer>
+          -->
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
@@ -1124,6 +1141,7 @@
     <script src="assets/js/settings.js"></script>
     <script src="assets/js/hoverable-collapse.js"></script>
     <script src="assets/js/todolist.js"></script>
+    <script src="assets/js/event.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
