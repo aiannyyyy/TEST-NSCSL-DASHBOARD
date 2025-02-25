@@ -1,5 +1,5 @@
 {
-  "name": "Star_admin",
+  "name": "star_admin",
   "version": "2.0.0",
   "description": "",
   "main": "index.html",
@@ -106,5 +106,6 @@
   "author": "bootstrapdash",
   "url": "http://www.bootstrapdash.com/",
   "copyright": "",
-  "license": ""
+  "license": "ISC",
+  "keywords": []
 }
