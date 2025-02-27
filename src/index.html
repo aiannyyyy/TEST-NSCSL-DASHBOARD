@@ -19,15 +19,16 @@
     <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
     <!-- End plugin css for this page -->
+
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
-
-    <!--inject css from php-->
-    <link rel="stylesheet" href="fetch_data/fetch_data.css">
-    <!--end inject from php-->
-
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+
+    <!--script for crud operations-->
+    <script defer src="crud_script/pdo_visit.js"></script>
+    <!--end inject-->
+    
   </head>
   <body class="with-welcome-text">
     <!--
@@ -521,6 +522,8 @@
                             </div>
                           </div>
                           -->
+
+                          <!--
                           <div class="row flex-grow">
                             <div class="col-12 grid-margin stretch-card">
                               <div class="card card-rounded">
@@ -733,6 +736,84 @@
                               </div>
                             </div>
                           </div>
+
+                          -->
+
+                          <div class="row flex-grow">
+                            <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body card-rounded">
+                                  <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title card-title-dash">Facility Visits</h4>
+                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#visitModal">
+                                      <i class="mdi mdi-account-plus"></i> Add Facility Visit
+                                    </button>
+                                  </div>
+                          
+                                  <div class="table-responsive mt-1">
+                                    <table class="table select-table">
+                                      <thead>
+                                        <tr>
+                                          <th>Facility Code</th>
+                                          <th>Facility Name</th>
+                                          <th>Date Visited</th>
+                                          <th>Province</th>
+                                          <th>Status</th>
+                                          <th>Actions</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="visitTable">
+                                        <!-- Data will be inserted dynamically via JavaScript -->
+                                      </tbody>
+                                    </table>
+                                  </div>
+                          
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <!-- Add/Edit Facility Visit Modal -->
+                          <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="visitModalLabel">Add Facility Visit</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <form id="visitForm">
+                                    <input type="hidden" id="visitId">
+                                    <div class="mb-3">
+                                      <label class="form-label">Facility Code</label>
+                                      <input type="text" class="form-control" id="facilityCode" required>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label">Facility Name</label>
+                                      <input type="text" class="form-control" id="facilityName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label">Date Visited</label>
+                                      <input type="datetime-local" class="form-control" id="dateVisited" required>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label">Province</label>
+                                      <input type="text" class="form-control" id="province" required>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label">Status</label>
+                                      <select class="form-control" id="status" required>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                      </select>
+                                    </div>
+                                    <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                           <div class="row flex-grow">
                               <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                                 <div class="card card-rounded">
@@ -1129,21 +1210,6 @@
         <!-- main-panel ends -->
       </div>
       <!-- page-body-wrapper ends -->
-
-      <h2>PDO Visit Table</h2>
-      <table id="pdoTable">
-          <thead>
-              <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Visit Date</th>
-                  <th>Details</th>
-              </tr>
-          </thead>
-          <tbody>
-              <!-- Data will be inserted here dynamically -->
-          </tbody>
-      </table>
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
@@ -1162,15 +1228,11 @@
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/event.js"></script>
     <!-- endinject -->
-
-    <!--SCRIPT FOR PHP QUERY-->
-    <script src="fetch_data/fetch_data.js"></script>
-    <!--END INJECT-->
-
     <!-- Custom js for this page-->
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="assets/js/dashboard.js"></script>
     <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
+    
     <!-- End custom js for this page-->
   </body>
 </html>
