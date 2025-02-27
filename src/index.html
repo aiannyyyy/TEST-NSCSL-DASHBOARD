@@ -22,6 +22,11 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
+
+    <!--inject css from php-->
+    <link rel="stylesheet" href="fetch_data/fetch_data.css">
+    <!--end inject from php-->
+
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
   </head>
   <body class="with-welcome-text">
@@ -71,7 +76,6 @@
               <h3 class="welcome-sub-text">Welcome to NSCSL Dasbhaord </h3>
             </li>
           </ul>
-          
           <ul class="navbar-nav ms-auto">
             <!--
             <li class="nav-item dropdown d-none d-lg-block">
@@ -1125,6 +1129,21 @@
         <!-- main-panel ends -->
       </div>
       <!-- page-body-wrapper ends -->
+
+      <h2>PDO Visit Table</h2>
+      <table id="pdoTable">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Visit Date</th>
+                  <th>Details</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Data will be inserted here dynamically -->
+          </tbody>
+      </table>
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
@@ -1143,6 +1162,11 @@
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/event.js"></script>
     <!-- endinject -->
+
+    <!--SCRIPT FOR PHP QUERY-->
+    <script src="fetch_data/fetch_data.js"></script>
+    <!--END INJECT-->
+
     <!-- Custom js for this page-->
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="assets/js/dashboard.js"></script>
