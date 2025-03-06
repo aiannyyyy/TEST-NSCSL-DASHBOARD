@@ -360,43 +360,56 @@
       bar.animate(.34); // Number from 0.0 to 1.0
     }
 
-    if ($("#doughnutChart").length) { 
-      const doughnutChartCanvas = document.getElementById('doughnutChart');
-      new Chart(doughnutChartCanvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['Total','Net','Gross','AVG'],
-          datasets: [{
-            data: [40, 20, 30, 10],
-            backgroundColor: [
-              "#1F3BB3",
-              "#FDD0C7",
-              "#52CDFF",
-              "#81DADA"
-            ],
-            borderColor: [
-              "#1F3BB3",
-              "#FDD0C7",
-              "#52CDFF",
-              "#81DADA"
-            ],
-          }]
-        },
-        options: {
-          cutout: 90,
-          animationEasing: "easeOutBounce",
-          animateRotate: true,
-          animateScale: false,
-          responsive: true,
-          maintainAspectRatio: true,
-          showScale: true,
-          legend: false,
-          plugins: {
-            legend: {
-                display: false,
-            }
-          }
-        },
+      $(document).ready(function () {
+        if ($("#doughnutChart").length) {
+            $.ajax({
+                url: "/chart-data",
+                method: "GET",
+                success: function (data) {
+                    const doughnutChartCanvas = document.getElementById('doughnutChart');
+                    new Chart(doughnutChartCanvas, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Active', 'Inactive', 'Closed'],
+                            datasets: [{
+                                data: [data.active, data.inactive, data.closed], // Use dynamic data
+                                backgroundColor: [
+                                    "#1F3BB3",  // Active - Blue
+                                    "#FDD0C7",  // Inactive - Light Red
+                                    "#52CDFF"   // Closed - Cyan
+                                ],
+                                borderColor: [
+                                    "#1F3BB3",
+                                    "#FDD0C7",
+                                    "#52CDFF"
+                                ],
+                            }]
+                        },
+                        options: {
+                            cutout: 90,
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom',
+                                    labels: {
+                                        color: "#6B778C",
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching chart data:", error);
+                }
+            });
+        }
+    }),
         plugins: [{
           afterDatasetUpdate: function (chart, args, options) {
               const chartId = chart.canvas.id;
