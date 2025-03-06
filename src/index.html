@@ -24,10 +24,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
-
-    <!--script for crud operations-->
-    <script defer src="crud_script/pdo_visit.js"></script>
-    <!--end inject-->
     
   </head>
   <body class="with-welcome-text">
@@ -801,10 +797,11 @@
                                       <input type="text" class="form-control" id="province" required>
                                     </div>
                                     <div class="mb-3">
-                                      <label class="form-label">Status</label>
                                       <select class="form-control" id="status" required>
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
+                                        <option value="">-- Select Status --</option>
+                                        <option value="1">Active</option>
+                                        <option value="0">Inactive</option>
+                                        <option value="2">Closed</option> <!-- Added Closed Status -->
                                       </select>
                                     </div>
                                     <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
@@ -1076,7 +1073,7 @@
                                     <div class="row">
                                       <div class="col-lg-12">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h4 class="card-title card-title-dash">Type By Amount</h4>
+                                          <h4 class="card-title card-title-dash">Facilities Visits By this Month</h4>
                                         </div>
                                         <div>
                                           <canvas class="my-auto" id="doughnutChart"></canvas>
@@ -1228,6 +1225,11 @@
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/event.js"></script>
     <!-- endinject -->
+
+    <!--script for pdo visit-->
+    <script src="assets/js/pdo_visit.js"></script>
+    <!--end inject-->
+
     <!-- Custom js for this page-->
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="assets/js/dashboard.js"></script>
