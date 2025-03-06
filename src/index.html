@@ -769,47 +769,61 @@
                             </div>
                           </div>
                           
-                          <!-- Add/Edit Facility Visit Modal -->
-                          <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="visitModalLabel">Add Facility Visit</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                  <form id="visitForm">
-                                    <input type="hidden" id="visitId">
-                                    <div class="mb-3">
-                                      <label class="form-label">Facility Code</label>
-                                      <input type="text" class="form-control" id="facilityCode" required>
-                                    </div>
-                                    <div class="mb-3">
-                                      <label class="form-label">Facility Name</label>
-                                      <input type="text" class="form-control" id="facilityName" required>
-                                    </div>
-                                    <div class="mb-3">
-                                      <label class="form-label">Date Visited</label>
-                                      <input type="datetime-local" class="form-control" id="dateVisited" required>
-                                    </div>
-                                    <div class="mb-3">
-                                      <label class="form-label">Province</label>
-                                      <input type="text" class="form-control" id="province" required>
-                                    </div>
-                                    <div class="mb-3">
-                                      <select class="form-control" id="status" required>
-                                        <option value="">-- Select Status --</option>
-                                        <option value="1">Active</option>
-                                        <option value="0">Inactive</option>
-                                        <option value="2">Closed</option> <!-- Added Closed Status -->
-                                      </select>
-                                    </div>
-                                    <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
-                                  </form>
-                                </div>
+                        <!-- Add/Edit Facility Visit Modal -->
+                        <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="visitModalLabel">Add Facility Visit</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form id="visitForm">
+                                  <input type="hidden" id="visitId">
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Code</label>
+                                    <input type="text" class="form-control" id="facilityCode" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Name</label>
+                                    <input type="text" class="form-control" id="facilityName" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Date Visited</label>
+                                    <input type="datetime-local" class="form-control" id="dateVisited" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Province</label>
+                                    <select class="form-control" id="province" required>
+                                      <option value="">-- Select Province --</option>
+                                      <option value="Cavite">Cavite</option>
+                                      <option value="Laguna">Laguna</option>
+                                      <option value="Batangas">Batangas</option>
+                                      <option value="Rizal">Rizal</option>
+                                      <option value="Quezon">Quezon</option>
+                                    </select>
+                                  </div>
+
+                                  <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-control" id="status" required>
+                                      <option value="">-- Select Status --</option>
+                                      <option value="1">Active</option>
+                                      <option value="0">Inactive</option>
+                                      <option value="2">Closed</option> <!-- Added Closed Status -->
+                                    </select>
+                                  </div>
+
+                                  <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
+                                </form>
                               </div>
                             </div>
                           </div>
+                        </div>
 
                           <div class="row flex-grow">
                               <div class="col-md-6 col-lg-6 grid-margin stretch-card">
@@ -1228,6 +1242,7 @@
 
     <!--script for pdo visit-->
     <script src="assets/js/pdo_visit.js"></script>
+    <script src="assets/js/date_visited.js"></script>
     <!--end inject-->
 
     <!-- Custom js for this page-->
