@@ -26,6 +26,21 @@
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
     
   </head>
+  <style>
+    .table-responsive {
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+    }
+
+    .table-header {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+    }
+
+  </style>
   <body class="with-welcome-text">
     <!--
     <div class="container-scroller">
@@ -737,37 +752,38 @@
 
                           <div class="row flex-grow">
                             <div class="col-md-12 col-lg-12 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body card-rounded">
-                                  <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="card-title card-title-dash">Facility Visits</h4>
-                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#visitModal">
-                                      <i class="mdi mdi-account-plus"></i> Add Facility Visit
-                                    </button>
-                                  </div>
-                          
-                                  <div class="table-responsive mt-1">
-                                    <table class="table select-table">
-                                      <thead>
-                                        <tr>
-                                          <th>Facility Code</th>
-                                          <th>Facility Name</th>
-                                          <th>Date and Time Visited</th>
-                                          <th>Province</th>
-                                          <th>Status</th>
-                                          <th>Actions</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody id="visitTable">
-                                        <!-- Data will be inserted dynamically via JavaScript -->
-                                      </tbody>
-                                    </table>
-                                  </div>
-                          
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="card-title card-title-dash">Facility Visits</h4>
+                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#visitModal">
+                                                <i class="mdi mdi-account-plus"></i> Add Facility Visit
+                                            </button>
+                                        </div>
+                        
+                                        <!-- Scrollable Table -->
+                                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table select-table">
+                                                <thead class="table-header">
+                                                    <tr>
+                                                        <th>Facility Code</th>
+                                                        <th>Facility Name</th>
+                                                        <th>Date and Time Visited</th>
+                                                        <th>Province</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="visitTable">
+                                                    <!-- Data will be inserted dynamically via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        
+                                    </div>
                                 </div>
-                              </div>
                             </div>
-                          </div>
+                        </div>
                           
                         <!-- Add/Edit Facility Visit Modal -->
                         <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
@@ -1140,58 +1156,11 @@
                                             <h4 class="card-title card-title-dash">Top Unsatisfactory Sample Contributor</h4>
                                           </div>
                                         </div>
-                                        <div class="mt-3">
-                                          <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                            <div class="d-flex">
-                                              <img class="img-sm rounded-10" src="assets/images/hospital.png" alt="profile">
-                                              <div class="wrapper ms-3">
-                                                <p class="ms-1 mb-1 fw-bold">Facility Name</p>
-                                                <small class="text-muted mb-0">Province</small>
-                                              </div>
-                                            </div>
-                                            <div class="text-muted text-small"> 22 </div>
-                                          </div>
-                                          <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                            <div class="d-flex">
-                                              <img class="img-sm rounded-10" src="assets/images/faces/face2.jpg" alt="profile">
-                                              <div class="wrapper ms-3">
-                                                <p class="ms-1 mb-1 fw-bold">Facility Name</p>
-                                                <small class="text-muted mb-0">Province</small>
-                                              </div>
-                                            </div>
-                                            <div class="text-muted text-small"> 32 </div>
-                                          </div>
-                                          <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                            <div class="d-flex">
-                                              <img class="img-sm rounded-10" src="assets/images/faces/face3.jpg" alt="profile">
-                                              <div class="wrapper ms-3">
-                                                <p class="ms-1 mb-1 fw-bold">Facility Name</p>
-                                                <small class="text-muted mb-0">Province</small>
-                                              </div>
-                                            </div>
-                                            <div class="text-muted text-small"> 42 </div>
-                                          </div>
-                                          <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                            <div class="d-flex">
-                                              <img class="img-sm rounded-10" src="assets/images/faces/face4.jpg" alt="profile">
-                                              <div class="wrapper ms-3">
-                                                <p class="ms-1 mb-1 fw-bold">Facility Name</p>
-                                                <small class="text-muted mb-0">Province</small>
-                                              </div>
-                                            </div>
-                                            <div class="text-muted text-small"> 52 </div>
-                                          </div>
-                                          <div class="wrapper d-flex align-items-center justify-content-between pt-2">
-                                            <div class="d-flex">
-                                              <img class="img-sm rounded-10" src="assets/images/faces/face5.jpg" alt="profile">
-                                              <div class="wrapper ms-3">
-                                                <p class="ms-1 mb-1 fw-bold">Facility Name</p>
-                                                <small class="text-muted mb-0">Province</small>
-                                              </div>
-                                            </div>
-                                            <div class="text-muted text-small"> 42 </div>
-                                          </div>
+                                        <!-- Scrollable Container -->
+                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
+                                          <!-- Data will be inserted dynamically here -->
                                         </div>
+                                        <!-- End Scrollable Container -->
                                       </div>
                                     </div>
                                   </div>
@@ -1245,10 +1214,12 @@
     <!--script for pdo visit-->
     <script src="/routes/facilityRoutes.js"></script>
     <script src="/routes/oracleRoutes.js"></script>
-
+    <script src="/routes/unsatRoutes.js"></script>
+    
     <script src="assets/js/date_visited.js"></script>
 
     <!--GRAPH JS-->
+    <script src="/js/top_unsat.js"></script>
     <script src="/js/facility_chart.js"></script>
     <script src="/js/pdo_visit.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
