@@ -25,7 +25,7 @@ function fetchTopUnsatisfactoryContributors(fromDate, toDate) {
                             <small class="text-muted mb-0">${visit.province || visit.PROVINCE}</small>
                         </div>
                     </div>
-                    <div class="text-muted text-small">${visit.unsatisfactory_count || visit.UNSATISFACTORY_COUNT}</div>
+                    <div class="text-muted text-big fw-bold">${visit.unsatisfactory_count || visit.UNSATISFACTORY_COUNT}</div>
                 </div>
             `);
         });
