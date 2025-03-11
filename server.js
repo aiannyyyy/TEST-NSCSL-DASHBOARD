@@ -30,7 +30,8 @@ connectOracle()
 
 // ✅ Register Routes
 app.use("/api/facility-visits", require("./routes/facilityRoutes")); // MySQL CRUD
-app.use("/api/unsat", require("./routes/unsatRoutes")); // Unsatisfactory Section (Oracle)
+app.use("/api/unsat", require("./routes/unsatRoutes"));
+app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section (Oracle)
 app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle routes
 
 // ✅ Debugging Route - Check if OracleDB is Set
