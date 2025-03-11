@@ -1,0 +1,36 @@
+$(document).ready(function () {
+    fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59"); // Default date range
+});
+
+function fetchTopUnsatisfactoryContributors(fromDate, toDate) {
+    let requestUrl = `http://localhost:3000/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
+    console.log("🔹 Fetching data from:", requestUrl);
+
+    $.get(requestUrl, function (data) {
+        let container = $(".scrollable-container");
+        container.html(""); // Clear previous content
+
+        if (!data || data.length === 0) {
+            container.append(`<p class="text-muted text-center">No data available</p>`);
+            return;
+        }
+
+        data.slice(0, 20).forEach(visit => {
+            container.append(`
+                <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                    <div class="d-flex">
+                        <img class="img-sm rounded-10" src="/routes/hospital.png" alt="Hospital">
+                        <div class="wrapper ms-3">
+                            <p class="ms-1 mb-1 fw-bold">${visit.facility_name || visit.FACILITY_NAME}</p>
+                            <small class="text-muted mb-0">${visit.province || visit.PROVINCE}</small>
+                        </div>
+                    </div>
+                    <div class="text-muted text-small">${visit.unsatisfactory_count || visit.UNSATISFACTORY_COUNT}</div>
+                </div>
+            `);
+        });
+    }).fail(function (err) {
+        console.error("❌ Error fetching top unsatisfactory contributors!", err);
+        $(".scrollable-container").html(`<p class="text-danger text-center">Error loading data</p>`);
+    });
+}
