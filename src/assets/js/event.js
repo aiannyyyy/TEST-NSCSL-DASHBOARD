@@ -2,8 +2,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const eventForm = document.getElementById("eventForm");
     const eventsList = document.getElementById("eventsList");
     const allEventsList = document.getElementById("allEventsList");
-    let events = [];
 
+    // ✅ Load Events from Local Storage on Page Load
+    displayEvents();
+
+    // 📌 Function to Add New Event
     function addEvent() {
         const eventName = document.getElementById("eventName").value;
         const eventLocation = document.getElementById("eventLocation").value;
@@ -13,14 +16,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (eventName && eventLocation && eventDateTime && eventDescription && eventHost) {
             const event = {
+                id: Date.now(), // Unique ID for each event
                 name: eventName,
                 location: eventLocation,
                 dateTime: eventDateTime,
                 description: eventDescription,
                 host: eventHost
             };
-            
+
+            let events = JSON.parse(localStorage.getItem("events")) || [];
             events.push(event);
+            localStorage.setItem("events", JSON.stringify(events)); // ✅ Save to localStorage
+
             displayEvents();
             eventForm.reset();
             bootstrap.Modal.getInstance(document.getElementById("addEventModal")).hide();
@@ -29,9 +36,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // 📌 Function to Display Events
     function displayEvents() {
+        let events = JSON.parse(localStorage.getItem("events")) || [];
         eventsList.innerHTML = "";
         allEventsList.innerHTML = "";
+
+        if (events.length === 0) {
+            eventsList.innerHTML = "<p class='text-muted text-center'>No events available</p>";
+            allEventsList.innerHTML = "<p class='text-muted text-center'>No events available</p>";
+            return;
+        }
 
         events.forEach((event, index) => {
             let eventItem = `<div class='mb-3 p-2 border rounded'>
@@ -40,9 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <p class='mb-1'><strong>Date & Time:</strong> ${new Date(event.dateTime).toLocaleString()}</p>
                                 <p class='mb-1'><strong>Host:</strong> ${event.host}</p>
                                 <p class='mb-1'><strong>Description:</strong> ${event.description}</p>
-                                <button class='btn btn-danger btn-sm' onclick='deleteEvent(${index})'>Delete</button>
+                                <button class='btn btn-danger btn-sm' onclick='deleteEvent(${event.id})'>Delete</button>
                             </div>`;
-            
+
             if (index < 3) {
                 eventsList.innerHTML += eventItem;
             }
@@ -50,11 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function deleteEvent(index) {
-        events.splice(index, 1);
+    // 📌 Function to Delete Event
+    function deleteEvent(eventId) {
+        let events = JSON.parse(localStorage.getItem("events")) || [];
+        events = events.filter(event => event.id !== eventId);
+        localStorage.setItem("events", JSON.stringify(events)); // ✅ Update localStorage
+
         displayEvents();
     }
 
+    // ✅ Ensure deleteEvent is accessible globally
     window.addEvent = addEvent;
     window.showAllEvents = displayEvents;
     window.deleteEvent = deleteEvent;
