@@ -42,9 +42,13 @@ function applyDateFilter() {
     // ✅ Update the header text dynamically
     $(".selected-month-year").text(`For the month of ${month} ${year}`);
 
+    // ✅ Get selected radio button (numbers or percentages)
+    let selectedType = $("input[name='btnradio']:checked").attr("id") === "btnradio1" ? "numbers" : "percentages";
+
     // Fetch updated data
-    fetchTopUnsatisfactoryContributors(formattedFrom, formattedTo);
+    fetchTopUnsatisfactoryContributors(formattedFrom, formattedTo, selectedType);
 
     // ✅ Close the modal after applying the filter
     $("#dateRangeModal").modal("hide");
 }
+
