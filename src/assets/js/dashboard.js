@@ -177,110 +177,104 @@
       });
     }
 
-    if ($("#marketingOverview").length) { 
-      const marketingOverviewCanvas = document.getElementById('marketingOverview');
-      new Chart(marketingOverviewCanvas, {
-        type: 'bar',
-        data: {
-          labels: ["JAN","FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
-          datasets: [{
-            label: 'Last week',
-            data: [110, 220, 200, 190, 220, 110, 210, 110, 205, 202, 201, 150],
-            backgroundColor: "#52CDFF",
-            borderColor: [
-                '#52CDFF',
-            ],
-              borderWidth: 0,
-              barPercentage: 0.35,
-              fill: true, // 3: no fill
-              
-          },{
-            label: 'This week',
-            data: [215, 290, 210, 250, 290, 230, 290, 210, 280, 220, 190, 300],
-            backgroundColor: "#1F3BB3",
-            borderColor: [
-                '#1F3BB3',
-            ],
-            borderWidth: 0,
-              barPercentage: 0.35,
-              fill: true, // 3: no fill
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          elements: {
-            line: {
-                tension: 0.4,
-            }
-        },
-        
-          scales: {
-            y: {
-              border: {
-                display: false
-              },
-              grid: {
-                display: true,
-                drawTicks: false,
-                color:"#F0F0F0",
-                zeroLineColor: '#F0F0F0',
-              },
-              ticks: {
-                beginAtZero: false,
-                autoSkip: true,
-                maxTicksLimit: 4,
-                color:"#6B778C",
-                font: {
-                  size: 10,
-                }
-              }
-            },
-            x: {
-              border: {
-                display: false
-              },
-              stacked: true,
-              grid: {
-                display: false,
-                drawTicks: false,
-              },
-              ticks: {
-                beginAtZero: false,
-                autoSkip: true,
-                maxTicksLimit: 7,
-                color:"#6B778C",
-                font: {
-                  size: 10,
-                }
-              }
-            }
-          },
-          plugins: {
-            legend: {
-                display: false,
-            }
-          }
-        },
-        plugins: [{
-          afterDatasetUpdate: function (chart, args, options) {
-              const chartId = chart.canvas.id;
-              var i;
-              const legendId = `${chartId}-legend`;
-              const ul = document.createElement('ul');
-              for(i=0;i<chart.data.datasets.length; i++) {
-                  ul.innerHTML += `
-                  <li>
-                    <span style="background-color: ${chart.data.datasets[i].borderColor}"></span>
-                    ${chart.data.datasets[i].label}
-                  </li>
-                `;
-              }
-              return document.getElementById(legendId).appendChild(ul);
-            }
-        }]
-      });
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+      if ($("#marketingOverview").length) {
+          fetch("/api/inc-dec/monthly-labno-count")
+              .then(response => response.json())
+              .then(data => {
+                  if (!data || data.length === 0) {
+                      console.error("No data received for chart");
+                      return;
+                  }
+  
+                  // Extracting months and counts for 2024 & 2025
+                  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                  let labno2024 = new Array(12).fill(0);
+                  let labno2025 = new Array(12).fill(0);
+  
+                  data.forEach(row => {
+                      let year = row.MONTH_YEAR.split("-")[0];
+                      let monthIndex = parseInt(row.MONTH_YEAR.split("-")[1]) - 1; // Convert to zero-based index
+                      if (year === "2024") labno2024[monthIndex] = row.TOTAL_LABNO;
+                      if (year === "2025") labno2025[monthIndex] = row.TOTAL_LABNO;
+                  });
+  
+                  // Create Chart
+                  const marketingOverviewCanvas = document.getElementById("marketingOverview");
+                  new Chart(marketingOverviewCanvas, {
+                      type: "bar",
+                      data: {
+                          labels: months,
+                          datasets: [
+                              {
+                                  label: "2024",
+                                  data: labno2024,
+                                  backgroundColor: "#52CDFF",
+                                  borderColor: "#52CDFF",
+                                  borderWidth: 0,
+                                  barPercentage: 0.35,
+                                  fill: true,
+                              },
+                              {
+                                  label: "2025",
+                                  data: labno2025,
+                                  backgroundColor: "#1F3BB3",
+                                  borderColor: "#1F3BB3",
+                                  borderWidth: 0,
+                                  barPercentage: 0.35,
+                                  fill: true,
+                              },
+                          ],
+                      },
+                      options: {
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          elements: { line: { tension: 0.4 } },
+                          scales: {
+                              y: {
+                                  border: { display: false },
+                                  grid: { display: true, drawTicks: false, color: "#F0F0F0" },
+                                  ticks: { beginAtZero: false, autoSkip: true, maxTicksLimit: 4, color: "#6B778C", font: { size: 10 } },
+                              },
+                              x: {
+                                  border: { display: false },
+                                  stacked: true,
+                                  grid: { display: false },
+                                  ticks: { autoSkip: true, maxTicksLimit: 7, color: "#6B778C", font: { size: 10 } },
+                              },
+                          },
+                          plugins: {
+                              legend: { display: false },
+                          },
+                      },
+                      plugins: [
+                          {
+                              afterDatasetUpdate: function (chart, args, options) {
+                                  const chartId = chart.canvas.id;
+                                  const legendId = `${chartId}-legend`;
+                                  const ul = document.createElement("ul");
+                                  chart.data.datasets.forEach(dataset => {
+                                      ul.innerHTML += `<li>
+                                          <span style="background-color: ${dataset.borderColor}"></span>
+                                          ${dataset.label}
+                                      </li>`;
+                                  });
+                                  document.getElementById(legendId)?.appendChild(ul);
+                              },
+                          },
+                      ],
+                  });
+  
+                  // Update Table Values
+                  document.querySelector(".table-light:nth-child(2)").innerText = labno2024[0];
+                  document.querySelector(".table-light:nth-child(3)").innerText = labno2025[0];
+                  document.querySelector(".table-light:nth-child(4)").innerText = labno2025[0] - labno2024[0];
+                  document.querySelector(".table-light:nth-child(5)").innerText =
+                      ((labno2025[0] - labno2024[0]) / labno2024[0] * 100).toFixed(2) + "%";
+              })
+              .catch(error => console.error("Error fetching chart data:", error));
+      }
+  });
 
     if ($('#totalVisitors').length) {
       var bar = new ProgressBar.Circle(totalVisitors, {

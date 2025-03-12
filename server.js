@@ -33,6 +33,8 @@ app.use("/api/facility-visits", require("./routes/facilityRoutes")); // MySQL CR
 app.use("/api/unsat", require("./routes/unsatRoutes"));
 app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section (Oracle)
 app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle routes
+app.use("/api/inc-dec", require("./routes/inc_decRoutes")); 
+
 
 // ✅ Debugging Route - Check if OracleDB is Set
 app.get("/api/check-oracle", (req, res) => {
