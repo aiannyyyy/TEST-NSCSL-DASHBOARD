@@ -40,7 +40,7 @@ router.get("/monthly-labno-count", async (req, res) => {
                 SDA."SUBMID" = RPA."PROVIDERID"
             WHERE 
                 RPA."ADRS_TYPE" = '1'
-                AND SDA."SPECTYPE" IN ('87', '4', '3', '20', '2')
+                AND SDA."SPECTYPE" IN ('20')
                 AND SDA."DTRECV" BETWEEN TO_DATE(:date_from, 'YYYY-MM-DD') 
                                     AND TO_DATE(:date_to, 'YYYY-MM-DD')
                 AND UPPER(RPA."COUNTY") LIKE UPPER(:province || '%') 
