@@ -70,29 +70,29 @@ document.addEventListener("DOMContentLoaded", function () {
             console.warn("⚠️ No valid data received! Check API response.");
             return;
         }
-
+    
         let allMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         let valuesYear1 = Array(12).fill(0);
         let valuesYear2 = Array(12).fill(null);
-
+    
         data.forEach(entry => {
             let [year, month] = entry.MONTH_YEAR.split("-").map(Number);
             let monthIndex = month - 1;
             let province = entry.PROVINCE ? entry.PROVINCE.trim().toLowerCase() : "";
             let selectedProvinceNormalized = selectedProvince.trim().toLowerCase();
-
+    
             if (province === selectedProvinceNormalized) {
                 if (parseInt(year, 10) === selectedYear1) valuesYear1[monthIndex] = entry.TOTAL_LABNO || 0;
                 if (parseInt(year, 10) === selectedYear2) valuesYear2[monthIndex] = entry.TOTAL_LABNO || 0;
             }
         });
-
+    
         if (window.myChart instanceof Chart) {
             window.myChart.destroy();
         }
-
+    
         let ctx = document.getElementById("marketingOverview").getContext("2d");
-
+    
         window.myChart = new Chart(ctx, {
             type: "bar",
             data: {
@@ -129,13 +129,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 plugins: {
                     legend: { position: "top" },
-                    tooltip: { enabled: true }
+                    tooltip: { enabled: true },
+                    datalabels: {
+                        anchor: "end",
+                        align: "top",
+                        color: "#000",
+                        font: {
+                            weight: "bold"
+                        },
+                        formatter: function (value) {
+                            return value > 0 ? value : "";
+                        }
+                    }
                 }
-            }
+            },
+            plugins: [ChartDataLabels] // Add the ChartDataLabels plugin
         });
-
+    
         updateTable();
-    }
+    }    
 
     function fetchChartData() {
         let fromDate = `${selectedYear1}-01-01`;

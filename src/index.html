@@ -426,23 +426,116 @@
                       <div class="row">
                         <div class="col-lg-8 d-flex flex-column">
                           <div class="row flex-grow">
-                            <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body">
-                                  <div class="d-sm-flex justify-content-between align-items-start">
-                                    <div>
-                                      <h4 class="card-title card-title-dash">Performance Line Chart</h4>
-                                      <h5 class="card-subtitle card-subtitle-dash">Lorem Ipsum is simply dummy text of the printing</h5>
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <!-- Header Section -->
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash"> Cumulative Sample Screened Per Province </h4>
+                                                <h5 class="card-subtitle card-subtitle-dash" id="chartTitle2">2024 vs 2025</h5>
+                                            </div>
+                                            <div>
+                                                <!-- Year Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnA" data-bs-toggle="dropdown">2024</button>
+                                                    <div class="dropdown-menu" id="yearDropdownA">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                    <span> VS </span>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnB" data-bs-toggle="dropdown">2025</button>
+                                                    <div class="dropdown-menu" id="yearDropdownB">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Province Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="provinceDropdownBtn2" data-bs-toggle="dropdown">Batangas</button>
+                                                    <div class="dropdown-menu" id="provinceDropdown2">
+                                                        <a class="dropdown-item" href="#" data-province="Cavite">Cavite</a>
+                                                        <a class="dropdown-item" href="#" data-province="Laguna">Laguna</a>
+                                                        <a class="dropdown-item" href="#" data-province="Batangas">Batangas</a>
+                                                        <a class="dropdown-item" href="#" data-province="Rizal">Rizal</a>
+                                                        <a class="dropdown-item" href="#" data-province="Quezon">Quezon</a>
+                                                    </div>
+                                                </div>
+                                                <!-- Month Selection -->
+                                                <div class="dropdown d-inline-block mb-2">
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn2" data-bs-toggle="dropdown">January</button>
+                                                  <div class="dropdown-menu" id="monthDropdown2">
+                                                    <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                        
+                                        <!-- Chart Section -->
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="marketingOverview2"></canvas>
+                                        </div>
+                        
+                                        <!-- Table Section -->
+                                        <div class="mt-3">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row" class="table-light">Year</th>
+                                                        <th id="yearPrev2" class="table-light">2024</th>
+                                                        <th id="yearCurrent2" class="table-light">2025</th>
+                                                        <th class="table-light"><span style="color: green;">INC</span>/<span style="color: red;">DEC</span></th>
+                                                        <th class="table-light">%</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row" class="table-light">Total Screened</th>
+                                                        <td id="totalPrev2" class="table-light">3049</td>
+                                                        <td id="totalCurrent2" class="table-light">3133</td>
+                                                        <td id="incDec2" class="table-light">84</td>
+                                                        <td id="percentChange2" class="table-light">2.76% Increase</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        
                                     </div>
-                                    <div id="performanceLine-legend"></div>
-                                  </div>
-                                  <div class="chartjs-wrapper mt-4">
-                                    <canvas id="performanceLine" width=""></canvas>
-                                  </div>
                                 </div>
-                              </div>
                             </div>
-                          </div>
+                        </div>                                   
                         </div>
                         <div class="col-lg-4 d-flex flex-column">
                           <div class="row flex-grow">
@@ -506,7 +599,7 @@
                                         <div class="d-sm-flex justify-content-between align-items-start">
                                             <div>
                                                 <h4 class="card-title card-title-dash1">Monthly Total Screened Samples </h4>
-                                                <p id="chartTitle" class="card-subtitle card-subtitle-dash fw-bold">{selected by yearDropdown1} vs {selected by yearDropdown2}</p>
+                                                <h5 id="chartTitle" class="card-subtitle card-subtitle-dash fw-bold">{selected by yearDropdown1} vs {selected by yearDropdown2}</h5>
                                             </div>
                                             <div>
                                                 <div class="dropdown d-inline-block">
@@ -1361,6 +1454,7 @@
     <script src="/js/top_unsat.js"></script>
     <script src="/js/facility_chart.js"></script>
     <script src="/js/screened_chart.js"></script>
+    <script src="/js/screened_province.js"></script>
     <script src="/js/pdo_visit.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
