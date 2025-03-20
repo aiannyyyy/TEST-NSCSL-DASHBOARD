@@ -315,15 +315,46 @@ $(function() {
       options: multiAreaOptions
     });
   }
-
   if ($("#doughnutChart").length) {
     var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
+
+    // ✅ Ensure ChartDataLabels is registered
+    if (typeof ChartDataLabels !== "undefined") {
+        Chart.register(ChartDataLabels);
+    } else {
+        console.error("ChartDataLabels plugin is missing!");
+    }
+
     var doughnutChart = new Chart(doughnutChartCanvas, {
-      type: 'doughnut',
-      data: doughnutPieData,
-      options: doughnutPieOptions
+        type: 'doughnut',
+        data: doughnutPieData,
+        options: {
+            cutout: 90, // Adjust thickness of the ring
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "bottom"
+                },
+                datalabels: { // ✅ Add Data Labels
+                    color: "#fff",
+                    anchor: "center",
+                    align: "center",
+                    font: {
+                        weight: "bold",
+                        size: 14
+                    },
+                    formatter: (value, ctx) => {
+                        let total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                        let percentage = ((value / total) * 100).toFixed(1);
+                        return `${percentage}%`;
+                    }
+                }
+            }
+        }
     });
-  }
+}
 
   if ($("#pieChart").length) {
     var pieChartCanvas = $("#pieChart").get(0).getContext("2d");

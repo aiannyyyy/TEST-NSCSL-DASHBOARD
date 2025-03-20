@@ -12,6 +12,7 @@ const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connec
 
 const app = express();
 app.use(cors());
+app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
 app.use(bodyParser.json());
 
 // ✅ Serve static files
@@ -34,6 +35,7 @@ app.use("/api/unsat", require("./routes/unsatRoutes"));
 app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section (Oracle)
 app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle routes
 app.use("/api/inc-dec", require("./routes/inc_decRoutes")); 
+app.use("/api/auth", require("./routes/loginRoutes")); // ✅ Authentication Routes
 
 
 // ✅ Debugging Route - Check if OracleDB is Set

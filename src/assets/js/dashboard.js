@@ -354,75 +354,72 @@
       bar.animate(.34); // Number from 0.0 to 1.0
     }
 
-      $(document).ready(function () {
-        if ($("#doughnutChart").length) {
-            $.ajax({
-                url: "/chart-data",
-                method: "GET",
-                success: function (data) {
-                    const doughnutChartCanvas = document.getElementById('doughnutChart');
-                    new Chart(doughnutChartCanvas, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Active', 'Inactive', 'Closed'],
-                            datasets: [{
-                                data: [data.active, data.inactive, data.closed], // Use dynamic data
-                                backgroundColor: [
-                                    "#1F3BB3",  // Active - Blue
-                                    "#FDD0C7",  // Inactive - Light Red
-                                    "#52CDFF"   // Closed - Cyan
-                                ],
-                                borderColor: [
-                                    "#1F3BB3",
-                                    "#FDD0C7",
-                                    "#52CDFF"
-                                ],
-                            }]
-                        },
-                        options: {
-                            cutout: 90,
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                    position: 'bottom',
-                                    labels: {
-                                        color: "#6B778C",
-                                        font: {
-                                            size: 12
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching chart data:", error);
-                }
-            });
-        }
-    }),
-        plugins: [{
-          afterDatasetUpdate: function (chart, args, options) {
-              const chartId = chart.canvas.id;
-              var i;
-              const legendId = `${chartId}-legend`;
-              const ul = document.createElement('ul');
-              for(i=0;i<chart.data.datasets[0].data.length; i++) {
-                  ul.innerHTML += `
-                  <li>
-                    <span style="background-color: ${chart.data.datasets[0].backgroundColor[i]}"></span>
-                    ${chart.data.labels[i]}
-                  </li>
-                `;
+    $(document).ready(function () {
+      if ($("#doughnutChart").length) {
+          $.ajax({
+              url: "/chart-data",
+              method: "GET",
+              success: function (data) {
+                  const doughnutChartCanvas = document.getElementById("doughnutChart");
+  
+                  if (window.doughnutChartInstance) {
+                      window.doughnutChartInstance.destroy();
+                  }
+  
+                  // ✅ Ensure ChartDataLabels is properly registered
+                  if (typeof ChartDataLabels !== "undefined") {
+                      Chart.register(ChartDataLabels);
+                  } else {
+                      console.error("ChartDataLabels plugin is missing!");
+                  }
+  
+                  window.doughnutChartInstance = new Chart(doughnutChartCanvas, {
+                      type: "doughnut",
+                      data: {
+                          labels: ["Active", "Inactive", "Closed"],
+                          datasets: [{
+                              data: [data.active, data.inactive, data.closed],
+                              backgroundColor: ["#1F3BB3", "#FDD0C7", "#52CDFF"],
+                          }]
+                      },
+                      options: {
+                          cutout: 90,
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                              legend: {
+                                  display: true,
+                                  position: "bottom",
+                                  labels: {
+                                      color: "#6B778C",
+                                      font: { size: 12 }
+                                  }
+                              },
+                              datalabels: {  // ✅ Show Data Labels Inside the Chart
+                                  display: true,  
+                                  color: "#fff",  // White text inside the chart
+                                  anchor: "center",
+                                  align: "center",
+                                  font: {
+                                      weight: "bold",
+                                      size: 14
+                                  },
+                                  formatter: (value, ctx) => {
+                                      let total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                      let percentage = ((value / total) * 100).toFixed(1);
+                                      return `${percentage}%`; // Show percentage
+                                  }
+                              }
+                          }
+                      }
+                  });
+              },
+              error: function (xhr, status, error) {
+                  console.error("Error fetching chart data:", error);
               }
-              return document.getElementById(legendId).appendChild(ul);
-            }
-        }]
-      });
-    }
+          });
+      }
+  });
 
     if ($("#leaveReport").length) { 
       const leaveReportCanvas = document.getElementById('leaveReport');
