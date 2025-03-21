@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle Year 1 Selection
     document.getElementById("yearDropdown1").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-year");
         if (selected) {
             selectedYear1 = parseInt(selected, 10);
@@ -184,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle Year 2 Selection
     document.getElementById("yearDropdown2").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-year");
         if (selected) {
             selectedYear2 = parseInt(selected, 10);
@@ -194,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle Province Selection
     document.getElementById("provinceDropdown").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-province");
         if (selected) {
             selectedProvince = selected;
@@ -204,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle Month Selection
     document.getElementById("monthDropdown").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-month");
         if (selected) {
             selectedMonth = selected;

@@ -197,6 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ✅ Event Listeners for Dropdowns
     document.getElementById("yearDropdownA").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-year");
         if (selected) { 
             selectedYearA = parseInt(selected, 10); 
@@ -206,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById("yearDropdownB").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-year");
         if (selected) { 
             selectedYearB = parseInt(selected, 10); 
@@ -215,6 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById("provinceDropdown2").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-province");
         if (selected) { 
             selectedProvince2 = selected; 
@@ -225,6 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById("monthDropdown2").addEventListener("click", function (event) {
+        event.preventDefault(); // ⛔ Prevents page jump
         let selected = event.target.getAttribute("data-month");
         if (selected) { 
             selectedMonthRange = selected;
