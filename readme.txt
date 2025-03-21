@@ -1,0 +1,1 @@
+run all hash passwords before starting program
