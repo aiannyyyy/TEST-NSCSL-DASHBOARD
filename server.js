@@ -41,8 +41,7 @@ app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle route
 app.use("/api/inc-dec", require("./routes/inc_decRoutes")); 
 app.use("/api/auth", require("./routes/loginRoutes")); // ✅ Authentication Routes
 app.use("/api", require("./routes/exeRoutes")); // ✅ Register EXE Routes
-
-
+app.use("/api/timeliness", require("./routes/timelinessRoutes"));
 
 
 // ✅ Debugging Route - Check if OracleDB is Set

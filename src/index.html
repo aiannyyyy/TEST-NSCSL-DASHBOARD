@@ -77,6 +77,50 @@
       color: #0d6efd !important; /* Blue text on hover */
       border: 2px solid #0d6efd; /* Keep the blue border */
   }
+
+
+  .table-container {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    display: block;
+    max-height: none; /* Remove max-height to prevent extra space */
+  }
+
+  .custom-table {
+      min-width: 900px; /* Ensure table doesn't shrink */
+      border-collapse: collapse;
+      text-align: center;
+  }
+
+  .custom-table thead {
+      position: sticky;
+      top: 0;
+      background: #004085; /* Dark blue header */
+      color: white;
+      z-index: 2;
+  }
+
+  .custom-table th, .custom-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  .nav .nav-item {
+  padding: 10px 0; /* Adds vertical spacing */
+}
+
+.nav .nav-link {
+  padding: 12px 15px; /* Adjust link padding for better spacing */
+  border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+}
+
+
   </style>
   <body class="with-welcome-text">
     <!--
@@ -284,110 +328,70 @@
       </nav>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
-          <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#pdo-dashboard" aria-expanded="false" aria-controls="pdo-dashboard">
-                <i class="mdi mdi-grid-large menu-icon"></i>
-                <span class="menu-title">NSCSL PDO</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="pdo-dashboard">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="buttons.html">Reports</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/dashboard/analytics.html">Analytics</a></li>
-                </ul>
-              </div>
-            </li>            
-            <li class="nav-item nav-category">UI Elements</li>
-           <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <i class="menu-icon mdi mdi-floor-plan"></i>
-                <span class="menu-title">UI Elements</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="ui-basic">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Dropdowns</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typography</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
-                <i class="menu-icon mdi mdi-card-text-outline"></i>
-                <span class="menu-title">Form elements</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="form-elements">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Basic Elements</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                <i class="menu-icon mdi mdi-chart-line"></i>
-                <span class="menu-title">Charts</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="charts">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/charts/chartjs.html">ChartJs</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-                <i class="menu-icon mdi mdi-table"></i>
-                <span class="menu-title">Tables</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="tables">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <i class="menu-icon mdi mdi-layers-outline"></i>
-                <span class="menu-title">Icons</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="icons">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/icons/font-awesome.html">Font Awesome</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                <span class="menu-title">User Pages</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="auth">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="docs/documentation.html">
-                <i class="menu-icon mdi mdi-file-document"></i>
-                <span class="menu-title">Documentation</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+       <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#admin-dashboard" aria-expanded="false" aria-controls="admin-dashboard">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">ADMIN</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="admin-dashboard">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Supply</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Purchasing</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
+              <i class="mdi mdi-office-building menu-icon"></i>
+              <span class="menu-title"> PDO </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-pdo">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+              </ul>
+            </div>
+          </li> 
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-lab" aria-expanded="false" aria-controls="nscsl-lab">
+              <i class="mdi mdi-flask-outline menu-icon"></i>
+              <span class="menu-title">LABORATORY</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-lab">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Demographics</a></li>
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#followup-dashboard" aria-expanded="false" aria-controls="followup-dashboard">
+              <i class="mdi mdi-stethoscope menu-icon"></i>
+              <span class="menu-title">FOLLOWUP</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="followup-dashboard">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
 
         <!-- partial -->
         <div class="main-panel">
@@ -1380,6 +1384,7 @@
                                 </div>
                               </div>
                             </div>
+
                             <div class="row flex-grow">
                               <div class="col-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
@@ -1388,26 +1393,134 @@
                                       <div class="col-lg-12">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                           <div>
-                                            <h4 class="card-title card-title-dash">Leave Report</h4>
+                                            <h4 class="card-title card-title-dash">Timeliness of NBS </h4> <span> Province </span> <br>
                                           </div>
                                           <div>
                                             <div class="dropdown">
-                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Month Wise </button>
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                                                Year 
+                                              </button>
                                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                                <h6 class="dropdown-header">week Wise</h6>
-                                                <a class="dropdown-item" href="#">Year Wise</a>
+                                                <a class="dropdown-item" href="#">2024</a>
+                                                <a class="dropdown-item" href="#">2023</a>
+                                                <a class="dropdown-item" href="#">2022</a>
+                                                <a class="dropdown-item" href="#">2021</a> 
+                                              </div>
+                                              <span> VS </span>
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                                                Year 
+                                              </button>
+                                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                                                <a class="dropdown-item" href="#">2025</a>
+                                                <a class="dropdown-item" href="#">2024</a>
+                                                <a class="dropdown-item" href="#">2023</a>
+                                                <a class="dropdown-item" href="#">2022</a>
                                               </div>
                                             </div>
                                           </div>
                                         </div>
-                                        <div class="mt-3">
-                                          <canvas id="leaveReport"></canvas>
-                                        </div>
                                       </div>
-                                    </div>
+                            
+                                      <!-- Scrollable Table -->
+                                      <div class="table-container">
+                                        <table class="custom-table">
+                                          <thead>
+                                            <tr>
+                                              <th rowspan="3">Month</th>
+                                              <th colspan="6">AOC</th>
+                                              <th colspan="6">Transit Time</th>
+                                              <th colspan="6">Age Upon Receipt</th>
+                                            </tr>
+                                            <tr>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                            </tr>
+                                            <tr>
+                                              <th id="aoc-ave-2024">2024</th>
+                                              <th id="aoc-ave-2025">2025</th>
+                                              <th id="aoc-med-2024">2024</th>
+                                              <th id="aoc-med-2025">2025</th>
+                                              <th id="aoc-mod-2024">2024</th>
+                                              <th id="aoc-mod-2025">2025</th>
+                                      
+                                              <th id="transit-ave-2024">2024</th>
+                                              <th id="transit-ave-2025">2025</th>
+                                              <th id="transit-med-2024">2024</th>
+                                              <th id="transit-med-2025">2025</th>
+                                              <th id="transit-mod-2024">2024</th>
+                                              <th id="transit-mod-2025">2025</th>
+                                      
+                                              <th id="age-ave-2024">2024</th>
+                                              <th id="age-ave-2025">2025</th>
+                                              <th id="age-med-2024">2024</th>
+                                              <th id="age-med-2025">2025</th>
+                                              <th id="age-mod-2024">2024</th>
+                                              <th id="age-mod-2025">2025</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="timeliness-data">
+                                            <tr>
+                                              <td>Jan</td>
+                                              <td>1.33</td><td>1.33</td>
+                                              <td>1</td><td>1</td>
+                                              <td>1</td><td>1</td>
+                                              <td>3.27</td><td>3.27</td>
+                                              <td>3</td><td>3</td>
+                                              <td>2</td><td>2</td>
+                                              <td>4.86</td><td>4.87</td>
+                                              <td>4</td><td>5</td>
+                                              <td>5</td><td>4</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      
+                                      <!-- Month Dropdown -->
+                                      <div class="dropdown mt-3">
+                                        <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" 
+                                        type="button" id="dropdownMenuButton5" 
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select Month
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                                          <a class="dropdown-item" href="#">January</a>
+                                          <a class="dropdown-item" href="#">February</a>
+                                          <a class="dropdown-item" href="#">March</a>
+                                          <a class="dropdown-item" href="#">April</a>
+                                          <a class="dropdown-item" href="#">May</a>
+                                          <a class="dropdown-item" href="#">June</a>
+                                          <a class="dropdown-item" href="#">July</a>
+                                          <a class="dropdown-item" href="#">August</a>
+                                          <a class="dropdown-item" href="#">September</a>
+                                          <a class="dropdown-item" href="#">October</a>
+                                          <a class="dropdown-item" href="#">November</a>
+                                          <a class="dropdown-item" href="#">December</a>
+                                        </div>
+                                        <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" 
+                                        type="button" id="dropdownMenuButton5" 
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select Province
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                                          <a class="dropdown-item" href="#">Cavite</a>
+                                          <a class="dropdown-item" href="#">Laguna</a>
+                                          <a class="dropdown-item" href="#">Batangas</a>
+                                          <a class="dropdown-item" href="#">Rizal</a>
+                                          <a class="dropdown-item" href="#">Quezon</a>
+                                      </div>
+                                      </div>
+
                                   </div>
                                 </div>
                               </div>
+                            </div>
                             </div>
 
                             <div class="row flex-grow">
@@ -1539,6 +1652,7 @@
     <script src="/js/pdo_visit.js"></script>
     <script src="/js/julianDate.js"></script>
     <script src="/js/reportGen.js"></script>
+    <script src="/js/timeliness.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 

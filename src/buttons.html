@@ -44,21 +44,72 @@
     background-color: #28a745 !important; /* Green */
     color: white !important;
     border: none;
-}
+    }
 
-.custom-btn:hover {
-    background-color: #218838 !important; /* Darker Green */
-    color: white !important;
-}
+    .custom-btn:hover {
+        background-color: #218838 !important; /* Darker Green */
+        color: white !important;
+    }
 
-#marketingOverview {
-    width: 100% !important;
-    height: 600px !important; /* ⬆️ Increased from 500px to 600px */
-}
+    #marketingOverview {
+        width: 100% !important;
+        height: 600px !important; /* ⬆️ Increased from 500px to 600px */
+    }
 
-.chart-container {
-    height: 650px !important; /* Adjust container height */
-}
+    .chart-container {
+        height: 650px !important; /* Adjust container height */
+    }
+
+    .button-custom {
+    background-color: #0d6efd; /* Blue background */
+    color: white !important; /* White text */
+    border: 2px solid #0d6efd; /* Blue border */
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .button-custom:hover {
+      background-color: white; /* White background on hover */
+      color: #0d6efd !important; /* Blue text on hover */
+      border: 2px solid #0d6efd; /* Keep the blue border */
+  }
+
+
+  .table-container {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    display: block;
+    max-height: none; /* Remove max-height to prevent extra space */
+  }
+
+  .custom-table {
+      min-width: 900px; /* Ensure table doesn't shrink */
+      border-collapse: collapse;
+      text-align: center;
+  }
+
+  .custom-table thead {
+      position: sticky;
+      top: 0;
+      background: #004085; /* Dark blue header */
+      color: white;
+      z-index: 2;
+  }
+
+  .custom-table th, .custom-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
 
   </style>
   <body class="with-welcome-text">
@@ -279,8 +330,7 @@
               <div class="collapse" id="pdo-dashboard">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="/src/pages/pdo-features/buttons.html">Reports</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/dashboard/analytics.html">Analytics</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
                 </ul>
               </div>
             </li>            
@@ -371,6 +421,7 @@
             </li>
           </ul>
         </nav>
+
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -584,36 +635,43 @@
                                 </div>
                               </div>
                             </div>
+
                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
                                   <div class="row">
+                                    <h4>NSCSL Julian Date</h4>
+                                    
+                                    <!-- Computed Julian Date Section -->
                                     <div class="col-lg-6">
                                       <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
-                                        <div class="circle-progress-width">
-                                          <div id="totalVisitors" class="progressbar-js-circle pr-2"></div>
-                                        </div>
                                         <div>
-                                          <p class="text-small mb-2">Total Visitors</p>
-                                          <h4 class="mb-0 fw-bold">26.80%</h4>
+                                          <p class="text-small mb-2">Computed Julian Date</p>
+                                          <input type="date" id="datePicker" class="form-control mb-2">
+                                          <button class="btn btn-primary button-custom" onclick="computeJulianDate()">Compute</button>
+                                          <h4 class="mb-0 fw-bold" id="julianDateDisplay">--</h4>
                                         </div>
                                       </div>
                                     </div>
+                            
+                                    <!-- Computed Calendar Date Section -->
                                     <div class="col-lg-6">
                                       <div class="d-flex justify-content-between align-items-center">
-                                        <div class="circle-progress-width">
-                                          <div id="visitperday" class="progressbar-js-circle pr-2"></div>
-                                        </div>
                                         <div>
-                                          <p class="text-small mb-2">Visits per day</p>
-                                          <h4 class="mb-0 fw-bold">9065</h4>
+                                          <p class="text-small mb-2">Computed Calendar Date</p>
+                                          <input type="number" id="julianInput" class="form-control mb-2" placeholder="Enter Julian Date">
+                                          <input type="number" id="yearInput" class="form-control mb-2" placeholder="Enter Year">
+                                          <button class="btn btn-primary button-custom" onclick="computeCalendarDate()">Compute</button>
+                                          <h4 class="mb-0 fw-bold" id="calendarDateDisplay">--</h4>
                                         </div>
                                       </div>
                                     </div>
+                            
                                   </div>
                                 </div>
                               </div>
                             </div>
+
                           </div>
                         </div>
                       </div>
@@ -1076,63 +1134,92 @@
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
-                                  <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h4 class="card-title card-title-dash">Activities</h4>
-                                    <p class="mb-0">20 finished, 5 remaining</p>
-                                  </div>
-                                  <ul class="bullet-line-list">
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
-                                        <p>Just now</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Oliver Noah</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Jack William</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Leo Lucas</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Thomas Henry</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Ben Tossell</span> assign you a task</div>
-                                        <p>1h</p>
-                                      </div>
-                                    </li>
-                                  </ul>
-                                  <div class="list align-items-center pt-3">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-0">
-                                        <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
-                                      </p>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
+                                        <div class="dropdown">
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button"
+                                                id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Select Here
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                              <a class="dropdown-item" href="#" onclick="filterReports('daily', event)">Daily</a>
+                                              <a class="dropdown-item" href="#" onclick="filterReports('monthly', event)">Monthly</a>
+                                              <a class="dropdown-item" href="#" onclick="filterReports('yearly', event)">Yearly</a>
+                                          </div>
+                                          
+                                        </div>
                                     </div>
-                                  </div>
+                            
+                                    <!-- Scrollable list container -->
+                                    <div id="reportContainer" style="max-height: 150px; overflow-y: auto;">
+                                        <ul class="bullet-line-list" id="reportList">
+                                            <!-- Daily Reports (Default View) -->
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Filtercard Monitoring</span></div>
+                                                    <p onclick="runExe('daily1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSF Performance Report</span></div>
+                                                    <p onclick="runExe('daily2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Result Tracking System</span></div>
+                                                    <p onclick="runExe('daily3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Sample Per Province</span></div>
+                                                    <p onclick="runExe('daily4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Monthly Reports -->
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">MENU FOR PDO</span></div>
+                                                    <p onclick="runExe('monthly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Report</span></div>
+                                                    <p onclick="runExe('monthly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">New Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Quezon Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Yearly Reports -->
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Reports</span></div>
+                                                    <p onclick="runExe('yearly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Total Sample Receipt</span></div>
+                                                    <p onclick="runExe('yearly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                              </div>
+                            </div>        
                             </div>
                           </div>
                         </div>
@@ -1326,6 +1413,7 @@
                                 </div>
                               </div>
                             </div>
+
                             <div class="row flex-grow">
                               <div class="col-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
@@ -1334,26 +1422,134 @@
                                       <div class="col-lg-12">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                           <div>
-                                            <h4 class="card-title card-title-dash">Leave Report</h4>
+                                            <h4 class="card-title card-title-dash">Timeliness of NBS </h4> <span> Province </span> <br>
                                           </div>
                                           <div>
                                             <div class="dropdown">
-                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Month Wise </button>
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                                                Year 
+                                              </button>
                                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                                <h6 class="dropdown-header">week Wise</h6>
-                                                <a class="dropdown-item" href="#">Year Wise</a>
+                                                <a class="dropdown-item" href="#">2024</a>
+                                                <a class="dropdown-item" href="#">2023</a>
+                                                <a class="dropdown-item" href="#">2022</a>
+                                                <a class="dropdown-item" href="#">2021</a> 
+                                              </div>
+                                              <span> VS </span>
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                                                Year 
+                                              </button>
+                                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                                                <a class="dropdown-item" href="#">2025</a>
+                                                <a class="dropdown-item" href="#">2024</a>
+                                                <a class="dropdown-item" href="#">2023</a>
+                                                <a class="dropdown-item" href="#">2022</a>
                                               </div>
                                             </div>
                                           </div>
                                         </div>
-                                        <div class="mt-3">
-                                          <canvas id="leaveReport"></canvas>
-                                        </div>
                                       </div>
-                                    </div>
+                            
+                                      <!-- Scrollable Table -->
+                                      <div class="table-container">
+                                        <table class="custom-table">
+                                          <thead>
+                                            <tr>
+                                              <th rowspan="3">Month</th>
+                                              <th colspan="6">AOC</th>
+                                              <th colspan="6">Transit Time</th>
+                                              <th colspan="6">Age Upon Receipt</th>
+                                            </tr>
+                                            <tr>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                              <th colspan="2">AVE</th>
+                                              <th colspan="2">MED</th>
+                                              <th colspan="2">MOD</th>
+                                            </tr>
+                                            <tr>
+                                              <th id="aoc-ave-2024">2024</th>
+                                              <th id="aoc-ave-2025">2025</th>
+                                              <th id="aoc-med-2024">2024</th>
+                                              <th id="aoc-med-2025">2025</th>
+                                              <th id="aoc-mod-2024">2024</th>
+                                              <th id="aoc-mod-2025">2025</th>
+                                      
+                                              <th id="transit-ave-2024">2024</th>
+                                              <th id="transit-ave-2025">2025</th>
+                                              <th id="transit-med-2024">2024</th>
+                                              <th id="transit-med-2025">2025</th>
+                                              <th id="transit-mod-2024">2024</th>
+                                              <th id="transit-mod-2025">2025</th>
+                                      
+                                              <th id="age-ave-2024">2024</th>
+                                              <th id="age-ave-2025">2025</th>
+                                              <th id="age-med-2024">2024</th>
+                                              <th id="age-med-2025">2025</th>
+                                              <th id="age-mod-2024">2024</th>
+                                              <th id="age-mod-2025">2025</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="timeliness-data">
+                                            <tr>
+                                              <td>Jan</td>
+                                              <td>1.33</td><td>1.33</td>
+                                              <td>1</td><td>1</td>
+                                              <td>1</td><td>1</td>
+                                              <td>3.27</td><td>3.27</td>
+                                              <td>3</td><td>3</td>
+                                              <td>2</td><td>2</td>
+                                              <td>4.86</td><td>4.87</td>
+                                              <td>4</td><td>5</td>
+                                              <td>5</td><td>4</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      
+                                      <!-- Month Dropdown -->
+                                      <div class="dropdown mt-3">
+                                        <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" 
+                                        type="button" id="dropdownMenuButton5" 
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select Month
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                                          <a class="dropdown-item" href="#">January</a>
+                                          <a class="dropdown-item" href="#">February</a>
+                                          <a class="dropdown-item" href="#">March</a>
+                                          <a class="dropdown-item" href="#">April</a>
+                                          <a class="dropdown-item" href="#">May</a>
+                                          <a class="dropdown-item" href="#">June</a>
+                                          <a class="dropdown-item" href="#">July</a>
+                                          <a class="dropdown-item" href="#">August</a>
+                                          <a class="dropdown-item" href="#">September</a>
+                                          <a class="dropdown-item" href="#">October</a>
+                                          <a class="dropdown-item" href="#">November</a>
+                                          <a class="dropdown-item" href="#">December</a>
+                                        </div>
+                                        <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" 
+                                        type="button" id="dropdownMenuButton5" 
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Select Province
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                                          <a class="dropdown-item" href="#">Cavite</a>
+                                          <a class="dropdown-item" href="#">Laguna</a>
+                                          <a class="dropdown-item" href="#">Batangas</a>
+                                          <a class="dropdown-item" href="#">Rizal</a>
+                                          <a class="dropdown-item" href="#">Quezon</a>
+                                      </div>
+                                      </div>
+
                                   </div>
                                 </div>
                               </div>
+                            </div>
                             </div>
 
                             <div class="row flex-grow">
@@ -1483,6 +1679,9 @@
     <script src="/js/screened_chart.js"></script>
     <script src="/js/screened_province.js"></script>
     <script src="/js/pdo_visit.js"></script>
+    <script src="/js/julianDate.js"></script>
+    <script src="/js/reportGen.js"></script>
+    <script src="/js/timeliness.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
@@ -1571,6 +1770,7 @@
     <!--END SCRIPT-->
     
     <!-- End custom js for this page-->
+
     
   </body>
 </html>
