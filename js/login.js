@@ -45,3 +45,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text"; // Show password
+        eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/2767/2767146.png"; // Change icon (open eye)
+    } else {
+        passwordInput.type = "password"; // Hide password
+        eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/709/709612.png"; // Change icon (closed eye)
+    }
+}
+
