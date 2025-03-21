@@ -29,6 +29,10 @@ connectOracle()
     console.error("❌ Oracle connection error:", err);
   });
 
+  // ✅ Import and register EXE execution routes
+const exeRoutes = require("./routes/exeRoutes");
+app.use("/api/run-exe", exeRoutes);
+
 // ✅ Register Routes
 app.use("/api/facility-visits", require("./routes/facilityRoutes")); // MySQL CRUD
 app.use("/api/unsat", require("./routes/unsatRoutes"));
@@ -36,6 +40,9 @@ app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section
 app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle routes
 app.use("/api/inc-dec", require("./routes/inc_decRoutes")); 
 app.use("/api/auth", require("./routes/loginRoutes")); // ✅ Authentication Routes
+app.use("/api", require("./routes/exeRoutes")); // ✅ Register EXE Routes
+
+
 
 
 // ✅ Debugging Route - Check if OracleDB is Set

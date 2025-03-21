@@ -1101,72 +1101,92 @@
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
-                                  <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
-                                    <div class="dropdown">
-                                      <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Select Here </button>
-                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                        <a class="dropdown-item" href="#">Daily</a>
-                                        <a class="dropdown-item" href="#">Monthly</a>
-                                        <a class="dropdown-item" href="#">Yearly</a>
-                                      </div>
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
+                                        <div class="dropdown">
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button"
+                                                id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Select Here
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                              <a class="dropdown-item" href="#" onclick="filterReports('daily', event)">Daily</a>
+                                              <a class="dropdown-item" href="#" onclick="filterReports('monthly', event)">Monthly</a>
+                                              <a class="dropdown-item" href="#" onclick="filterReports('yearly', event)">Yearly</a>
+                                          </div>
+                                          
+                                        </div>
                                     </div>
-                                  </div>
-                                  <ul class="bullet-line-list">
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Per Province</span></div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">NSC Performance</span> </div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Button 3</span> </div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Button 4</span></div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Button 5</span> </div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Button 6</span> </div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                    <li>
-                                      <div class="d-flex justify-content-between">
-                                        <div><span class="text-light-green">Sample Button 7</span></div>
-                                        <p>Run</p>
-                                      </div>
-                                    </li>
-                                  </ul>
-                                  <!--
-                                  <div class="list align-items-center pt-3">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-0">
-                                        <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
-                                      </p>
+                            
+                                    <!-- Scrollable list container -->
+                                    <div id="reportContainer" style="max-height: 150px; overflow-y: auto;">
+                                        <ul class="bullet-line-list" id="reportList">
+                                            <!-- Daily Reports (Default View) -->
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Filtercard Monitoring</span></div>
+                                                    <p onclick="runExe('daily1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSF Performance Report</span></div>
+                                                    <p onclick="runExe('daily2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Result Tracking System</span></div>
+                                                    <p onclick="runExe('daily3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Sample Per Province</span></div>
+                                                    <p onclick="runExe('daily4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Monthly Reports -->
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">MENU FOR PDO</span></div>
+                                                    <p onclick="runExe('monthly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Report</span></div>
+                                                    <p onclick="runExe('monthly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">New Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Quezon Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Yearly Reports -->
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Reports</span></div>
+                                                    <p onclick="runExe('yearly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Total Sample Receipt</span></div>
+                                                    <p onclick="runExe('yearly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                        </ul>
                                     </div>
-                                  </div>
-                                  -->
                                 </div>
-                              </div>
+                            </div>        
                             </div>
                           </div>
                         </div>
@@ -1518,6 +1538,7 @@
     <script src="/js/screened_province.js"></script>
     <script src="/js/pdo_visit.js"></script>
     <script src="/js/julianDate.js"></script>
+    <script src="/js/reportGen.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
