@@ -1,3 +1,6 @@
+
+
+//start design for Total Daily Received Samples
 document.addEventListener("DOMContentLoaded", function () {
     const yearDropdownBtn = document.getElementById("yearDropdownBtnA");
     const monthDropdownBtn = document.getElementById("monthDropdownBtn2");
@@ -6,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentChart = null;
     let selectedYear = "2025"; 
-    let selectedMonth = "January";
+    let selectedMonth = "March";
 
     function fetchAndRenderChart(year, month) {
         fetch(`http://localhost:3000/api/lab-total-samples-per-day?year=${year}&month=${month}`)
@@ -137,3 +140,4 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+//end design for Total Daily Received Samples

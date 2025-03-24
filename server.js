@@ -43,6 +43,8 @@ app.use("/api/auth", require("./routes/loginRoutes")); // ✅ Authentication Rou
 app.use("/api", require("./routes/exeRoutes")); // ✅ Register EXE Routes
 app.use("/api/timeliness", require("./routes/timelinessRoutes"));
 app.use("/api/lab-total-samples-per-day", require("./routes/labTotalSamplesPerDayRoutes"));  // Chart for Total Samples Per Day at laboratory dashboard
+app.use("/api/lab-comparison-samples-per-day", require("./routes/labComparisonOfDailySamples"));  // Chart for Total Samples Per Day at laboratory dashboard
+
 
 
 // ✅ Debugging Route - Check if OracleDB is Set
