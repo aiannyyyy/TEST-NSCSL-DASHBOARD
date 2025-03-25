@@ -1,30 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const yearDropdownA = document.querySelectorAll("#yearDropdownAA .dropdown-item");
+    const yearDropdownA = document.querySelectorAll("#yearDropdownAAA .dropdown-item");
     const yearDropdownB = document.querySelectorAll("#yearDropdownBB .dropdown-item");
     const monthDropdown = document.querySelectorAll("#monthDropdown22 .dropdown-item");
 
-    const yearDropdownBtnA = document.getElementById("yearDropdownBtnA");
+    const yearDropdownBtnA = document.getElementById("yearDropdownBtnAA");
     const yearDropdownBtnB = document.getElementById("yearDropdownBtnB");
-    const monthDropdownBtn = document.getElementById("monthDropdownBtn2");
+    const monthDropdownBtn = document.getElementById("monthDropdownBtn22");
 
-    const cardTitle = document.querySelector(".card-title-dash");
+    const cardTitle = document.querySelector(".card-title-dash1");
 
     let selectedYearA = "2024";
     let selectedYearB = "2025";
-    let selectedMonth = "March";
+    let selectedMonth = "January";
 
     function updateTitle() {
         cardTitle.innerHTML = `Comparison of Trend for Daily Received Samples <br> (${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB})`;
-        monthDropdownBtn.textContent = `${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB}`;
+        monthDropdownBtn.innerText = `${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB}`;
     }
 
     async function fetchData() {
         try {
-            const responseA = await fetch(`http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearA}&month=${selectedMonth}`);
-            const responseB = await fetch(`http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearB}&month=${selectedMonth}`);
+            const urls = [
+                `http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearA}&month=${selectedMonth}`,
+                `http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearB}&month=${selectedMonth}`
+            ];
 
-            const dataA = await responseA.json();
-            const dataB = await responseB.json();
+            const [responseA, responseB] = await Promise.all(urls.map(url => fetch(url)));
+            
+            if (!responseA.ok || !responseB.ok) throw new Error("Failed to fetch data");
+
+            const [dataA, dataB] = await Promise.all([responseA.json(), responseB.json()]);
 
             updateChart(dataA, dataB);
         } catch (error) {
@@ -32,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function updateChart(dataA, dataB) {
+    function updateChart(dataA = [], dataB = []) {
         const ctx = document.getElementById("labComparisonOfDailySamples").getContext("2d");
 
         if (window.labChart) {
@@ -45,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let date = new Date(entry.RECEIVED_DATE);
                 let dayIndex = date.getDate() - 1;
                 if (dayIndex >= 0 && dayIndex < 31) {
-                    days[dayIndex] += entry.TOTAL_SAMPLES;
+                    days[dayIndex] += entry.TOTAL_SAMPLES || 0;
                 }
             });
             return days;
@@ -59,15 +64,15 @@ document.addEventListener("DOMContentLoaded", function () {
             {
                 label: selectedYearA,
                 data: dailyDataA,
-                backgroundColor: "rgba(54, 162, 235, 0.5)",
-                borderColor: "rgba(54, 162, 235, 1)",
+                backgroundColor: "rgba(0, 153, 255, 0.5)",
+                borderColor: "rgb(0, 153, 255)",
                 borderWidth: 1
             },
             {
                 label: selectedYearB,
                 data: dailyDataB,
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
-                borderColor: "rgba(255, 99, 132, 1)",
+                backgroundColor: "rgba(255, 153, 0, 0.9)",
+                borderColor: "rgba(255, 153, 0, 0.9)",
                 borderWidth: 1
             }
         ];
@@ -99,40 +104,34 @@ document.addEventListener("DOMContentLoaded", function () {
         updateTitle();
     }
 
-    // Handle Year A Selection
-    yearDropdownA.forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedYearA = this.getAttribute("data-year");
-            yearDropdownBtnA.textContent = selectedYearA; // Update dropdown text
-            updateTitle();
-            fetchData();
+    function attachDropdownHandlers(dropdownItems, callback) {
+        dropdownItems.forEach(item => {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
+                callback(this);
+                fetchData();
+            });
         });
+    }
+
+    attachDropdownHandlers(yearDropdownA, item => {
+        selectedYearA = item.getAttribute("data-year");
+        yearDropdownBtnA.innerText = selectedYearA;
+        updateTitle();
     });
 
-    // Handle Year B Selection
-    yearDropdownB.forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedYearB = this.getAttribute("data-year");
-            yearDropdownBtnB.textContent = selectedYearB; // Update dropdown text
-            updateTitle();
-            fetchData();
-        });
+    attachDropdownHandlers(yearDropdownB, item => {
+        selectedYearB = item.getAttribute("data-year");
+        yearDropdownBtnB.innerText = selectedYearB;
+        updateTitle();
     });
 
-    // Handle Month Selection
-    monthDropdown.forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedMonth = this.getAttribute("data-month");
-            monthDropdownBtn.textContent = `${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB}`; // Update dropdown text
-            updateTitle();
-            fetchData();
-        });
+    attachDropdownHandlers(monthDropdown, item => {
+        selectedMonth = item.getAttribute("data-month");
+        monthDropdownBtn.innerText = `${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB}`;
+        updateTitle();
     });
 
-    // Initial Fetch
     updateTitle();
     fetchData();
 });

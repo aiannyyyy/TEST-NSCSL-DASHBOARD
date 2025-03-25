@@ -67,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     label: "Total Samples Per Day",
                     data: counts,
-                    backgroundColor: "rgba(255, 99, 132, 0.6)",
-                    borderColor: "rgba(255, 99, 132, 1)",
+                    backgroundColor: "rgba(255, 115, 0, 0.6)",
+                    borderColor: "rgb(255, 115, 0)",
                     borderWidth: 1,
                     borderRadius: 5
                 }]
