@@ -15,10 +15,10 @@ async function connectOracle() {
         const result = await connection.execute("SELECT * FROM dual");
         console.log("🔹 Oracle Test Query Result:", result.rows);
 
-        return connection;
+        return connection; // Ensure connection is returned
     } catch (err) {
         console.error("❌ Oracle connection failed:", err.message);
-        process.exit(1);
+        return null; // Return null instead of exiting process
     }
 }
 
