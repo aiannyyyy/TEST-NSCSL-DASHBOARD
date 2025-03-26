@@ -44,8 +44,10 @@ app.use("/api", require("./routes/exeRoutes")); // ✅ Register EXE Routes
 app.use("/api/timeliness", require("./routes/timelinessRoutes"));
 app.use("/api/lab-total-samples-per-day", require("./routes/labTotalSamplesPerDayRoutes"));  // Chart for Total Samples Per Day at laboratory dashboard
 app.use("/api/lab-comparison-samples-per-day", require("./routes/labComparisonOfDailySamples"));  // Chart for Total Samples Per Day at laboratory dashboard
-app.use("/api", require("./routes/ytdSampleRoutes"));
- //chart for year to date samples received and screened
+app.use("/api", require("./routes/ytdSampleRoutes")); //chart for year to date samples received and screened
+app.use("/api", require("./routes/cumulativeCencusofSamplesRoutes"));  //chart for cumulative samples received and screened
+
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log error

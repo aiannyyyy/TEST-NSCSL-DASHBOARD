@@ -741,19 +741,59 @@
                                 </div>
                             </div>
                         </div>
-                       
+                      </div>  
+                      
                           <div class="row flex-grow">
                             <div class="col-md-12 col-lg-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
                                     <div class="card-body card-rounded">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                           
+                                          <div>
+                                            <h4 class="card-title card-title-dash3">
+                                              Cumulative Monthly Census of Samples Received
+                                            </h4>
+                                          </div>
+                                          <!-- Sample Type Selection -->
+                                          <div class="dropdown d-inline-block mb-2">
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                    type="button" id="cumulativeTypeButton" data-bs-toggle="dropdown">Received</button>
+                                            <div class="dropdown-menu" id="cumulativeTypeDropdown">
+                                                <a class="dropdown-item" href="#" data-type="Received">Received</a>
+                                                <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                            </div>
+                                            <button class="btn btn-light btn-lg mb-0" id="showTableButton">Show Table</button>
+                                          </div>
                                         </div>
 
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                          <canvas id="cumulativeSamples"></canvas>
+                                      </div>
+                                      
+                                      <!-- Table Container (Initially Hidden) -->
+                                      <div id="cumulativeTableContainer" class="mt-4" style="display: none;">
+                                        <table class="table table-bordered1">
+                                            <thead>
+                                                <tr id="tableHeader"></tr>
+                                            </thead>
+                                            <tbody id="tableBody"></tbody>
+                                        </table>
+                                      </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row flex-grow">
+                          <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                  <div class="card-body card-rounded">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                       
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                           
 
                           <div class="row flex-grow">
@@ -922,6 +962,7 @@
         <script src="assets/js/labdashboard.js"></script>
         <script src="/js/labComparisonSamples.js"></script>
         <script src="/js/ytdSampleComparison.js"></script>
+        <script src="/js/cumulativeCencusSamples.js"></script>
 
         <!-- Custom Scripts (Ensure DOM is ready before running) -->
         <script>
