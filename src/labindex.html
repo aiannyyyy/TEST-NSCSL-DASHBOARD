@@ -665,7 +665,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 98%;">
                                             <canvas id="ytdSampleComparison"></canvas>
                                         </div>
 
@@ -767,7 +767,7 @@
 
                                         <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
                                           <canvas id="cumulativeSamples"></canvas>
-                                      </div>
+                                        </div>
                                       
                                       <!-- Table Container (Initially Hidden) -->
                                       <div id="cumulativeTableContainer" class="mt-4" style="display: none;">
@@ -788,7 +788,43 @@
                               <div class="card card-rounded">
                                   <div class="card-body card-rounded">
                                       <div class="d-flex justify-content-between align-items-center mb-3">
-                                       
+                                        <div>
+                                          <h4 class="card-title card-title-dash4">
+                                            Cumulative Annual Census of Samples Received
+                                          </h4>
+                                        </div>
+
+                                        <!-- Sample Type Selection -->
+                                        <div class="dropdown d-inline-block mb-2">
+                                          <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                  type="button" id="cumulativeAnnualButton" data-bs-toggle="dropdown">Received</button>
+                                          <div class="dropdown-menu" id="cumulativeAnnualDropdown">
+                                              <a class="dropdown-item" href="#" data-type="Received">Received</a>
+                                              <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                          </div>
+                                          <!-- Month Selection -->
+                                          <div class="dropdown d-inline-block mb-2">
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn2" data-bs-toggle="dropdown">January</button>
+                                            <div class="dropdown-menu" id="monthDropdown2">
+                                              <a class="dropdown-item" href="#" data-month="January">January</a>
+                                              <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
+                                              <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
+                                              <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
+                                              <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
+                                              <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
+                                              <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
+                                              <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
+                                              <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
+                                              <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
+                                              <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
+                                              <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                        <canvas id="cumulativeAnnualSamples"></canvas>
                                       </div>
                                   </div>
                               </div>
@@ -963,6 +999,7 @@
         <script src="/js/labComparisonSamples.js"></script>
         <script src="/js/ytdSampleComparison.js"></script>
         <script src="/js/cumulativeCencusSamples.js"></script>
+        <script src="/js/cumulativeAnnual.js"></script>
 
         <!-- Custom Scripts (Ensure DOM is ready before running) -->
         <script>
