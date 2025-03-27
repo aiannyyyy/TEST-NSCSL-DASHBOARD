@@ -10,8 +10,8 @@ router.get("/cumulative-census-samples", async (req, res) => {
     const { type } = req.query;
 
     const validTypes = {
-        "Received": ["1", "87", "20", "2", "3", "4", "5"],
-        "Screened": ["4", "3", "20", "2", "1"]
+        "Received": ["1", "87", "20", "2", "3", "4", "5", "18"],
+        "Screened": ["4", "3", "20", "2", "1", "87"]
     };
 
     if (!type || !validTypes[type.trim()]) {

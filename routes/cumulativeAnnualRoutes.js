@@ -10,33 +10,29 @@ router.get("/cumulative-annual-samples", async (req, res) => {
 
     try {
         connection = await getOracleConnection();
-        const sampleType = req.query.type ? req.query.type.trim() : "Received";
-        console.log("🔹 Requested Sample Type:", sampleType);
 
-        // Define SPECTYPE values
-        const spectypeMapping = {
-            "Received": ["1", "87", "20", "2", "3", "4", "5"],
-            "Screened": ["4", "3", "20", "2", "1"],
-        };
-
-        // Get unique SPECTYPE values based on sampleType
-        let spectypeValues = [...new Set([...spectypeMapping[sampleType] || [], "1", "20"])];
-
-        console.log("🔹 Spectype Values:", spectypeValues);
-
-        // Convert array to a formatted string for SQL query
-        const spectypeValuesStr = spectypeValues.map(val => `'${val}'`).join(", ");
-
-        // Query: Yearly totals for total, 5-Test, and ENBS
+        // Optimized SQL Query
         const yearlyQuery = `
             SELECT 
                 TO_CHAR(DTRECV, 'YYYY') AS year, 
                 COUNT(labno) AS total_samples,
-                SUM(CASE WHEN SPECTYPE = '1' THEN 1 ELSE 0 END) AS test_5,
-                SUM(CASE WHEN SPECTYPE = '20' THEN 1 ELSE 0 END) AS enbs
+                SUM(CASE WHEN SPECTYPE IN ('1', '18', '87', '2', '3', '4', '5') 
+                          AND DTRECV BETWEEN TO_DATE('2013-09-24', 'YYYY-MM-DD') 
+                                        AND TO_DATE('2018-12-31', 'YYYY-MM-DD') 
+                         THEN 1 ELSE 0 END) AS test_6,
+                SUM(CASE WHEN SPECTYPE IN ('1', '18', '87', '2', '3', '4') 
+                          AND DTRECV BETWEEN TO_DATE('2013-09-24', 'YYYY-MM-DD') 
+                                        AND TO_DATE('2018-12-31', 'YYYY-MM-DD') 
+                         THEN 1 ELSE 0 END) AS test_6_screened,
+                SUM(CASE WHEN SPECTYPE IN ('20', '2', '3', '4', '5', '87') 
+                          AND DTRECV >= TO_DATE('2018-07-16', 'YYYY-MM-DD') 
+                         THEN 1 ELSE 0 END) AS enbs,
+                SUM(CASE WHEN SPECTYPE IN ('20', '2', '3', '4', '87') 
+                          AND DTRECV >= TO_DATE('2018-07-16', 'YYYY-MM-DD') 
+                         THEN 1 ELSE 0 END) AS enbs_screened
             FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE
-            WHERE SPECTYPE IN (${spectypeValuesStr}) 
-            AND DTRECV IS NOT NULL
+            WHERE DTRECV IS NOT NULL
+            AND SPECTYPE IN ('1', '20', '2', '3', '4', '5', '87', '18')  
             GROUP BY TO_CHAR(DTRECV, 'YYYY')
             ORDER BY year ASC
         `;
@@ -52,8 +48,10 @@ router.get("/cumulative-annual-samples", async (req, res) => {
         const yearlyData = yearlyResults.rows.map(row => ({
             year: parseInt(row.YEAR, 10), // Ensure year is a number
             total_samples: row.TOTAL_SAMPLES,
-            test_5: row.TEST_5,  // Gray
-            enbs: row.ENBS       // Orange
+            test_6: row.TEST_6,  
+            test_6_screened: row.TEST_6_SCREENED,  
+            enbs: row.ENBS,       
+            enbs_screened: row.ENBS_SCREENED
         }));
 
         console.log("✅ Processed Data:", yearlyData);
