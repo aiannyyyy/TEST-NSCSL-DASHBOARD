@@ -11,52 +11,52 @@ router.get("/cumulative-annual-samples", async (req, res) => {
     try {
         connection = await getOracleConnection();
 
-        // Optimized SQL Query
         const yearlyQuery = `
             SELECT 
                 TO_CHAR(DTRECV, 'YYYY') AS year, 
+                TO_CHAR(DTRECV, 'MM') AS month,
                 COUNT(labno) AS total_samples,
                 SUM(CASE WHEN SPECTYPE IN ('1', '18', '87', '2', '3', '4', '5') 
-                          AND DTRECV BETWEEN TO_DATE('2013-09-24', 'YYYY-MM-DD') 
-                                        AND TO_DATE('2018-12-31', 'YYYY-MM-DD') 
+                         AND DTRECV BETWEEN TO_DATE('2013-09-24', 'YYYY-MM-DD') 
+                                         AND TO_DATE('2018-12-31', 'YYYY-MM-DD') 
                          THEN 1 ELSE 0 END) AS test_6,
-                SUM(CASE WHEN SPECTYPE IN ('1', '18', '87', '2', '3', '4') 
-                          AND DTRECV BETWEEN TO_DATE('2013-09-24', 'YYYY-MM-DD') 
-                                        AND TO_DATE('2018-12-31', 'YYYY-MM-DD') 
-                         THEN 1 ELSE 0 END) AS test_6_screened,
                 SUM(CASE WHEN SPECTYPE IN ('20', '2', '3', '4', '5', '87') 
-                          AND DTRECV >= TO_DATE('2018-07-16', 'YYYY-MM-DD') 
-                         THEN 1 ELSE 0 END) AS enbs,
-                SUM(CASE WHEN SPECTYPE IN ('20', '2', '3', '4', '87') 
-                          AND DTRECV >= TO_DATE('2018-07-16', 'YYYY-MM-DD') 
-                         THEN 1 ELSE 0 END) AS enbs_screened
+                         AND DTRECV >= TO_DATE('2018-07-16', 'YYYY-MM-DD') 
+                         THEN 1 ELSE 0 END) AS enbs
             FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE
             WHERE DTRECV IS NOT NULL
             AND SPECTYPE IN ('1', '20', '2', '3', '4', '5', '87', '18')  
-            GROUP BY TO_CHAR(DTRECV, 'YYYY')
-            ORDER BY year ASC
+            GROUP BY TO_CHAR(DTRECV, 'YYYY'), TO_CHAR(DTRECV, 'MM')
+            ORDER BY year ASC, month ASC
         `;
 
         console.log("🔹 Executing Query:", yearlyQuery);
 
-        // Execute query
         const yearlyResults = await connection.execute(yearlyQuery, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         console.log("✅ Query Results:", yearlyResults.rows);
 
-        // Format data
-        const yearlyData = yearlyResults.rows.map(row => ({
-            year: parseInt(row.YEAR, 10), // Ensure year is a number
-            total_samples: row.TOTAL_SAMPLES,
-            test_6: row.TEST_6,  
-            test_6_screened: row.TEST_6_SCREENED,  
-            enbs: row.ENBS,       
-            enbs_screened: row.ENBS_SCREENED
-        }));
+        // Format data in the structure your chart expects
+        const yearlyData = {};
 
-        console.log("✅ Processed Data:", yearlyData);
+        yearlyResults.rows.forEach(row => {
+            const year = row.YEAR;
+            const month = parseInt(row.MONTH, 10);
 
-        res.json({ yearlyData });
+            if (!yearlyData[year]) {
+                yearlyData[year] = {
+                    year: parseInt(year, 10),
+                    total_samples: 0,
+                    test_6: 0,
+                    enbs: 0
+                };
+            }
+
+            yearlyData[year][`test_6_${month}`] = row.TEST_6;
+            yearlyData[year][`enbs_${month}`] = row.ENBS;
+        });
+
+        res.json({ yearlyData: Object.values(yearlyData) });
 
     } catch (error) {
         console.error("❌ Error fetching data:", error);
