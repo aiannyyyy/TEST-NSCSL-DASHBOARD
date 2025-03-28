@@ -1,99 +1,118 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const ctx = document.getElementById("cumulativeAnnualSamples").getContext("2d");
     let chartInstance;
-    let selectedType = "Received";
-    let selectedMonth = "January";
+    let selectedType = "Received"; // Default category
+    let selectedMonths = "January"; // Default month
 
-    // Cumulative month mappings
-    const monthsIndex = {
-        "January": 1, "January-February": 2, "January-March": 3, "January-April": 4,
-        "January-May": 5, "January-June": 6, "January-July": 7, "January-August": 8,
-        "January-September": 9, "January-October": 10, "January-November": 11, "January-December": 12
-    };
-
-    async function fetchDataAndRenderChart() {
+    async function fetchData() {
         try {
-            const response = await fetch(`http://localhost:3000/api/cumulative-annual-samples`);
-            const data = await response.json();
-            console.log("Fetched Data:", data); 
-    
-            if (!data || !data.yearlyData) {
-                console.error("Invalid data structure:", data);
-                return;
-            }
-    
-            let monthIdx = monthsIndex[selectedMonth];
-            let labels = [], barData5Test = [], barDataENBS = [];
-    
-            data.yearlyData.forEach(entry => {
-                let total5Test = 0;
-                let totalENBS = 0;
-    
-                for (let i = 1; i <= monthIdx; i++) {
-                    total5Test += entry[`test_6_${i}`] || 0;
-                    totalENBS += entry[`enbs_${i}`] || 0;
-                }
-    
-                if (total5Test > 0 || totalENBS > 0) {
-                    labels.push(entry.year);
-                    barData5Test.push(total5Test);
-                    barDataENBS.push(totalENBS);
-                }
-            });
-    
-            if (chartInstance) {
-                chartInstance.data.labels = labels;
-                chartInstance.data.datasets[0].data = barData5Test;
-                chartInstance.data.datasets[1].data = barDataENBS;
-                chartInstance.update();
-            } else {
-                chartInstance = new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: "6-test", data: barData5Test, backgroundColor: "gray", stack: "Stack 0" },
-                            { label: "ENBS", data: barDataENBS, backgroundColor: "orange", stack: "Stack 0" }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            x: { stacked: true },
-                            y: { stacked: true, beginAtZero: true }
-                        },
-                        plugins: {
-                            datalabels: { anchor: "end", align: "top", color: "#000", font: { weight: "bold", size: 12 } }
-                        }
-                    }
-                });
-            }
+            const response = await fetch(`http://localhost:3000/api/cumulative-annual-samples?category=${selectedType}`);
+            if (!response.ok) throw new Error("Failed to fetch data");
+
+            const { data } = await response.json();
+            if (!Array.isArray(data) || data.length === 0) throw new Error("No data available");
+
+            processData(data);
         } catch (error) {
-            console.error("❌ Error fetching chart data:", error);
+            console.error("❌ Error loading chart data:", error.message);
         }
-    }    
+    }
 
-    // Dropdown: Type Selection (Received, Released, etc.)
-    document.getElementById("cumulativeAnnualDropdown").addEventListener("click", function (e) {
-        if (e.target.matches(".dropdown-item")) {
-            e.preventDefault();
-            selectedType = e.target.dataset.type;
+    function processData(data) {
+        const yearlyData = {};
+        const cumulativeData = {};
+    
+        data.forEach(entry => {
+            if (!entry.YEAR_MONTH) {
+                console.warn("⚠️ Missing YEAR_MONTH in entry:", entry);
+                return; // Skip this entry if YEAR_MONTH is missing
+            }
+    
+            const parts = entry.YEAR_MONTH.split("-");
+            if (parts.length !== 2) {
+                console.warn("⚠️ Invalid YEAR_MONTH format:", entry.YEAR_MONTH);
+                return; // Skip invalid format
+            }
+    
+            const [, month] = parts; // Ignore the year
+            const test6 = Number(entry.TEST_6 || 0);
+            const enbs = Number(entry.ENBS || 0);
+    
+            if (!yearlyData[month]) {
+                yearlyData[month] = { test6: 0, enbs: 0 };
+            }
+            yearlyData[month].test6 += test6;
+            yearlyData[month].enbs += enbs;
+    
+            if (!cumulativeData[month]) {
+                cumulativeData[month] = { test6: 0, enbs: 0 };
+            }
+            cumulativeData[month].test6 += test6;
+            cumulativeData[month].enbs += enbs;
+        });
+    
+        let labels = Object.keys(yearlyData);
+        let test6Data = labels.map(month => yearlyData[month].test6);
+        let enbsData = labels.map(month => yearlyData[month].enbs);
+    
+        updateChart(labels, test6Data, enbsData);
+    }
+    
+    function updateChart(labels, test6Data, enbsData) {
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Test 6",
+                        data: test6Data,
+                        backgroundColor: "rgba(54, 162, 235, 0.6)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderWidth: 1
+                    },
+                    {
+                        label: "Total ENBS",
+                        data: enbsData,
+                        backgroundColor: "rgba(255, 99, 132, 0.6)",
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    document.getElementById("cumulativeAnnualDropdown").addEventListener("click", (event) => {
+        if (event.target.classList.contains("dropdown-item")) {
+            selectedType = event.target.getAttribute("data-type");
             document.getElementById("cumulativeAnnualButton").textContent = selectedType;
-            document.querySelector(".card-title-dash4").textContent = `Cumulative Annual Census of Samples ${selectedType}`;
-            fetchDataAndRenderChart();
+            event.stopPropagation();
+            fetchData();
         }
     });
 
-    // Dropdown: Cumulative Month Selection
-    document.getElementById("monthDropdown2").addEventListener("click", function (e) {
-        if (e.target.matches(".dropdown-item")) {
-            e.preventDefault();
-            selectedMonth = e.target.dataset.month;
-            document.getElementById("monthDropdownBtn2").textContent = selectedMonth;
-            fetchDataAndRenderChart();
+    document.getElementById("monthDropdown2").addEventListener("click", (event) => {
+        if (event.target.classList.contains("dropdown-item")) {
+            selectedMonths = event.target.getAttribute("data-month");
+            document.getElementById("monthDropdownBtn2").textContent = selectedMonths;
+            event.stopPropagation();
+            fetchData();
         }
     });
 
-    // Initial chart render
-    fetchDataAndRenderChart();
+    fetchData();
 });

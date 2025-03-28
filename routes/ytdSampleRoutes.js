@@ -7,8 +7,8 @@ router.get("/ytd-sample-comparison", async (req, res) => {
     const { year1, year2, type } = req.query;
 
     const validTypes = {
-        "Received": ["1", "87", "20", "2", "3", "4", "5"],
-        "Screened": ["4", "3", "20", "2", "1"]
+        "Received": ["1", "87", "20", "2", "3", "4", "5", "18"],
+        "Screened": ["4", "3", "20", "2", "1", "18", "87"]
     };
 
     if (!validTypes[type.trim()]) {
