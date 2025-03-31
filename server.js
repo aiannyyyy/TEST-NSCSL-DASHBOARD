@@ -47,6 +47,8 @@ app.use("/api/lab-comparison-samples-per-day", require("./routes/labComparisonOf
 app.use("/api", require("./routes/ytdSampleRoutes")); //chart for year to date samples received and screened
 app.use("/api", require("./routes/cumulativeCencusofSamplesRoutes"));  //chart for cumulative samples received and screened
 app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative Annual Census
+app.use("/api/total-samples", require("./routes/cardSummaryRoutes")); // ✅ Add total sample count route
+app.use("/api/neometrics", require("./routes/neometricsRoutes")); // neometrics routes
 
 
 app.use((err, req, res, next) => {
