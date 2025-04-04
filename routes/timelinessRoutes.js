@@ -1,53 +1,77 @@
-const express = require("express");
+const express = require('express');
+const oracledb = require('oracledb');
+const getOracleConnection = require("../config/oracleConnection");
 const router = express.Router();
-const oracleDb = require("oracledb");
 
-// Timeliness Route
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
+    let connection = await getOracleConnection();
+
+    if (!connection) {
+        return res.status(500).json({ error: 'Oracle connection not available' });
+    }
+
     try {
-        const connection = req.app.locals.oracleDb;
-        if (!connection) {
-            return res.status(500).json({ error: "Oracle connection is not initialized" });
-        }
+        const { year1, year2, province, month } = req.query;
 
-        const { year1, year2, month } = req.query;
-        if (!year1 || !year2 || !month) {
-            return res.status(400).json({ error: "Missing 'year1', 'year2', or 'month' parameters" });
-        }
-
-        console.log(`🔍 Fetching timeliness data for ${month} ${year1} and ${year2}`);
-
-        // Month mapping
-        const monthMapping = {
-            "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
-            "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
-            "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"
+        // Convert month name to number (Jan -> 01, Feb -> 02, etc.)
+        const monthMap = {
+            Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+            Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12"
         };
-        const monthNum = monthMapping[month];
+        const numericMonth = monthMap[month];
 
-        // Oracle SQL Query for both years
+        if (!numericMonth) {
+            return res.status(400).json({ error: "Invalid month provided" });
+        }
+
+        const startDate = `${year1}-${numericMonth}-01`;
+        const endDate = `${year2}-${numericMonth}-31`;
+
         const query = `
-        SELECT 
-            ROUND(AVG(sda.DTRECV - sda.DTCOLL), 2) AS transit_ave,
-            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY sda.DTRECV - sda.DTCOLL), 2) AS transit_med,
-            ROUND(PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY sda.DTRECV - sda.DTCOLL), 2) AS transit_mod
-        FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
-        WHERE TO_CHAR(sda.DTRECV, 'YYYY') = :year AND TO_CHAR(sda.DTRECV, 'MM') = :monthNum`;
+            SELECT 
+                rpa.COUNTY,
+                EXTRACT(YEAR FROM sda.DTRECV) AS YEAR,
+                ROUND(AVG(sda.DTRECV - sda.DTCOLL), 2) AS TRANSIT_AVE,
+                ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.DTCOLL)), 2) AS TRANSIT_MED,
+                ROUND(PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.DTCOLL)), 2) AS TRANSIT_MOD,
+                ROUND(AVG(sda.DTRECV - sda.BIRTHDT), 2) AS AOS_AVE,
+                ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.BIRTHDT)), 2) AS AOS_MED,
+                ROUND(PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.BIRTHDT)), 2) AS AOS_MOD,
+                ROUND(AVG(sda.DTCOLL - sda.BIRTHDT), 2) AS AOC_AVE,
+                ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (sda.DTCOLL - sda.BIRTHDT)), 2) AS AOC_MED,
+                ROUND(PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY (sda.DTCOLL - sda.BIRTHDT)), 2) AS AOC_MOD
+            FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
+            JOIN PHMSDS.REF_PROVIDER_ADDRESS rpa 
+                ON sda.SUBMID = rpa.PROVIDERID
+            WHERE 
+                rpa.ADRS_TYPE = '1'
+                AND sda.SPECTYPE IN ('1', '18', '20')
+                AND sda.DTRECV BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
+                AND rpa.COUNTY = :province
+                AND sda.BIRTHDT IS NOT NULL
+                AND EXTRACT(YEAR FROM sda.DTRECV) >= 2013
+            GROUP BY 
+                rpa.COUNTY, EXTRACT(YEAR FROM sda.DTRECV)
+            ORDER BY 
+                rpa.COUNTY, YEAR
+        `;
 
-        const result1 = await connection.execute(query, { year: year1, monthNum }, { outFormat: oracleDb.OUT_FORMAT_OBJECT });
-        const result2 = await connection.execute(query, { year: year2, monthNum }, { outFormat: oracleDb.OUT_FORMAT_OBJECT });
+        const result = await connection.execute(query, {
+            startDate,
+            endDate,
+            province
+        }, {
+            outFormat: oracledb.OUT_FORMAT_OBJECT,
+        });
 
-        const responseData = {
-            [`transit_ave_${year1}`]: result1.rows[0]?.TRANSIT_AVE || "N/A",
-            [`transit_ave_${year2}`]: result2.rows[0]?.TRANSIT_AVE || "N/A",
-            [`transit_med_${year1}`]: result1.rows[0]?.TRANSIT_MED || "N/A",
-            [`transit_med_${year2}`]: result2.rows[0]?.TRANSIT_MED || "N/A",
-        };
+        if (result.rows.length === 0) {
+            return res.json({ message: "No data found" });
+        }
 
-        res.json(responseData);
+        res.json(result.rows);
     } catch (err) {
-        console.error("❌ Database error:", err.message, err);
-        res.status(500).json({ error: "Database error", details: err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
 });
 
