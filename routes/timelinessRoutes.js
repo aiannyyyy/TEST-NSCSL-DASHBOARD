@@ -11,22 +11,6 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        const { year1, year2, province, month } = req.query;
-
-        // Convert month name to number (Jan -> 01, Feb -> 02, etc.)
-        const monthMap = {
-            Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
-            Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12"
-        };
-        const numericMonth = monthMap[month];
-
-        if (!numericMonth) {
-            return res.status(400).json({ error: "Invalid month provided" });
-        }
-
-        const startDate = `${year1}-${numericMonth}-01`;
-        const endDate = `${year2}-${numericMonth}-31`;
-
         const query = `
             SELECT 
                 rpa.COUNTY,
@@ -46,21 +30,17 @@ router.get('/', async (req, res) => {
             WHERE 
                 rpa.ADRS_TYPE = '1'
                 AND sda.SPECTYPE IN ('1', '18', '20')
-                AND sda.DTRECV BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
-                AND rpa.COUNTY = :province
+                AND EXTRACT(MONTH FROM sda.DTRECV) = 2  -- February (month 2)
+                AND EXTRACT(YEAR FROM sda.DTRECV) IN (2024, 2025)  -- Compare years 2024 and 2025
+                AND rpa.COUNTY IN ('CAVITE', 'LAGUNA', 'BATANGAS', 'RIZAL', 'QUEZON')
                 AND sda.BIRTHDT IS NOT NULL
-                AND EXTRACT(YEAR FROM sda.DTRECV) >= 2013
             GROUP BY 
                 rpa.COUNTY, EXTRACT(YEAR FROM sda.DTRECV)
             ORDER BY 
-                rpa.COUNTY, YEAR
+                rpa.COUNTY, EXTRACT(YEAR FROM sda.DTRECV)
         `;
 
-        const result = await connection.execute(query, {
-            startDate,
-            endDate,
-            province
-        }, {
+        const result = await connection.execute(query, [], {
             outFormat: oracledb.OUT_FORMAT_OBJECT,
         });
 
@@ -74,5 +54,6 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
 });
+    
 
 module.exports = router;

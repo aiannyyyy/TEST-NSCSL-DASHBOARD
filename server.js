@@ -49,6 +49,8 @@ app.use("/api", require("./routes/cumulativeCencusofSamplesRoutes"));  //chart f
 app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative Annual Census
 app.use("/api/total-samples", require("./routes/cardSummaryRoutes")); // ✅ Add total sample count route
 app.use("/api/neometrics", require("./routes/neometricsRoutes")); // neometrics routes
+app.use("/api/demog-summary-count", require("./routes/demogSummaryRoutes")); // demog summary routes
+
 
 
 app.use((err, req, res, next) => {

@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Fetch and populate data based on the updated selections
-        fetchAndPopulateData();
+        fetchData();
     }
 
   // Function to fetch and populate data
@@ -206,5 +206,6 @@ nextButton.addEventListener('click', () => {
         currentTableIndex++;
     }
     showTable(currentTableIndex);
+    fetchData();
 });
 

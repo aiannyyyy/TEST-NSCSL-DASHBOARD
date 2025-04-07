@@ -24,6 +24,10 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
     
   </head>
   <style>
@@ -199,31 +203,16 @@
   .tab-content {
     padding-top: 10px !important;
   }
+
+  .icon-box:before {
+  content: "\f007" !important; /* Unicode for the Font Awesome user icon */
+  font-family: 'Font Awesome 5 Free' !important; /* Ensure the correct font family */
+  font-weight: 900 !important; /* Needed for solid icons */
+    }
   /* end container */
+
   </style>
   <body class="with-welcome-text">
-    <!--
-    <div class="container-scroller">
-      <div class="row p-0 m-0 proBanner" id="proBanner">
-        <div class="col-md-12 p-0 m-0">
-          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
-            <div class="ps-lg-3">
-              <div class="d-flex align-items-center justify-content-between">
-                <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
-                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" class="btn me-2 buy-now-btn border-0">Buy Now</a>
-              </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <a href="https://www.bootstrapdash.com/product/star-admin-pro/"><i class="ti-home me-3 text-white"></i></a>
-              <button id="bannerClose" class="btn border-0 p-0">
-                <i class="ti-close text-white"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      -->
-      
       <!-- partial:partials/_navbar.html -->
       <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
@@ -245,7 +234,7 @@
           <ul class="navbar-nav">
             <li class="nav-item fw-semibold d-none d-lg-block ms-0">
               <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
-              <h3 class="welcome-sub-text fw-semibold">Welcome to LABORATORY Dashboard </h3>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to DEMOGRAPHICS Dashboard </h3>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
@@ -372,47 +361,51 @@
                       <!-- Charts --> 
                       <div class="row">
                         <div class="container mt-4">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="card-title">Summary of Total Samples Processed This Month</h4>
-                            <button class="btn btn-primary button-custom" onclick="runNeometrics('neometrics')">Run Neometrics</button>
-                          </div>                          
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="card-title">
+                                  Summary of Total Data Entry of the Encoders this Month
+                                  <!-- Add the downloaded icon -->
+                                  <img src="/src/assets/images/switch_data.png" alt="Change Data Icon" class="switch-icon" style="width: 30px; margin-left: 10px;">
+                                </h4>
+                                <button class="btn btn-primary button-custom" onclick="runNeometrics('neometrics')">Run Neometrics</button>
+                              </div>
                           <div class="row">
                             <div class="col-md-3">
                               <div class="task-card total">
-                                <div class="icon-box"><i class="fas fa-tasks"></i></div>
+                                <div class="icon-box"></div> <!-- Male icon -->
                                 <div class="task-content">
-                                  <p class="task-label">Total Sample Received</p>
-                                  <h2 class="task-value sample-receieved-value">-</h2>
+                                  <p class="task-label">Jay Arr Apelado</p>
+                                  <h2 class="task-value jay-arr-value">-</h2>
                                   <span class="task-subtext">at the moment</span>
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-3">
                               <div class="task-card completed">
-                                <div class="icon-box"><i class="fas fa-check-circle"></i></div>
+                                <div class="icon-box"></div> <!-- Female icon -->
                                 <div class="task-content">
-                                  <p class="task-label">Total Sample Screened</p>
-                                  <h2 class="task-value sample-screened-value">-</h2>
+                                  <p class="task-label">Angelica Brutas</p>
+                                  <h2 class="task-value angge-value">-</h2>
                                   <span class="task-subtext">at the moment</span>
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-3">
                               <div class="task-card pending">
-                                <div class="icon-box"><i class="fas fa-clock"></i></div>
+                                <div class="icon-box"></div> <!-- Male icon -->
                                 <div class="task-content">
-                                  <p class="task-label">Total Unfit and Unsat</p>
-                                  <h2 class="task-value sample-unfitunst-value">-</h2>
+                                  <p class="task-label">Mary Rose Gomez</p>
+                                  <h2 class="task-value rose-value">-</h2>
                                   <span class="task-subtext">at the moment</span>
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-3">
                               <div class="task-card overdue">
-                                <div class="icon-box"><i class="fas fa-exclamation-circle"></i></div>
+                                <div class="icon-box"></div> <!-- Female icon -->
                                 <div class="task-content">
-                                  <p class="task-label">Overdue Tasks</p>
-                                  <h2 class="task-value">-</h2>
+                                  <p class="task-label">Abigail Morfe</p>
+                                  <h2 class="task-value abi-value">-</h2>
                                   <span class="task-subtext">at the moment</span>
                                 </div>
                               </div>
@@ -910,7 +903,7 @@
         <script src="/js/ytdSampleComparison.js"></script>
         <script src="/js/cumulativeCencusSamples.js"></script>
         <script src="/js/cumulativeAnnual.js"></script>
-        <script src="/js/cardSummary.js"></script>
+        <script src="/js/demogSummary.js"></script>
         <script src="/js/neometrics.js"></script>
 
         <!-- Custom Scripts (Ensure DOM is ready before running) -->
