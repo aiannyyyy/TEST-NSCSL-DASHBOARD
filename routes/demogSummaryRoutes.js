@@ -1,83 +1,60 @@
 const express = require("express");
 const router = express.Router();
 
-// ✅ Route to Get Total LABNO Count per Name for Entry and Verification
 router.get("/", async (req, res) => {
     try {
-        const oracleDb = req.app.locals.oracleDb; // ✅ Get Oracle connection
+        const oracleDb = req.app.locals.oracleDb;
 
         if (!oracleDb) {
             return res.status(500).json({ error: "OracleDB is not connected" });
         }
 
-        // ✅ SQL Query for Entry
-        const entryQuery = `
+        // 📦 SQL Queries
+        const queryTemplate = (column) => `
             SELECT
                 u."FIRSTNAME",
                 COUNT(DISTINCT sa."LABNO") AS total_labno_count
             FROM
                 "PHMSDS"."SAMPLE_DEMOG_ARCHIVE" sa
             JOIN
-                "PHSECURE"."USERS" u ON sa."VER_TECH" = u."USER_ID" -- Joining on VER_TECH with USER_ID for entry
+                "PHSECURE"."USERS" u ON sa."${column}" = u."USER_ID"
             WHERE
-                sa."DTRECV" >= TO_TIMESTAMP('2025-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
-                sa."DTRECV" < TO_TIMESTAMP('2025-01-31 00:00:01', 'YYYY-MM-DD HH24:MI:SS') AND
-                u."FIRSTNAME" IN ('ABIGAIL', 'ANGELICA', 'JAY ARR', 'Mary Rose')
+                sa."DTRECV" BETWEEN TRUNC(SYSDATE, 'MM') AND LAST_DAY(SYSDATE)
+                AND u."FIRSTNAME" IN ('ABIGAIL', 'ANGELICA', 'JAY ARR', 'Mary Rose')
             GROUP BY
                 u."FIRSTNAME"
             ORDER BY
                 u."FIRSTNAME"
         `;
 
-        // ✅ SQL Query for Verification
-        const verificationQuery = `
-            SELECT
-                u."FIRSTNAME",
-                COUNT(DISTINCT sa."LABNO") AS total_labno_count
-            FROM
-                "PHMSDS"."SAMPLE_DEMOG_ARCHIVE" sa
-            JOIN
-                "PHSECURE"."USERS" u ON sa."VER_TECH" = u."USER_ID" -- Joining on VER_TECH with USER_ID for verification
-            WHERE
-                sa."DTRECV" >= TO_TIMESTAMP('2025-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND
-                sa."DTRECV" < TO_TIMESTAMP('2025-01-31 00:00:01', 'YYYY-MM-DD HH24:MI:SS') AND
-                u."FIRSTNAME" IN ('ABIGAIL', 'ANGELICA', 'JAY ARR', 'Mary Rose')
-            GROUP BY
-                u."FIRSTNAME"
-            ORDER BY
-                u."FIRSTNAME"
-        `;
+        // 📊 Execute entry and verification queries
+        const [entryResult, verificationResult] = await Promise.all([
+            oracleDb.execute(queryTemplate("INIT_TECH")),
+            oracleDb.execute(queryTemplate("VER_TECH"))
+        ]);
 
-        // ✅ Execute Entry Query
-        const entryResult = await oracleDb.execute(entryQuery);
+        // 🛠️ Process results
+        const mapResults = (rows) => rows.reduce((acc, [firstname, count]) => {
+            acc[firstname] = count;
+            return acc;
+        }, {});
 
-        // ✅ Execute Verification Query
-        const verificationResult = await oracleDb.execute(verificationQuery);
+        const entryMap = mapResults(entryResult.rows);
+        const verificationMap = mapResults(verificationResult.rows);
 
-        // ✅ Process Results
-        const entryData = entryResult.rows.map(row => ({
-            FIRSTNAME: row[0], // The FIRSTNAME
-            total_labno_count: row[1], // The total labno count for entry
-        }));
-
-        const verificationData = verificationResult.rows.map(row => ({
-            FIRSTNAME: row[0], // The FIRSTNAME
-            total_labno_count: row[1], // The total labno count for verification
-        }));
-
-        // ✅ Send Combined Response with both entry and verification data
+        // 🧾 Build response with full names
         res.json({
             entry: {
-                "Jay Arr Apelado": entryData.find(person => person.FIRSTNAME === 'JAY ARR')?.total_labno_count || 0,
-                "Angelica Brutas": entryData.find(person => person.FIRSTNAME === 'ANGELICA')?.total_labno_count || 0,
-                "Mary Rose Gomez": verificationData.find(person => person.FIRSTNAME === 'Mary Rose')?.total_labno_count || 0,
-                "Abigail Morfe": verificationData.find(person => person.FIRSTNAME === 'ABIGAIL')?.total_labno_count || 0
+                "Jay Arr Apelado": entryMap["JAY ARR"] || 0,
+                "Angelica Brutas": entryMap["ANGELICA"] || 0,
+                "Mary Rose Gomez": entryMap["Mary Rose"] || 0,
+                "Abigail Morfe": entryMap["ABIGAIL"] || 0
             },
             verification: {
-                "Jay Arr Apelado": verificationData.find(person => person.FIRSTNAME === 'JAY ARR')?.total_labno_count || 0,
-                "Angelica Brutas": verificationData.find(person => person.FIRSTNAME === 'ANGELICA')?.total_labno_count || 0,
-                "Mary Rose Gomez": verificationData.find(person => person.FIRSTNAME === 'Mary Rose')?.total_labno_count || 0,
-                "Abigail Morfe": verificationData.find(person => person.FIRSTNAME === 'ABIGAIL')?.total_labno_count || 0
+                "Apelado Jay Arr": verificationMap["JAY ARR"] || 0,
+                "Brutas Angelica": verificationMap["ANGELICA"] || 0,
+                "Gomez Mary Rose": verificationMap["Mary Rose"] || 0,
+                "Morfe Abigail": verificationMap["ABIGAIL"] || 0
             }
         });
 
