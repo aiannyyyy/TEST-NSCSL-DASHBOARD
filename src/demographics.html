@@ -422,58 +422,66 @@
                                                 <h4 class="card-title card-title-dash"> Speed Monitoring - Data Entry <br> January 2025 </h4>
                                             </div>
                                             <div>
-                                              
+                                                <!-- Year Selection Dropdown -->
                                                 <div class="dropdown d-inline-block">
-                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" 
-                                                          type="button" id="year-dropdown" data-bs-toggle="dropdown">2025</button>
-                                                  <div class="dropdown-menu" id="year-dropdown">
-                                                      <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                      <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                      <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                      <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                      <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                      <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                      <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                      <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                      <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                      <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                      <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                      <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                      <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                  </div> 
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" 
+                                                            type="button" id="year-dropdown" data-bs-toggle="dropdown">2025</button>
+                                                    <div class="dropdown-menu" id="year-dropdown-menu">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div> 
                                                 </div>
-
-                                                <!-- Month Selection -->
+                        
+                                                <!-- Month Selection Dropdown -->
                                                 <div class="dropdown d-inline-block mb-2">
-                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="month-dropdown" data-bs-toggle="dropdown">January</button>
-                                                  <div class="dropdown-menu" id="month-dropdown">
-                                                    <a class="dropdown-item" href="#" data-month="January">January</a>
-                                                    <a class="dropdown-item" href="#" data-month="February">February</a>
-                                                    <a class="dropdown-item" href="#" data-month="March">March</a>
-                                                    <a class="dropdown-item" href="#" data-month="April">April</a>
-                                                    <a class="dropdown-item" href="#" data-month="May">May</a>
-                                                    <a class="dropdown-item" href="#" data-month="June">June</a>
-                                                    <a class="dropdown-item" href="#" data-month="July">July</a>
-                                                    <a class="dropdown-item" href="#" data-month="August">August</a>
-                                                    <a class="dropdown-item" href="#" data-month="September">September</a>
-                                                    <a class="dropdown-item" href="#" data-month="October">October</a>
-                                                    <a class="dropdown-item" href="#" data-month="November">November</a>
-                                                    <a class="dropdown-item" href="#" data-month="December">December</a>
-                                                  </div>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="month-dropdown" data-bs-toggle="dropdown">January</button>
+                                                    <div class="dropdown-menu" id="month-dropdown-menu">
+                                                        <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                        <a class="dropdown-item" href="#" data-month="February">February</a>
+                                                        <a class="dropdown-item" href="#" data-month="March">March</a>
+                                                        <a class="dropdown-item" href="#" data-month="April">April</a>
+                                                        <a class="dropdown-item" href="#" data-month="May">May</a>
+                                                        <a class="dropdown-item" href="#" data-month="June">June</a>
+                                                        <a class="dropdown-item" href="#" data-month="July">July</a>
+                                                        <a class="dropdown-item" href="#" data-month="August">August</a>
+                                                        <a class="dropdown-item" href="#" data-month="September">September</a>
+                                                        <a class="dropdown-item" href="#" data-month="October">October</a>
+                                                        <a class="dropdown-item" href="#" data-month="November">November</a>
+                                                        <a class="dropdown-item" href="#" data-month="December">December</a>
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Data Type Selection Dropdown -->
+                                                <div class="dropdown d-inline-block mb-2">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="type-dropdown" data-bs-toggle="dropdown">Data Entry</button>
+                                                    <div class="dropdown-menu" id="type-dropdown-menu">
+                                                        <a class="dropdown-item" href="#" data-type="Data Entry">Data Entry</a>
+                                                        <a class="dropdown-item" href="#" data-type="Data Verification">Data Verification</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 120%;">
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 100%;">
                                             <canvas id="speedMonitoringGraph"></canvas>
                                         </div>
-                                    
+                                        <br>
                                     </div>
                                 </div>
                             </div>
-                        </div>                                  
                         </div>
-                        
+                      </div>
+                      
                         <div class="col-lg-4 d-flex flex-column">
                           <div class="row flex-grow">
                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
@@ -878,6 +886,7 @@
         <!-- jQuery Cookie (After jQuery loads) -->
         <script src="assets/js/jquery.cookie.js"></script>
 
+        <script src="/js/speedMonitoring.js"></script>
         <script src="/js/demogSummary.js"></script>
         <script src="/js/neometrics.js"></script>
 

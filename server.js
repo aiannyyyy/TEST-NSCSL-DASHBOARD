@@ -50,6 +50,7 @@ app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative A
 app.use("/api/total-samples", require("./routes/cardSummaryRoutes")); // ✅ Add total sample count route
 app.use("/api/neometrics", require("./routes/neometricsRoutes")); // neometrics routes
 app.use("/api/demog-summary-count", require("./routes/demogSummaryRoutes")); // demog summary routes
+app.use("/api/speed-monitoring", require("./routes/speedMonitoringRoutes")); //speed monitoring routes
 
 
 
