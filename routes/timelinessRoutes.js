@@ -4,8 +4,21 @@ const getOracleConnection = require("../config/oracleConnection");
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    let connection = await getOracleConnection();
+    const { year1, year2, month, province } = req.query;
 
+    if (!year1 || !year2 || !month || !province) {
+        return res.status(400).json({ error: 'Missing required query parameters: year1, year2, month, province' });
+    }
+
+    // Construct the start and end dates for the specific month in both years
+    const monthPadded = month.toString().padStart(2, '0');
+    const date_from_year1 = `${year1}-${monthPadded}-01`;
+    const date_to_year1 = `${year1}-${monthPadded}-01`; // Temporary end date, we will calculate last day later
+
+    const date_from_year2 = `${year2}-${monthPadded}-01`;
+    const date_to_year2 = `${year2}-${monthPadded}-01`; // Temporary end date, we will calculate last day later
+
+    let connection = await getOracleConnection();
     if (!connection) {
         return res.status(500).json({ error: 'Oracle connection not available' });
     }
@@ -14,7 +27,7 @@ router.get('/', async (req, res) => {
         const query = `
             SELECT 
                 rpa.COUNTY,
-                EXTRACT(YEAR FROM sda.DTRECV) AS YEAR,
+                TO_CHAR(sda.DTRECV, 'YYYY-MM') AS month_year,
                 ROUND(AVG(sda.DTRECV - sda.DTCOLL), 2) AS TRANSIT_AVE,
                 ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.DTCOLL)), 2) AS TRANSIT_MED,
                 ROUND(PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY (sda.DTRECV - sda.DTCOLL)), 2) AS TRANSIT_MOD,
@@ -30,17 +43,26 @@ router.get('/', async (req, res) => {
             WHERE 
                 rpa.ADRS_TYPE = '1'
                 AND sda.SPECTYPE IN ('1', '18', '20')
-                AND EXTRACT(MONTH FROM sda.DTRECV) = 2  -- February (month 2)
-                AND EXTRACT(YEAR FROM sda.DTRECV) IN (2024, 2025)  -- Compare years 2024 and 2025
-                AND rpa.COUNTY IN ('CAVITE', 'LAGUNA', 'BATANGAS', 'RIZAL', 'QUEZON')
+                AND (
+                    (sda.DTRECV BETWEEN TO_DATE(:date_from_year1, 'YYYY-MM-DD') AND LAST_DAY(TO_DATE(:date_from_year1, 'YYYY-MM-DD')))
+                    OR 
+                    (sda.DTRECV BETWEEN TO_DATE(:date_from_year2, 'YYYY-MM-DD') AND LAST_DAY(TO_DATE(:date_from_year2, 'YYYY-MM-DD')))
+                )
+                AND UPPER(rpa.COUNTY) LIKE UPPER(:province || '%')
                 AND sda.BIRTHDT IS NOT NULL
             GROUP BY 
-                rpa.COUNTY, EXTRACT(YEAR FROM sda.DTRECV)
+                rpa.COUNTY, TO_CHAR(sda.DTRECV, 'YYYY-MM')
             ORDER BY 
-                rpa.COUNTY, EXTRACT(YEAR FROM sda.DTRECV)
+                rpa.COUNTY, month_year
         `;
 
-        const result = await connection.execute(query, [], {
+        const binds = {
+            date_from_year1,
+            date_from_year2,
+            province: province.trim()
+        };
+
+        const result = await connection.execute(query, binds, {
             outFormat: oracledb.OUT_FORMAT_OBJECT,
         });
 
@@ -54,6 +76,5 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
 });
-    
 
 module.exports = router;

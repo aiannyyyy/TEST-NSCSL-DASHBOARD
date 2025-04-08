@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (monthTitle){
             monthTitle.textContent = selectedMonth
         }
-        
+
         let month1Title = document.querySelector(".month1");
         if (month1Title){
             month1Title.textContent = selectedMonth
@@ -66,50 +66,44 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchData();
     }
 
-  // Function to fetch and populate data
-function fetchData() {
-    fetch(`http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&province=${selectedProvince}&month=${selectedMonth}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Fetched Data: ", data); // Log the response to check its structure
+    // Function to fetch and populate data
+    function fetchData() {
+        // Construct the URL with the query parameters
+        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&province=${selectedProvince}&month=${selectedMonth}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Fetched Data: ", data); // Log the response to check its structure
 
-            // Check if data exists and has rows
-            if (data && Array.isArray(data) && data.length > 0) {
-                // Default values in case data for a specific year or field is missing
-                const year2024Data = data.find(item => item.YEAR === 2024) || {};
-                const year2025Data = data.find(item => item.YEAR === 2025) || {};
+                // Check if data exists and has rows
+                if (data && Array.isArray(data) && data.length > 0) {
+                    // Default values in case data for a specific year or field is missing
+                    const year2024Data = data.find(item => item.YEAR === 2024) || {};
+                    const year2025Data = data.find(item => item.YEAR === 2025) || {};
 
-                // Populate table cells based on available data
-                // For Year 2024
-                document.getElementById("aoc-ave-2024").textContent = year2024Data.AOC_AVE || 'N/A';
-                document.getElementById("transit-ave-2024").textContent = year2024Data.TRANSIT_AVE || 'N/A';
-                document.getElementById("age-ave-2024").textContent = year2024Data.AOS_AVE || 'N/A';
+                    // Populate table cells based on available data
+                    populateTableData(year2024Data, 2024);
+                    populateTableData(year2025Data, 2025);
+                } else {
+                    console.error('No data found for the given parameters');
+                    // Optionally handle no data situation, e.g., display a message or reset values
+                    const defaultValue = 'N/A';
+                    const fields = [
+                        'aoc-ave', 'transit-ave', 'age-ave',
+                        'aoc-med', 'transit-med', 'age-med',
+                        'aoc-mod', 'transit-mod', 'age-mod'
+                    ];
 
-                document.getElementById("aoc-med-2024").textContent = year2024Data.AOC_MED || 'N/A';
-                document.getElementById("transit-med-2024").textContent = year2024Data.TRANSIT_MED || 'N/A';
-                document.getElementById("age-med-2024").textContent = year2024Data.AOS_MED || 'N/A';
-
-                document.getElementById("aoc-mod-2024").textContent = year2024Data.AOC_MOD || 'N/A';
-                document.getElementById("transit-mod-2024").textContent = year2024Data.TRANSIT_MOD || 'N/A';
-                document.getElementById("age-mod-2024").textContent = year2024Data.AOS_MOD || 'N/A';
-
-                // For Year 2025
-                document.getElementById("aoc-ave-2025").textContent = year2025Data.AOC_AVE || 'N/A';
-                document.getElementById("transit-ave-2025").textContent = year2025Data.TRANSIT_AVE || 'N/A';
-                document.getElementById("age-ave-2025").textContent = year2025Data.AOS_AVE || 'N/A';
-
-                document.getElementById("aoc-med-2025").textContent = year2025Data.AOC_MED || 'N/A';
-                document.getElementById("transit-med-2025").textContent = year2025Data.TRANSIT_MED || 'N/A';
-                document.getElementById("age-med-2025").textContent = year2025Data.AOS_MED || 'N/A';
-
-                document.getElementById("aoc-mod-2025").textContent = year2025Data.AOC_MOD || 'N/A';
-                document.getElementById("transit-mod-2025").textContent = year2025Data.TRANSIT_MOD || 'N/A';
-                document.getElementById("age-mod-2025").textContent = year2025Data.AOS_MOD || 'N/A';
-
-            } else {
-                console.error('No data found for the given parameters');
-                // Optionally handle no data situation, e.g., display a message or reset values
-                const defaultValue = 'N/A';
+                    fields.forEach(field => {
+                        document.getElementById(`${field}-2024`).textContent = defaultValue;
+                        document.getElementById(`${field}-2025`).textContent = defaultValue;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                // Handle errors by displaying a message
                 const fields = [
                     'aoc-ave', 'transit-ave', 'age-ave',
                     'aoc-med', 'transit-med', 'age-med',
@@ -117,13 +111,19 @@ function fetchData() {
                 ];
 
                 fields.forEach(field => {
-                    document.getElementById(`${field}-2024`).textContent = defaultValue;
-                    document.getElementById(`${field}-2025`).textContent = defaultValue;
+                    document.getElementById(`${field}-2024`).textContent = 'Error loading data';
+                    document.getElementById(`${field}-2025`).textContent = 'Error loading data';
                 });
-            }
-        })
-        .catch(error => console.error('Error fetching data:', error));
-}
+            });
+    }
+
+    // Function to populate table data
+    function populateTableData(yearData, year) {
+        const fields = ['AOC_AVE', 'TRANSIT_AVE', 'AOS_AVE', 'AOC_MED', 'TRANSIT_MED', 'AOS_MED', 'AOC_MOD', 'TRANSIT_MOD', 'AOS_MOD'];
+        fields.forEach(field => {
+            document.getElementById(`${field.toLowerCase()}-${year}`).textContent = yearData[field] || 'N/A';
+        });
+    }
 
     // Year 1
     document.querySelectorAll("#year1Menu .dropdown-item").forEach(item => {

@@ -234,7 +234,7 @@
           <ul class="navbar-nav">
             <li class="nav-item fw-semibold d-none d-lg-block ms-0">
               <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
-              <h3 class="welcome-sub-text fw-semibold">Welcome to DEMOGRAPHICS Dashboard </h3>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to DEMO & UNSAT Dashboard </h3>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
@@ -303,7 +303,7 @@
             <div class="collapse" id="nscsl-lab">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="labindex.html">Overview</a></li>
-                <li class="nav-item"> <a class="nav-link" href="demographics.html">Demographics</a></li>
+                <li class="nav-item"> <a class="nav-link" href="demographics.html">Demo & Unsat</a></li>
                 <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
               </ul>
             </div>
@@ -513,135 +513,14 @@
                                         <div class="d-sm-flex justify-content-between align-items-start">
                                             <div>
                                                 <h4 class="card-title card-title-dash2">
-                                                    Year to Date Comparison of Total Received Samples(2024 vs 2025)
+                                                    Typing Test
                                                 </h4>
                                             </div>
                                             <div>
-                                                <!-- Year A Selection -->
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                            type="button" id="yearAButton" data-bs-toggle="dropdown">2024</button>
-                                                    <div class="dropdown-menu" id="yearADropdown">
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div> 
-                                                </div>
-                                                <span>VS</span>
-                                                <!-- Year B Selection -->
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                            type="button" id="yearBButton" data-bs-toggle="dropdown">2025</button>
-                                                    <div class="dropdown-menu" id="yearBDropdown">
-                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div> 
-                                                </div>
-                        
-                                                <!-- Sample Type Selection -->
-                                                <div class="dropdown d-inline-block mb-2">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                            type="button" id="sampleTypeButton" data-bs-toggle="dropdown">Received</button>
-                                                    <div class="dropdown-menu" id="sampleTypeDropdown">
-                                                        <a class="dropdown-item" href="#" data-type="Received">Received</a>
-                                                        <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
-                                                    </div>
-                                                </div>
+
                                             </div>
                                         </div>
-                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 98%;">
-                                            <canvas id="ytdSampleComparison"></canvas>
-                                        </div>
-
-                                          <!-- Table Section -->
-                                          <div class="table-responsive mt-4">
-                                            <table class="table table-bordered text-center">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Year</th>
-                                                        <th>January</th>
-                                                        <th>February</th>
-                                                        <th>March</th>
-                                                        <th>April</th>
-                                                        <th>May</th>
-                                                        <th>June</th>
-                                                        <th>July</th>
-                                                        <th>August</th>
-                                                        <th>September</th>
-                                                        <th>October</th>
-                                                        <th>November</th>
-                                                        <th>December</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="comparisonTableBody">
-                                                    <tr id="year2024Row">
-                                                        <td id="year1row">2024</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr id="year2025Row">
-                                                        <td id="year2row">2025</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr id="percentDiffRow">
-                                                        <td>% Diff</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                          </div>
+                                        
                                 </div>
                             </div>
                         </div>
