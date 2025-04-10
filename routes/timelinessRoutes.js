@@ -3,11 +3,24 @@ const oracledb = require('oracledb');
 const getOracleConnection = require("../config/oracleConnection");
 const router = express.Router();
 
+// Helper function to validate month_year
+const isValidMonthYear = (monthYear) => {
+    // Basic regex check for valid 'YYYY-MM' format
+    const regex = /^\d{4}-\d{2}$/;
+    return regex.test(monthYear);
+};
+
 router.get('/', async (req, res) => {
     const { year1, year2, month, province } = req.query;
 
+    // Validate required query parameters
     if (!year1 || !year2 || !month || !province) {
         return res.status(400).json({ error: 'Missing required query parameters: year1, year2, month, province' });
+    }
+
+    // Validate that month is between 1 and 12
+    if (parseInt(month) < 1 || parseInt(month) > 12) {
+        return res.status(400).json({ error: 'Invalid month value, must be between 1 and 12' });
     }
 
     // Construct the start and end dates for the specific month in both years
@@ -70,7 +83,22 @@ router.get('/', async (req, res) => {
             return res.json({ message: "No data found" });
         }
 
-        res.json(result.rows);
+        // Post-query processing to validate and correct month_year
+        const correctedRows = result.rows.map(row => {
+            let monthYear = row.MONTH_YEAR;
+
+            if (!isValidMonthYear(monthYear)) {
+                console.warn(`Invalid month_year: ${monthYear}, setting to default (2024-01)`);
+                monthYear = "2024-01"; // Set a default or handle accordingly
+            }
+
+            return {
+                ...row,
+                MONTH_YEAR: monthYear
+            };
+        });
+
+        res.json(correctedRows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error', details: err.message });

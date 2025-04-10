@@ -2,118 +2,92 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedYear1 = 2024; // Default previous year
     let selectedYear2 = 2025; // Default current year
     let selectedProvince = "Batangas"; // Default province
-    let selectedMonth = "Jan"; // Default month
+    let selectedMonth = 1; // Default month as a number (1 = January)
+
+    // Month name to number mapping
+    const monthMap = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mar": 3,
+        "Apr": 4,
+        "May": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12
+    };
 
     // Function to update dropdown button text
     function updateDropdownText() {
+        // Map selectedMonth to its string equivalent
+        const monthNames = Object.keys(monthMap);
+        document.getElementById("monthDropdownButton").textContent = monthNames[selectedMonth - 1];
+
         document.getElementById("year1Dropdown").textContent = selectedYear1;
         document.getElementById("year2Dropdown").textContent = selectedYear2;
         document.getElementById("provinceDropdownButton").textContent = selectedProvince;
-        document.getElementById("monthDropdownButton").textContent = selectedMonth;
 
-        // Update the card title with the selected province
+        // Update the card titles
         let cardTitle = document.querySelector(".province");
         if (cardTitle) {
-            cardTitle.textContent = selectedProvince; // Use selectedProvince directly instead of wrapping it in parentheses
+            cardTitle.textContent = selectedProvince; // Use selectedProvince directly
         }
 
         let monthTitle = document.querySelector(".month");
-        if (monthTitle){
-            monthTitle.textContent = selectedMonth
+        if (monthTitle) {
+            monthTitle.textContent = monthNames[selectedMonth - 1];
         }
-
+        // Other month/year titles
         let month1Title = document.querySelector(".month1");
-        if (month1Title){
-            month1Title.textContent = selectedMonth
-        }
-
-        let month11Title = document.querySelector(".month11");
-        if (month11Title){
-            month11Title.textContent = selectedMonth
+        if (month1Title) {
+            month1Title.textContent = monthNames[selectedMonth - 1];
         }
 
         let year1Title = document.querySelector("#year1");
-        if (year1Title){
-            year1Title.textContent = selectedYear1
-        }
-
-        let year11Title = document.querySelector("#year11");
-        if (year11Title){
-            year11Title.textContent = selectedYear1
-        }
-
-        let year111Title = document.querySelector("#year111");
-        if (year111Title){
-            year111Title.textContent = selectedYear1
+        if (year1Title) {
+            year1Title.textContent = selectedYear1;
         }
 
         let year2Title = document.querySelector("#year2");
-        if (year2Title){
-            year2Title.textContent = selectedYear2
+        if (year2Title) {
+            year2Title.textContent = selectedYear2;
         }
-
-        let year22Title = document.querySelector("#year22");
-        if (year22Title){
-            year22Title.textContent = selectedYear2
-        }
-
-        let year222Title = document.querySelector("#year222");
-        if (year222Title){
-            year222Title.textContent = selectedYear2
-        }
-
-        // Fetch and populate data based on the updated selections
-        fetchData();
     }
 
-    // Function to fetch and populate data
+    // Function to fetch data from the API and populate the table
     function fetchData() {
-        // Construct the URL with the query parameters
-        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&province=${selectedProvince}&month=${selectedMonth}`;
-        
+        // Construct the URL with query parameters based on the selected values
+        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                console.log("Fetched Data: ", data); // Log the response to check its structure
-
-                // Check if data exists and has rows
-                if (data && Array.isArray(data) && data.length > 0) {
-                    // Default values in case data for a specific year or field is missing
-                    const year2024Data = data.find(item => item.YEAR === 2024) || {};
-                    const year2025Data = data.find(item => item.YEAR === 2025) || {};
-
-                    // Populate table cells based on available data
-                    populateTableData(year2024Data, 2024);
-                    populateTableData(year2025Data, 2025);
-                } else {
-                    console.error('No data found for the given parameters');
-                    // Optionally handle no data situation, e.g., display a message or reset values
-                    const defaultValue = 'N/A';
-                    const fields = [
-                        'aoc-ave', 'transit-ave', 'age-ave',
-                        'aoc-med', 'transit-med', 'age-med',
-                        'aoc-mod', 'transit-mod', 'age-mod'
-                    ];
-
-                    fields.forEach(field => {
-                        document.getElementById(`${field}-2024`).textContent = defaultValue;
-                        document.getElementById(`${field}-2025`).textContent = defaultValue;
-                    });
+                if (data.message === "No data found") {
+                    // Handle no data scenario
+                    alert("No data found for the selected criteria.");
+                    return;
                 }
+
+                // Inside fetchData function
+                data.forEach(yearData => {
+                    // Ensure yearData.month_year is defined and a string before calling startsWith
+                    if (yearData.month_year && typeof yearData.month_year === "string") {
+                        if (yearData.month_year.startsWith(selectedYear1)) {
+                            populateTableData(yearData, selectedYear1);
+                        } else if (yearData.month_year.startsWith(selectedYear2)) {
+                            populateTableData(yearData, selectedYear2);
+                        }
+                    } else {
+                        console.warn('Invalid or missing month_year in data:', yearData);
+                    }
+                });
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                // Handle errors by displaying a message
-                const fields = [
-                    'aoc-ave', 'transit-ave', 'age-ave',
-                    'aoc-med', 'transit-med', 'age-med',
-                    'aoc-mod', 'transit-mod', 'age-mod'
-                ];
-
-                fields.forEach(field => {
-                    document.getElementById(`${field}-2024`).textContent = 'Error loading data';
-                    document.getElementById(`${field}-2025`).textContent = 'Error loading data';
-                });
+                alert('Error fetching data. Please try again later.');
             });
     }
 
@@ -131,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             selectedYear1 = item.getAttribute("data-value");
             updateDropdownText();
+            fetchData();
         });
     });
 
@@ -140,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             selectedYear2 = item.getAttribute("data-value");
             updateDropdownText();
+            fetchData();
         });
     });
 
@@ -147,8 +123,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("#monthMenu .dropdown-item").forEach(item => {
         item.addEventListener("click", function (event) {
             event.preventDefault();
-            selectedMonth = item.getAttribute("data-value");
+            selectedMonth = monthMap[item.getAttribute("data-value")]; // Convert selected month to number
             updateDropdownText();
+            fetchData();
         });
     });
 
@@ -158,12 +135,15 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             selectedProvince = item.getAttribute("data-value");
             updateDropdownText();
+            fetchData();
         });
     });
 
     // Initialize the dropdown text on page load
     updateDropdownText();
-    fetchData(); // Initial data load
+
+    // Initial data fetch
+    fetchData();
 });
 
 // Select the tables and buttons
@@ -206,6 +186,5 @@ nextButton.addEventListener('click', () => {
         currentTableIndex++;
     }
     showTable(currentTableIndex);
-    fetchData();
 });
 

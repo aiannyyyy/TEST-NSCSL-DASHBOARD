@@ -51,6 +51,7 @@ app.use("/api/total-samples", require("./routes/cardSummaryRoutes")); // ✅ Add
 app.use("/api/neometrics", require("./routes/neometricsRoutes")); // neometrics routes
 app.use("/api/demog-summary-count", require("./routes/demogSummaryRoutes")); // demog summary routes
 app.use("/api/speed-monitoring", require("./routes/speedMonitoringRoutes")); //speed monitoring routes
+app.use("/api/common-error", require("./routes/commonErrorRoutes")); //this is for common error of demographics
 
 
 
