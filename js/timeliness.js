@@ -55,96 +55,84 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Function to clear previous data in the table
+    // Clear table data
     function clearTableData() {
-        // Define all the cell ID prefixes we want to clear
-        const idPrefixes = ['aoc-ave-', 'aoc-med-', 'aoc-mod-', 
-                           'transit-ave-', 'transit-med-', 'transit-mod-', 
-                           'age-ave-', 'age-med-', 'age-mod-'];
+        const allCells = [
+            // AOC cells
+            "aoc-ave-year1", "aoc-ave-year2", "aoc-med-year1", "aoc-med-year2", "aoc-mod-year1", "aoc-mod-year2",
+            // Transit cells
+            "transit-ave-year1", "transit-ave-year2", "transit-med-year1", "transit-med-year2", "transit-mod-year1", "transit-mod-year2",
+            // Age cells
+            "age-ave-year1", "age-ave-year2", "age-med-year1", "age-med-year2", "age-mod-year1", "age-mod-year2"
+        ];
         
-        [selectedYear1, selectedYear2].forEach(year => {
-            idPrefixes.forEach(prefix => {
-                const cellId = `${prefix}${year}`;
-                const cell = document.getElementById(cellId);
-                if (cell) {
-                    cell.textContent = "N/A";
-                }
-            });
+        allCells.forEach(cellId => {
+            const cell = document.getElementById(cellId);
+            if (cell) {
+                cell.textContent = "-";
+            }
         });
     }
-    
-    function populateTableData(data, yearKey) {
-        console.log(`Populating table data for ${yearKey}`, data);
-    
-        const mappings = {
-            'AOC_AVE': `aoc-ave-${yearKey}`,
-            'AOC_MED': `aoc-med-${yearKey}`,
-            'AOC_MOD': `aoc-mod-${yearKey}`,
-            'TRANSIT_AVE': `transit-ave-${yearKey}`,
-            'TRANSIT_MED': `transit-med-${yearKey}`,
-            'TRANSIT_MOD': `transit-mod-${yearKey}`,
-            'AOS_AVE': `age-ave-${yearKey}`,
-            'AOS_MED': `age-med-${yearKey}`,
-            'AOS_MOD': `age-mod-${yearKey}`
-        };
-    
-        for (const [field, elementId] of Object.entries(mappings)) {
-            const cell = document.getElementById(elementId);
-            if (cell) {
-                const value = data[field];
-                cell.textContent = value !== undefined && value !== null ? value : 'N/A';
-            } else {
-                console.warn(`Element with ID '${elementId}' not found.`);
+
+    async function fetchData() {
+        try {
+            // Clear existing data
+            clearTableData();
+            
+            // Construct API URL with selected parameters
+            const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+            
+            console.log("Fetching data from:", url);
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error ${response.status}`);
             }
+            
+            const data = await response.json();
+            console.log("API response:", data);
+            
+            if (!data || data.length === 0 || data.message === "No data found") {
+                console.warn("No data available for the selected criteria");
+                return;
+            }
+            
+            // Process each data item and update the table
+            data.forEach(item => {
+                const year = item.MONTH_YEAR?.substring(0, 4);
+                updateTableForYear(item, year);
+            });
+            
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            alert("Failed to fetch data. Please check your connection and try again.");
         }
     }
     
-
-    function fetchData() {
-        // Construct API URL with selected parameters
-        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+    function updateTableForYear(data, year) {
+        const yearSuffix = parseInt(year) === parseInt(selectedYear1) ? "year1" : "year2";
         
-        console.log("Fetching data from:", url);
+        // Update AOC cells
+        document.getElementById(`aoc-ave-${yearSuffix}`).textContent = data.AOC_AVE || "-";
+        document.getElementById(`aoc-med-${yearSuffix}`).textContent = data.AOC_MED || "-";
+        document.getElementById(`aoc-mod-${yearSuffix}`).textContent = data.AOC_MOD || "-";
         
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("API response:", data);
-                
-                // Clear existing table data
-                clearTableData();
-
-                if (!data || data.length === 0 || data.message === "No data found") {
-                    console.warn("No data available for the selected criteria");
-                    return;
-                }
-
-                data.forEach(item => {
-                    const year = item.MONTH_YEAR?.substring(0, 4);
-                
-                    if (parseInt(year) === selectedYear1) {
-                        populateTableData(item, "year1");
-                    } else if (parseInt(year) === selectedYear2) {
-                        populateTableData(item, "year2");
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-                alert("Failed to fetch data. Please check your connection and try again.");
-            });
+        // Update Transit cells
+        document.getElementById(`transit-ave-${yearSuffix}`).textContent = data.TRANSIT_AVE || "-";
+        document.getElementById(`transit-med-${yearSuffix}`).textContent = data.TRANSIT_MED || "-";
+        document.getElementById(`transit-mod-${yearSuffix}`).textContent = data.TRANSIT_MOD || "-";
+        
+        // Update Age/AOS cells
+        document.getElementById(`age-ave-${yearSuffix}`).textContent = data.AOS_AVE || "-";
+        document.getElementById(`age-med-${yearSuffix}`).textContent = data.AOS_MED || "-";
+        document.getElementById(`age-mod-${yearSuffix}`).textContent = data.AOS_MOD || "-";
     }
 
     // Year 1 dropdown
     document.querySelectorAll("#year1Menu .dropdown-item").forEach(item => {
         item.addEventListener("click", function(event) {
             event.preventDefault();
-            selectedYear1 = item.getAttribute("time-year1-value");
+            selectedYear1 = parseInt(item.getAttribute("time-year1-value"));
             updateDropdownText();
             fetchData();
         });
@@ -154,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("#year2Menu .dropdown-item").forEach(item => {
         item.addEventListener("click", function(event) {
             event.preventDefault();
-            selectedYear2 = item.getAttribute("time-year2-value");
+            selectedYear2 = parseInt(item.getAttribute("time-year2-value"));
             updateDropdownText();
             fetchData();
         });
@@ -180,13 +168,14 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchData();
         });
     });
+    
     // Table navigation setup
     const tables = [
         document.getElementById('aocTable'),
         document.getElementById('transitTimeTable'),
         document.getElementById('ageUponReceiptTable')
     ];
-    let currentTableIndex = 0;
+    let currentTableIndex = 2; // Start with Age Upon Receipt table (index 2)
 
     function showTable(index) {
         tables.forEach((table, i) => {
