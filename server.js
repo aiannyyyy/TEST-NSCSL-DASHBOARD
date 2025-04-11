@@ -47,11 +47,14 @@ app.use("/api/lab-comparison-samples-per-day", require("./routes/labComparisonOf
 app.use("/api", require("./routes/ytdSampleRoutes")); //chart for year to date samples received and screened
 app.use("/api", require("./routes/cumulativeCencusofSamplesRoutes"));  //chart for cumulative samples received and screened
 app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative Annual Census
+app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative Annual Census
+app.use("/api", require("./routes/cumulativeAnnualRoutes")); // ✅ Cumulative Annual Census
 app.use("/api/total-samples", require("./routes/cardSummaryRoutes")); // ✅ Add total sample count route
 app.use("/api/neometrics", require("./routes/neometricsRoutes")); // neometrics routes
 app.use("/api/demog-summary-count", require("./routes/demogSummaryRoutes")); // demog summary routes
 app.use("/api/speed-monitoring", require("./routes/speedMonitoringRoutes")); //speed monitoring routes
 app.use("/api/common-error", require("./routes/commonErrorRoutes")); //this is for common error of demographics
+app.use("/api/lab-tracking", require("./routes/labTrackingRoutes")); //routes for lab tracking system
 
 
 

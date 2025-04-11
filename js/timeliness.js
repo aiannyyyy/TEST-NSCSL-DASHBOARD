@@ -14,177 +14,206 @@ document.addEventListener("DOMContentLoaded", function () {
         "Jun": 6,
         "Jul": 7,
         "Aug": 8,
-        "Sep": 9,
+        "Sept": 9,
         "Oct": 10,
         "Nov": 11,
         "Dec": 12
     };
 
-    // Function to update dropdown button text
-    function updateDropdownText() {
-        // Map selectedMonth to its string equivalent
-        const monthNames = Object.keys(monthMap);
-        document.getElementById("monthDropdownButton").textContent = monthNames[selectedMonth - 1];
+    // Number to month name mapping (reverse of monthMap)
+    const numberToMonth = {};
+    Object.keys(monthMap).forEach(month => {
+        numberToMonth[monthMap[month]] = month;
+    });
 
+    // Function to update dropdown button text and table headers
+    function updateDropdownText() {
+        // Update dropdown buttons
+        document.getElementById("monthDropdownButton").textContent = numberToMonth[selectedMonth];
         document.getElementById("year1Dropdown").textContent = selectedYear1;
         document.getElementById("year2Dropdown").textContent = selectedYear2;
         document.getElementById("provinceDropdownButton").textContent = selectedProvince;
 
-        // Update the card titles
-        let cardTitle = document.querySelector(".province");
-        if (cardTitle) {
-            cardTitle.textContent = selectedProvince; // Use selectedProvince directly
+        // Update card title
+        let provinceTitle = document.querySelector(".province");
+        if (provinceTitle) {
+            provinceTitle.textContent = selectedProvince;
         }
 
-        let monthTitle = document.querySelector(".month");
-        if (monthTitle) {
-            monthTitle.textContent = monthNames[selectedMonth - 1];
-        }
-        // Other month/year titles
-        let month1Title = document.querySelector(".month1");
-        if (month1Title) {
-            month1Title.textContent = monthNames[selectedMonth - 1];
-        }
+        // Update month in each table
+        document.querySelectorAll(".month, .month1, .month11").forEach(elem => {
+            if (elem) elem.textContent = numberToMonth[selectedMonth];
+        });
+        
+        // Update year headers in all tables
+        document.querySelectorAll("#year1, #year11, #year111").forEach(elem => {
+            if (elem) elem.textContent = selectedYear1;
+        });
 
-        let year1Title = document.querySelector("#year1");
-        if (year1Title) {
-            year1Title.textContent = selectedYear1;
-        }
-
-        let year2Title = document.querySelector("#year2");
-        if (year2Title) {
-            year2Title.textContent = selectedYear2;
-        }
+        document.querySelectorAll("#year2, #year22, #year222").forEach(elem => {
+            if (elem) elem.textContent = selectedYear2;
+        });
     }
 
-    // Function to fetch data from the API and populate the table
-    function fetchData() {
-        // Construct the URL with query parameters based on the selected values
-        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+    // Function to clear previous data in the table
+    function clearTableData() {
+        // Define all the cell ID prefixes we want to clear
+        const idPrefixes = ['aoc-ave-', 'aoc-med-', 'aoc-mod-', 
+                           'transit-ave-', 'transit-med-', 'transit-mod-', 
+                           'age-ave-', 'age-med-', 'age-mod-'];
+        
+        [selectedYear1, selectedYear2].forEach(year => {
+            idPrefixes.forEach(prefix => {
+                const cellId = `${prefix}${year}`;
+                const cell = document.getElementById(cellId);
+                if (cell) {
+                    cell.textContent = "N/A";
+                }
+            });
+        });
+    }
+    
+    function populateTableData(data, yearKey) {
+        console.log(`Populating table data for ${yearKey}`, data);
+    
+        const mappings = {
+            'AOC_AVE': `aoc-ave-${yearKey}`,
+            'AOC_MED': `aoc-med-${yearKey}`,
+            'AOC_MOD': `aoc-mod-${yearKey}`,
+            'TRANSIT_AVE': `transit-ave-${yearKey}`,
+            'TRANSIT_MED': `transit-med-${yearKey}`,
+            'TRANSIT_MOD': `transit-mod-${yearKey}`,
+            'AOS_AVE': `age-ave-${yearKey}`,
+            'AOS_MED': `age-med-${yearKey}`,
+            'AOS_MOD': `age-mod-${yearKey}`
+        };
+    
+        for (const [field, elementId] of Object.entries(mappings)) {
+            const cell = document.getElementById(elementId);
+            if (cell) {
+                const value = data[field];
+                cell.textContent = value !== undefined && value !== null ? value : 'N/A';
+            } else {
+                console.warn(`Element with ID '${elementId}' not found.`);
+            }
+        }
+    }
+    
 
+    function fetchData() {
+        // Construct API URL with selected parameters
+        const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+        
+        console.log("Fetching data from:", url);
+        
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.message === "No data found") {
-                    // Handle no data scenario
-                    alert("No data found for the selected criteria.");
+                console.log("API response:", data);
+                
+                // Clear existing table data
+                clearTableData();
+
+                if (!data || data.length === 0 || data.message === "No data found") {
+                    console.warn("No data available for the selected criteria");
                     return;
                 }
 
-                // Inside fetchData function
-                data.forEach(yearData => {
-                    // Ensure yearData.month_year is defined and a string before calling startsWith
-                    if (yearData.month_year && typeof yearData.month_year === "string") {
-                        if (yearData.month_year.startsWith(selectedYear1)) {
-                            populateTableData(yearData, selectedYear1);
-                        } else if (yearData.month_year.startsWith(selectedYear2)) {
-                            populateTableData(yearData, selectedYear2);
-                        }
-                    } else {
-                        console.warn('Invalid or missing month_year in data:', yearData);
+                data.forEach(item => {
+                    const year = item.MONTH_YEAR?.substring(0, 4);
+                
+                    if (parseInt(year) === selectedYear1) {
+                        populateTableData(item, "year1");
+                    } else if (parseInt(year) === selectedYear2) {
+                        populateTableData(item, "year2");
                     }
                 });
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
-                alert('Error fetching data. Please try again later.');
+                console.error("Error fetching data:", error);
+                alert("Failed to fetch data. Please check your connection and try again.");
             });
     }
 
-    // Function to populate table data
-    function populateTableData(yearData, year) {
-        const fields = ['AOC_AVE', 'TRANSIT_AVE', 'AOS_AVE', 'AOC_MED', 'TRANSIT_MED', 'AOS_MED', 'AOC_MOD', 'TRANSIT_MOD', 'AOS_MOD'];
-        fields.forEach(field => {
-            document.getElementById(`${field.toLowerCase()}-${year}`).textContent = yearData[field] || 'N/A';
+    // Year 1 dropdown
+    document.querySelectorAll("#year1Menu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function(event) {
+            event.preventDefault();
+            selectedYear1 = item.getAttribute("time-year1-value");
+            updateDropdownText();
+            fetchData();
+        });
+    });
+
+    // Year 2 dropdown
+    document.querySelectorAll("#year2Menu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function(event) {
+            event.preventDefault();
+            selectedYear2 = item.getAttribute("time-year2-value");
+            updateDropdownText();
+            fetchData();
+        });
+    });
+
+    // Month dropdown
+    document.querySelectorAll("#monthMenu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function(event) {
+            event.preventDefault();
+            const monthName = item.getAttribute("time-month-value");
+            selectedMonth = monthMap[monthName];
+            updateDropdownText();
+            fetchData();
+        });
+    });
+
+    // Province dropdown
+    document.querySelectorAll(".province-item").forEach(item => {
+        item.addEventListener("click", function(event) {
+            event.preventDefault();
+            selectedProvince = item.getAttribute("time-prov-value");
+            updateDropdownText();
+            fetchData();
+        });
+    });
+    // Table navigation setup
+    const tables = [
+        document.getElementById('aocTable'),
+        document.getElementById('transitTimeTable'),
+        document.getElementById('ageUponReceiptTable')
+    ];
+    let currentTableIndex = 0;
+
+    function showTable(index) {
+        tables.forEach((table, i) => {
+            table.style.display = i === index ? 'table' : 'none';
         });
     }
 
-    // Year 1
-    document.querySelectorAll("#year1Menu .dropdown-item").forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedYear1 = item.getAttribute("data-value");
-            updateDropdownText();
-            fetchData();
-        });
+    // Initialize table visibility
+    showTable(currentTableIndex);
+
+    // Previous button handler
+    document.getElementById('prevButton').addEventListener('click', () => {
+        if (currentTableIndex > 0) {
+            currentTableIndex--;
+            showTable(currentTableIndex);
+        }
     });
 
-    // Year 2
-    document.querySelectorAll("#year2Menu .dropdown-item").forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedYear2 = item.getAttribute("data-value");
-            updateDropdownText();
-            fetchData();
-        });
+    // Next button handler
+    document.getElementById('nextButton').addEventListener('click', () => {
+        if (currentTableIndex < tables.length - 1) {
+            currentTableIndex++;
+            showTable(currentTableIndex);
+        }
     });
 
-    // Month
-    document.querySelectorAll("#monthMenu .dropdown-item").forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedMonth = monthMap[item.getAttribute("data-value")]; // Convert selected month to number
-            updateDropdownText();
-            fetchData();
-        });
-    });
-
-    // Province
-    document.querySelectorAll(".province-item").forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault();
-            selectedProvince = item.getAttribute("data-value");
-            updateDropdownText();
-            fetchData();
-        });
-    });
-
-    // Initialize the dropdown text on page load
+    // Initialize dropdown text and fetch initial data
     updateDropdownText();
-
-    // Initial data fetch
     fetchData();
 });
-
-// Select the tables and buttons
-const aocTable = document.getElementById('aocTable');
-const transitTimeTable = document.getElementById('transitTimeTable');
-const ageUponReceiptTable = document.getElementById('ageUponReceiptTable');
-
-const prevButton = document.getElementById('prevButton');
-const nextButton = document.getElementById('nextButton');
-
-// Variable to track the current state of the tables
-let currentTableIndex = 0;
-const tables = [aocTable, transitTimeTable, ageUponReceiptTable];
-
-// Function to show the table based on index
-function showTable(index) {
-    // Hide all tables first
-    tables.forEach((table) => {
-        table.style.display = 'none';
-    });
-
-    // Show the current table
-    tables[index].style.display = 'table';
-}
-
-// Initial table visibility
-showTable(currentTableIndex);
-
-// Event listener for the "Prev" button
-prevButton.addEventListener('click', () => {
-    if (currentTableIndex > 0) {
-        currentTableIndex--;
-    }
-    showTable(currentTableIndex);
-});
-
-// Event listener for the "Next" button
-nextButton.addEventListener('click', () => {
-    if (currentTableIndex < tables.length - 1) {
-        currentTableIndex++;
-    }
-    showTable(currentTableIndex);
-});
-

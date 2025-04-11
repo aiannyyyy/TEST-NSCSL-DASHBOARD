@@ -11,7 +11,7 @@ router.get("/cumulative-annual-samples", async (req, res) => {
         connection = await getOracleConnection();
 
         const query = `
-           SELECT 
+            SELECT 
                 TO_CHAR(DTRECV, 'YYYY-MM') AS year_month, 
                 COUNT(labno) AS total_samples,
                 SUM(CASE WHEN SPECTYPE IN ('1', '18', '87', '2', '3', '4', '5') 
