@@ -55,7 +55,7 @@ app.use("/api/demog-summary-count", require("./routes/demogSummaryRoutes")); // 
 app.use("/api/speed-monitoring", require("./routes/speedMonitoringRoutes")); //speed monitoring routes
 app.use("/api/common-error", require("./routes/commonErrorRoutes")); //this is for common error of demographics
 app.use("/api/lab-tracking", require("./routes/labTrackingRoutes")); //routes for lab tracking system
-
+app.use("/api/unsat-rate", require("./routes/unsatRateRoutes")); //routes for unsat rate ytd
 
 
 app.use((err, req, res, next) => {
