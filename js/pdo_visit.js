@@ -77,13 +77,42 @@ function updateDoughnutChart(active, inactive, closed) {
         options: {
             cutout: 90,
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true, // Set to true since you have fixed dimensions
+            layout: {
+                padding: {
+                    top: 30,
+                    bottom: 70, // Significantly increased to move legend down
+                    left: 20,
+                    right: 20
+                }
+            },
             plugins: {
                 legend: {
-                    display: true, // Show legend for Active, Inactive, and Closed
+                    display: true,
+                    position: 'bottom',
+                    align: 'center',
+                    labels: {
+                        padding: 40, // Increased padding between chart and legend
+                        boxWidth: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#000',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 15,
+                    formatter: (value) => `${value}`
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
 

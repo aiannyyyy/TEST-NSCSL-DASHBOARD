@@ -9,6 +9,7 @@ const oracledb = require("oracledb");
 // Import MySQL & Oracle connections
 const mysqlDb = require("./config/mysqlConnection"); // ✅ MySQL Connection
 const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connection
+const mysqlDb1 = require("./config/inhouseConnection"); // ✅ Oracle Connection
 
 const app = express();
 app.use(cors());
@@ -56,6 +57,7 @@ app.use("/api/speed-monitoring", require("./routes/speedMonitoringRoutes")); //s
 app.use("/api/common-error", require("./routes/commonErrorRoutes")); //this is for common error of demographics
 app.use("/api/lab-tracking", require("./routes/labTrackingRoutes")); //routes for lab tracking system
 app.use("/api/unsat-rate", require("./routes/unsatRateRoutes")); //routes for unsat rate ytd
+app.use("/api/kits-sold", require("./routes/kitsSoldRoutes")); //routes for kits sold
 
 
 app.use((err, req, res, next) => {

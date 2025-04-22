@@ -315,6 +315,8 @@ $(function() {
       options: multiAreaOptions
     });
   }
+
+/*
   if ($("#doughnutChart").length) {
     var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
 
@@ -355,7 +357,7 @@ $(function() {
         }
     });
 }
-
+*/
   if ($("#pieChart").length) {
     var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
     var pieChart = new Chart(pieChartCanvas, {

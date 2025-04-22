@@ -22,17 +22,9 @@ function fetchFacilityStatus() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: true, position: "bottom" },
-                    datalabels: {  // ✅ Show Data Labels
-                        color: "#fff",
-                        font: { weight: "bold", size: 14 },
-                        anchor: "end",
-                        align: "start",
-                        formatter: (value, ctx) => {
-                            let total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                            let percentage = ((value / total) * 100).toFixed(1);
-                            return `${percentage}%`; // Show percentage
-                        }
+                    legend: {
+                        display: true,
+                        position: "bottom"  // Legend at the bottom
                     }
                 }
             }
