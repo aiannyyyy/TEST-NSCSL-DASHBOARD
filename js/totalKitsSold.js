@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 dataPerYear[year][monthIndex] = entry.total_qty;
             });
 
-            const fixedColors = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33A1", "#A133FF"];
+            const fixedColors = ["#1abc9c", "#f5cd79", "#6ab04c", "##fed330", "#f8a5c2", "#3dc1d3"];
 
             const datasets = Object.entries(dataPerYear).map(([year, data], index) => {
                 const color = fixedColors[index % fixedColors.length];
