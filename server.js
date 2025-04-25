@@ -62,6 +62,9 @@ app.use("/api/cumulative-kits-sold", require("./routes/cumulativeKitsSold")); //
 app.use("/api/attendance-late", require("./routes/attendanceRoutes")); // for attendance
 
 
+app.use("/api", require("./routes/attendanceRoutes")); // for attendance
+
+
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log error
   res.status(500).json({ error: "Internal Server Error", details: err.message });

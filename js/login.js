@@ -35,10 +35,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (response.ok && result.success) {
                 localStorage.setItem("username", result.user.name); 
-                window.location.href = "/src/index.html";
+                localStorage.setItem("dept", result.user.dept); // Save dept in localStorage if needed
+            
+                // Redirect based on department
+                switch (result.user.dept) {
+                    case "Admin":
+                        window.location.href = "/src/admin.html";
+                        break;
+                    case "Laboratory":
+                        window.location.href = "/src/labindex.html";
+                        break;
+                    case "Program":
+                        window.location.href = "/src/index.html";
+                        break;
+                    case "Follow Up":
+                        window.location.href = "/src/followup.html";
+                        break;
+                    default:
+                        window.location.href = "/src/admin.html"; // fallback
+                        break;
+                }
             } else {
                 alert(result.message);
             }
+            
         } catch (error) {
             console.error("Login error:", error);
             alert("Something went wrong. Please try again.");
