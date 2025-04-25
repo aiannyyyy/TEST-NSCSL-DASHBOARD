@@ -119,6 +119,29 @@
   padding: 12px 15px; /* Adjust link padding for better spacing */
   border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
 }
+
+.table-header th {
+    color: black !important;      /* Set text color to black */
+    font-weight: bold !important; /* Make the text bold */
+}
+
+.limited-width {
+    max-width: 200px; /* Adjust this value as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.limited-width-wrap {
+    max-width: 200px; /* Adjust this value as needed */
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.color{
+  color: black !important;
+}
+
   </style>
   <body class="with-welcome-text">
     <!--
@@ -867,11 +890,16 @@
                                     <div class="card-body card-rounded">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h4 class="card-title card-title-dash">Facility Visits</h4>
-                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#visitModal">
-                                                <i class="mdi mdi-account-plus"></i> Add Facility Visit
-                                            </button>
+                                            <div class="d-flex">
+                                                <button class="btn btn-white fw-bold me-2" data-bs-toggle="modal" data-bs-target="#visitModal">
+                                                    <i class="mdi mdi-account-plus"></i> Add Facility Visit
+                                                </button>
+                                                <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                                    <i class="mdi mdi-file-excel"></i> Export
+                                                </button>
+                                            </div>
                                         </div>
-                        
+                                        
                                         <!-- Scrollable Table -->
                                         <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                                             <table class="table select-table">
@@ -881,6 +909,7 @@
                                                         <th>Facility Name</th>
                                                         <th>Date and Time Visited</th>
                                                         <th>Province</th>
+                                                        <th>Remarks</th>
                                                         <th>Status</th>
                                                         <th>Actions</th>
                                                     </tr>
@@ -890,12 +919,10 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                        
                                     </div>
                                 </div>
                             </div>
                         </div>
-                          
                         <!-- Add/Edit Facility Visit Modal -->
                         <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
                           <div class="modal-dialog">
@@ -910,12 +937,12 @@
                                   
                                   <div class="mb-3">
                                     <label class="form-label">Facility Code</label>
-                                    <input type="text" class="form-control" id="facilityCode" required>
+                                    <input type="text" class="form-control" id="facilityCode" required >
                                   </div>
                                   
                                   <div class="mb-3">
                                     <label class="form-label">Facility Name</label>
-                                    <input type="text" class="form-control" id="facilityName" required>
+                                    <input type="text" class="form-control" id="facilityName" required readonly>
                                   </div>
                                   
                                   <div class="mb-3">
@@ -934,7 +961,7 @@
                                       <option value="Quezon">Quezon</option>
                                     </select>
                                   </div>
-
+                        
                                   <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <select class="form-control" id="status" required>
@@ -944,8 +971,46 @@
                                       <option value="2">Closed</option> <!-- Added Closed Status -->
                                     </select>
                                   </div>
-
+                        
+                                  <div class="mb-3">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea class="form-control" id="remarks" rows="3" placeholder="Enter any remarks or notes about this visit"></textarea>
+                                  </div>
+                        
                                   <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Export Date Range Modal -->
+                        <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exportModalLabel">Export Facility Visits</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form id="exportForm">
+                                  <div class="mb-3">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="datetime-local" class="form-control" id="exportStartDate" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">End Date</label>
+                                    <input type="datetime-local" class="form-control" id="exportEndDate" required>
+                                  </div>
+                                  
+                                  <div class="alert alert-info">
+                                    <small>Select a date range to export facility visits within that period.</small>
+                                  </div>
+
+                                  <button type="button" class="btn btn-white text-dark fw-bold" onclick="exportToExcel()">
+                                    <i class="mdi mdi-file-excel"></i> Export to Excel
+                                  </button>
                                 </form>
                               </div>
                             </div>
@@ -1569,8 +1634,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
-        <!-- Latest Chart.js v4 -->
+    
+    <!-- Include SheetJS library for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+            <!-- Latest Chart.js v4 -->
   
     <!--end inject-->
 
