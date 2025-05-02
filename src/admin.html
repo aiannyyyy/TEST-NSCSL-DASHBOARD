@@ -699,31 +699,9 @@
                                 <div class="card card-rounded">
                                     <div class="card-body card-rounded">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="card-title card-title-dash">Inventory System</h4>
-                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#visitModal">
-                                                <i class="mdi mdi-account-plus"></i> Add Facility Visit
-                                            </button>
+                                            <h4 class="card-title card-title-dash">Content 6</h4>
+
                                         </div>
-                        
-                                        <!-- Scrollable Table -->
-                                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                            <table class="table select-table">
-                                                <thead class="table-header">
-                                                    <tr>
-                                                        <th>Facility Code</th>
-                                                        <th>Facility Name</th>
-                                                        <th>Date and Time Visited</th>
-                                                        <th>Province</th>
-                                                        <th>Status</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="visitTable">
-                                                    <!-- Data will be inserted dynamically via JavaScript -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                        
                                     </div>
                                 </div>
                             </div>
@@ -790,19 +768,8 @@
                                 <div class="card card-rounded">
                                     <div class="card-body card-rounded">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="card-title card-title-dash">Events</h4>
-                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: blac;">Add New Event</button>
-                                        </div>
-                                        <div id="eventsList">
-                                            <!-- Event items will be dynamically added here -->
-                                        </div>
-                                        <div class="list align-items-center pt-3">
-                                            <div class="wrapper w-100">
-                                                <p class="mb-0">
-                                                    <a href="#" class="fw-bold text-primary" data-bs-toggle="modal" data-bs-target="#viewAllEventsModal" onclick="showAllEvents()">Show all</a>
-                                                </p>
-                                            </div>
-                                        </div>
+                                            <h4 class="card-title card-title-dash">Content 6</h4>
+                                        </div>                      
                                     </div>
                                 </div>
                               </div>
@@ -810,131 +777,13 @@
                               <div class="card card-rounded">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
-                                        <div class="dropdown">
-                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button"
-                                                id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Select Here
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                              <a class="dropdown-item" href="#" onclick="filterReports('daily', event)">Daily</a>
-                                              <a class="dropdown-item" href="#" onclick="filterReports('monthly', event)">Monthly</a>
-                                              <a class="dropdown-item" href="#" onclick="filterReports('yearly', event)">Yearly</a>
-                                          </div>
-                                          
-                                        </div>
-                                    </div>
-                            
-                                    <!-- Scrollable list container -->
-                                    <div id="reportContainer" style="max-height: 150px; overflow-y: auto;">
-                                        <ul class="bullet-line-list" id="reportList">
-                                            <!-- Daily Reports (Default View) -->
-                                            <li class="daily">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">Filtercard Monitoring</span></div>
-                                                    <p onclick="runExe('daily1')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="daily">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">NSF Performance Report</span></div>
-                                                    <p onclick="runExe('daily2')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="daily">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">Result Tracking System</span></div>
-                                                    <p onclick="runExe('daily3')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="daily">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">Sample Per Province</span></div>
-                                                    <p onclick="runExe('daily4')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <!-- Monthly Reports -->
-                                            <li class="monthly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">MENU FOR PDO</span></div>
-                                                    <p onclick="runExe('monthly1')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="monthly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">NSRC Report</span></div>
-                                                    <p onclick="runExe('monthly2')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="monthly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">New Sample Receipt</span></div>
-                                                    <p onclick="runExe('monthly3')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="monthly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">Quezon Sample Receipt</span></div>
-                                                    <p onclick="runExe('monthly4')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <!-- Yearly Reports -->
-                                            <li class="yearly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">NSRC Reports</span></div>
-                                                    <p onclick="runExe('yearly1')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                            <li class="yearly" style="display: none;">
-                                                <div class="d-flex justify-content-between">
-                                                    <div><span class="text-light-green">Total Sample Receipt</span></div>
-                                                    <p onclick="runExe('yearly2')" style="cursor:pointer; color:blue;">Run</p>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                        <h4 class="card-title card-title-dash fw-bold">Content 7</h4>
                                     </div>
                                 </div>
                             </div>        
                             </div>
                           </div>
                         </div>
-                        <!-- Add Event Modal -->
-                        <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                      <form id="eventForm">
-                                          <div class="mb-3">
-                                              <label class="form-label">Event Name</label>
-                                              <input type="text" class="form-control" id="eventName" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Location</label>
-                                              <input type="text" class="form-control" id="eventLocation" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Date & Time</label>
-                                              <input type="datetime-local" class="form-control" id="eventDateTime" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Description</label>
-                                              <textarea class="form-control" id="eventDescription" required></textarea>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Event Host</label>
-                                              <input type="text" class="form-control" id="eventHost" required>
-                                          </div>
-                                          <button type="button" class="btn btn-white text-dark fw-bold" onclick="addEvent()">Add Event</button>
-                                      </form>
-                                  </div>
-                              </div>
-                          </div>
-                        </div>
-
                         <!-- View All Events Modal -->
                         <div class="modal fade" id="viewAllEventsModal" tabindex="-1" aria-labelledby="viewAllEventsModalLabel" aria-hidden="true">
                           <div class="modal-dialog modal-lg">
@@ -1076,12 +925,11 @@
                                     <div class="row">
                                       <div class="col-lg-12">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h4 class="card-title card-title-dash">Facilities Visits By this Month</h4>
+                                          <h4 class="card-title card-title-dash">Content 4</h4>
                                         </div>
                                         <div>
-                                          <canvas class="my-auto" id="doughnutChart" style="height: 500px; width: 400px"></canvas>
+                                          <canvas class="my-auto" id=""></canvas>
                                         </div>
-                                        <div id="doughnutChart-legend" class="mt-5 text-center"></div>
                                       </div>
                                     </div>
                                   </div>
@@ -1097,172 +945,8 @@
                                             <div class="col-lg-12">
                                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                                   <div>
-                                                    <h4 class="card-title card-title-dash2">Timeliness of NBS </h4> <span class="province">Province</span> <br>
-                                                </div>
-                                                
-                                                    <div>
-                                                        <div class="dropdown">
-                                                            <!-- Year 1 Dropdown -->
-                                                            <button class="btn btn-light dropdown-toggle" type="button" id="year1Dropdown" data-bs-toggle="dropdown">Year</button>
-                                                            <div class="dropdown-menu" id="year1Menu">
-                                                                <a class="dropdown-item" href="#" time-year1-value="2024">2024</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2023">2023</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2022">2022</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2021">2021</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2020">2020</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2019">2019</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2018">2018</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2017">2017</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2016">2016</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2015">2015</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2014">2014</a>
-                                                                <a class="dropdown-item" href="#" time-year1-value="2013">2013</a>
-                                                            </div>
-                                                            <span> VS </span>
-                                                            <!-- Year 2 Dropdown -->
-                                                            <button class="btn btn-light dropdown-toggle" type="button" id="year2Dropdown" data-bs-toggle="dropdown">Year</button>
-                                                            <div class="dropdown-menu" id="year2Menu">
-                                                                <a class="dropdown-item" href="#" time-year2-value="2025">2025</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2024">2024</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2023">2023</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2022">2022</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2021">2021</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2020">2020</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2019">2019</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2018">2018</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2017">2017</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2016">2016</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2015">2015</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2014">2014</a>
-                                                                <a class="dropdown-item" href="#" time-year2-value="2013">2013</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <!-- Table for AOC (hidden initially) -->
-                                                  <table class="custom-table" id="aocTable" style="display: none;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th rowspan="3">Month</th>
-                                                            <th colspan="6">AOC</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2">AVE</th>
-                                                            <th colspan="2">MED</th>
-                                                            <th colspan="2">MOD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th id="year1">2024</th>
-                                                            <th id="year2">2025</th>
-                                                            <th id="year1">2024</th>
-                                                            <th id="year2">2025</th>
-                                                            <th id="year1">2024</th>
-                                                            <th id="year2">2025</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="month">Jan</td>
-                                                            <td id="aoc-ave-year1">-</td><td id="aoc-ave-year2">-</td>
-                                                            <td id="aoc-med-year1">-</td><td id="aoc-med-year2">-</td>
-                                                            <td id="aoc-mod-year1">-</td><td id="aoc-mod-year2">-</td>
-                                                        </tr>
-                                                    </tbody>
-                                                  </table>
-
-                                                  <!-- Table for Transit Time (hidden initially) -->
-                                                  <table class="custom-table" id="transitTimeTable" style="display: none;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th rowspan="3">Month</th>
-                                                            <th colspan="6">Transit Time</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2">AVE</th>
-                                                            <th colspan="2">MED</th>
-                                                            <th colspan="2">MOD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th id="year11">2024</th>
-                                                            <th id="year22">2025</th>
-                                                            <th id="year11">2024</th>
-                                                            <th id="year22">2025</th>
-                                                            <th id="year11">2024</th>
-                                                            <th id="year22">2025</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="month1">Jan</td>
-                                                            <td id="transit-ave-year1">-</td><td id="transit-ave-year2">-</td>
-                                                            <td id="transit-med-year1">-</td><td id="transit-med-year2">-</td>
-                                                            <td id="transit-mod-year1">-</td><td id="transit-mod-year2">-</td>
-                                                        </tr>
-                                                    </tbody>
-                                                  </table>
-
-                                                  <!-- Table for Age Upon Receipt -->
-                                                  <table class="custom-table" id="ageUponReceiptTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th rowspan="3">Month</th>
-                                                            <th colspan="6">Age Upon Receipt</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="2">AVE</th>
-                                                            <th colspan="2">MED</th>
-                                                            <th colspan="2">MOD</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th id="year111">2024</th>
-                                                            <th id="year222">2025</th>
-                                                            <th id="year111">2024</th>
-                                                            <th id="year222">2025</th>
-                                                            <th id="year111">2024</th>
-                                                            <th id="year222">2025</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="month11">Jan</td>
-                                                            <td id="age-ave-year1">-</td><td id="age-ave-year2">-</td>
-                                                            <td id="age-med-year1">-</td><td id="age-med-year2">-</td>
-                                                            <td id="age-mod-year1">-</td><td id="age-mod-year2">-</td>
-                                                        </tr>
-                                                    </tbody>
-                                                  </table>
-                                                <!-- Month and Province Dropdowns -->
-                                                <div class="dropdown mt-3">
-                                                    <!-- Month Dropdown -->
-                                                    <button class="btn btn-light dropdown-toggle" type="button" id="monthDropdownButton" data-bs-toggle="dropdown">Select Month</button>
-                                                    <div class="dropdown-menu" id="monthMenu">
-                                                        <a class="dropdown-item" href="#" time-month-value="Jan">Jan</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Feb">Feb</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Mar">Mar</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Apr">Apr</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="May">May</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Jun">Jun</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Jul">Jul</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Aug">Aug</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Sept">Sept</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Oct">Oct</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Nov">Nov</a>
-                                                        <a class="dropdown-item" href="#" time-month-value="Dec">Dec</a>
-                                                    </div>
-
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" type="button" id="provinceDropdownButton" data-bs-toggle="dropdown">
-                                                        Select Province
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="provinceDropdownButton">
-                                                        <a class="dropdown-item province-item" time-prov-value="Cavite">Cavite</a>
-                                                        <a class="dropdown-item province-item" time-prov-value="Laguna">Laguna</a>
-                                                        <a class="dropdown-item province-item" time-prov-value="Batangas">Batangas</a>
-                                                        <a class="dropdown-item province-item" time-prov-value="Rizal">Rizal</a>
-                                                        <a class="dropdown-item province-item" time-prov-value="Quezon">Quezon</a>
-                                                    </div>
-                                                    <button class="btn btn-light" id="prevButton" style="margin-right: 10px;">Prev</button>
-                                                    <button class="btn btn-light" id="nextButton">Next</button>
+                                                    <h4 class="card-title card-title-dash2">Content 5 </h4>
+                                                  </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1278,59 +962,15 @@
                                       <div class="col-lg-12">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                           <h4 class="card-title card-title-dash">
-                                            Top Unsatisfactory Sample Contributor <br>
-                                            <span class="selected-month-year text-primary">For the month of January 2025</span>
+                                            Content 8
                                           </h4>
                                         </div>                                                                          
-                                        <!-- Scrollable Container -->
-                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
-                                          <!-- Data will be inserted dynamically here -->
-                                        </div>
-                                        <!-- End Scrollable Container -->
                                       </div>
-                                    </div>
-                                    <br>
-                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                                      <label class="btn btn-outline-primary" for="btnradio1">By Numbers</label>
-                                    
-                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                                      <label class="btn btn-outline-primary" for="btnradio2">By Percentages</label>
-                                      
-                                       <!-- Button to Open Modal -->
-                                       <button class="btn btn-success custom-btn" data-bs-toggle="modal" data-bs-target="#dateRangeModal">
-                                        Select Date Range
-                                      </button>
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-
-                            <!-- Modal -->
-                            <div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
-                              <div class="modal-dialog">
-                                  <div class="modal-content">
-                                      <div class="modal-header">
-                                          <h5 class="modal-title" id="dateRangeModalLabel">Select Date & Time Range</h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                      </div>
-                                      <div class="modal-body">
-                                          <label for="dateTimeFrom" class="form-label">Date & Time From:</label>
-                                          <input type="datetime-local" id="dateTimeFrom" class="form-control">
-
-                                          <label for="dateTimeTo" class="form-label mt-2">Date & Time To:</label>
-                                          <input type="datetime-local" id="dateTimeTo" class="form-control">
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                          <button type="button" class="btn btn-success custom-btn" onclick="applyDateFilter()">Apply</button>
-                                      </div>
-                                  </div>
-                              </div>
-                            </div>
-
-                            
                           </div>
                         </div>
                       </div>
@@ -1340,20 +980,9 @@
               </div>
             </div>
           </div>
-          <!-- content-wrapper ends -->
-
-          <!-- partial:partials/_footer.html 
-          <footer class="footer">
-            <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
-              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
-            </div>
-          </footer>
-          -->
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
       </div>
+    </div>
       <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->

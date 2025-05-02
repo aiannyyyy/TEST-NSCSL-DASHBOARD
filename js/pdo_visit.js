@@ -345,17 +345,22 @@ function getAllFacilityVisits() {
     });
 }
 
-// Initialize date inputs with current date range when opening the export modal
-$("#exportModal").on("show.bs.modal", function() {
-    const today = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(today.getMonth() - 1);
-    
-    // Format dates for datetime-local input
-    const formatDateForInput = (date) => {
-        return date.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
-    };
-    
-    $("#exportStartDate").val(formatDateForInput(oneMonthAgo));
-    $("#exportEndDate").val(formatDateForInput(today));
+$(document).ready(function () {
+    $("#exportModal").on("show.bs.modal", function () {
+        const today = new Date();
+
+        const startDate = new Date(today);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(today);
+        endDate.setHours(23, 59, 0, 0);
+
+        const formatDateForInput = (date) => {
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        };
+
+        $("#exportStartDate").val(formatDateForInput(startDate));
+        $("#exportEndDate").val(formatDateForInput(endDate));
+    });
 });

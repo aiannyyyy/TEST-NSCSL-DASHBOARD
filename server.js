@@ -61,6 +61,8 @@ app.use("/api/kits-sold", require("./routes/kitsSoldRoutes")); //routes for kits
 app.use("/api/cumulative-kits-sold", require("./routes/cumulativeKitsSold")); //cumulative monthly kits sold
 app.use("/api/attendance-late", require("./routes/attendanceRoutes")); // for attendance
 app.use("/api/list-facilities", require("./routes/listFacilityRoute")); //list facility route
+app.use("/api/lab-supplies", require("./routes/labSuppliesRoutes")); //lab supplies
+app.use("/api/lab-reagents", require("./routes/labReagentRoutes")); //lab reagents
 
 
 app.use("/api", require("./routes/attendanceRoutes")); // for attendance

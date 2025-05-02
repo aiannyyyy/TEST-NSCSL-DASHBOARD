@@ -224,6 +224,180 @@
       background-color: #f2f2f2;
   }
 
+  /* lab supplies */
+  .lab-supplies-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  .lab-supplies-table th {
+    background-color: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+  }
+  .lab-supplies-table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .lab-low-stock {
+    color: #dc3545;
+    font-weight: 600;
+  }
+  .lab-status-indicator {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  .lab-status-normal {
+    background-color: #28a745;
+  }
+  .lab-status-warning {
+    background-color: #ffc107;
+  }
+  .lab-status-critical {
+    background-color: #dc3545;
+  }
+  .lab-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .lab-stock-legend {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    gap: 15px;
+  }
+  .lab-legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  .lab-search-container {
+    margin-bottom: 15px;
+  }
+  .lab-search-input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .lab-supplies-count {
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-left: 15px;
+    font-size: 14px;
+  }
+  .lab-critical-count {
+    color: #dc3545;
+    font-weight: 600;
+  }
+  .lab-unit-label {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-left: 4px;
+  }
+
+ /* Enhanced reagent styles */
+.reagent-supplies-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.reagent-supplies-table th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.reagent-supplies-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.reagent-low-stock {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.reagent-status-indicator {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.reagent-status-normal {
+  background-color: #28a745;
+}
+
+.reagent-status-warning {
+  background-color: #ffc107;
+}
+
+.reagent-status-critical {
+  background-color: #dc3545;
+}
+
+.reagent-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+}
+
+.reagent-stock-legend {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  gap: 15px;
+}
+
+.reagent-legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.reagent-search-container {
+  margin-bottom: 15px;
+}
+
+.reagent-search-input {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.reagent-supplies-count {
+  background-color: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin-left: 15px;
+  font-size: 14px;
+}
+
+.reagent-critical-count {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.reagent-unit-label {
+  font-size: 0.8em;
+  color: #6c757d;
+  margin-left: 4px;
+}
   </style>
   <body class="with-welcome-text">
     <!--
@@ -782,42 +956,84 @@
                             </div>
                         </div>
                       </div>  
-                      
+                        
+                            <div class="row flex-grow">
+                              <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                                  <div class="card card-rounded">
+                                      <div class="card-body card-rounded">
+                                          <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                              <h4 class="card-title card-title-dash3">
+                                                Cumulative Monthly Census of Samples Received
+                                              </h4>
+                                            </div>
+                                            <!-- Sample Type Selection -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                      type="button" id="cumulativeTypeButton" data-bs-toggle="dropdown">Received</button>
+                                              <div class="dropdown-menu" id="cumulativeTypeDropdown">
+                                                  <a class="dropdown-item" href="#" data-type="Received">Received</a>
+                                                  <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                              </div>
+                                              <button class="btn btn-light btn-lg mb-0" id="showTableButton">Show Table</button>
+                                            </div>
+                                          </div>
+
+                                          <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                            <canvas id="cumulativeSamples"></canvas>
+                                          </div>
+                                        
+                                        <!-- Table Container (Initially Hidden) -->
+                                        <div id="cumulativeTableContainer" class="mt-4" style="display: none;">
+                                          <table class="table table-bordered1">
+                                              <thead>
+                                                  <tr id="tableHeader"></tr>
+                                              </thead>
+                                              <tbody id="tableBody"></tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
                           <div class="row flex-grow">
                             <div class="col-md-12 col-lg-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
                                     <div class="card-body card-rounded">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                           <div>
-                                            <h4 class="card-title card-title-dash3">
-                                              Cumulative Monthly Census of Samples Received
+                                            <h4 class="card-title card-title-dash4">
+                                              Cumulative Annual Census of Samples Received (January)
                                             </h4>
                                           </div>
+
                                           <!-- Sample Type Selection -->
                                           <div class="dropdown d-inline-block mb-2">
-                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                    type="button" id="cumulativeTypeButton" data-bs-toggle="dropdown">Received</button>
-                                            <div class="dropdown-menu" id="cumulativeTypeDropdown">
-                                                <a class="dropdown-item" href="#" data-type="Received">Received</a>
-                                                <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                            <!-- Month Selection -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdown2" data-bs-toggle="dropdown">January</button>
+                                              <div class="dropdown-menu" id="monthDropdown2">
+                                                <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
+                                                <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
+                                                <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
+                                                <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
+                                                <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
+                                                <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
+                                                <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
+                                                <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
+                                                <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
+                                                <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
+                                                <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                              </div>
                                             </div>
-                                            <button class="btn btn-light btn-lg mb-0" id="showTableButton">Show Table</button>
                                           </div>
                                         </div>
 
                                         <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
-                                          <canvas id="cumulativeSamples"></canvas>
+                                          <canvas id="cumulativeAnnualSamples"></canvas>
                                         </div>
-                                      
-                                      <!-- Table Container (Initially Hidden) -->
-                                      <div id="cumulativeTableContainer" class="mt-4" style="display: none;">
-                                        <table class="table table-bordered1">
-                                            <thead>
-                                                <tr id="tableHeader"></tr>
-                                            </thead>
-                                            <tbody id="tableBody"></tbody>
-                                        </table>
-                                      </div>
                                     </div>
                                 </div>
                             </div>
@@ -829,210 +1045,218 @@
                                   <div class="card-body card-rounded">
                                       <div class="d-flex justify-content-between align-items-center mb-3">
                                         <div>
-                                          <h4 class="card-title card-title-dash4">
-                                            Cumulative Annual Census of Samples Received (January)
+                                          <h4 class="card-title card-title-dash5">
+                                            Year to Date Comparison of Unsat Rate (Year 1 VS Year 2)
                                           </h4>
                                         </div>
 
                                         <!-- Sample Type Selection -->
                                         <div class="dropdown d-inline-block mb-2">
-                                          <!-- Month Selection -->
-                                          <div class="dropdown d-inline-block mb-2">
-                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdown2" data-bs-toggle="dropdown">January</button>
-                                            <div class="dropdown-menu" id="monthDropdown2">
-                                              <a class="dropdown-item" href="#" data-month="January">January</a>
-                                              <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
-                                              <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
-                                              <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
-                                              <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
-                                              <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
-                                              <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
-                                              <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
-                                              <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
-                                              <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
-                                              <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
-                                              <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                          <div>
+                                            <!-- Year A Selection -->
+                                            <div class="dropdown d-inline-block">
+                                                <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                        type="button" id="unsat-year1-dropdown" data-bs-toggle="dropdown">2024</button>
+                                                <div class="dropdown-menu" id="unsat-year1-dropdown">
+                                                    <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                    <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                    <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                    <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                    <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                    <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                    <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                    <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                    <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                    <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                    <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                    <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                </div> 
                                             </div>
-                                          </div>
+                                            <span>VS</span>
+                                            <!-- Year B Selection -->
+                                            <div class="dropdown d-inline-block">
+                                                <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                        type="button" id="unsat-year2-dropdown" data-bs-toggle="dropdown">2025</button>
+                                                <div class="dropdown-menu" id="unsat-year2-dropdown">
+                                                    <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                    <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                    <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                    <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                    <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                    <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                    <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                    <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                    <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                    <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                    <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                    <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                    <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                </div> 
+                                            </div>
+                                        </div>
                                         </div>
                                       </div>
 
-                                      <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
-                                        <canvas id="cumulativeAnnualSamples"></canvas>
-                                      </div>
                                   </div>
                               </div>
                           </div>
                       </div>
-
-                      <div class="row flex-grow">
-                        <div class="col-md-12 col-lg-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                                <div class="card-body card-rounded">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                      <div>
-                                        <h4 class="card-title card-title-dash5">
-                                          Year to Date Comparison of Unsat Rate (Year 1 VS Year 2)
-                                        </h4>
-                                      </div>
-
-                                      <!-- Sample Type Selection -->
-                                      <div class="dropdown d-inline-block mb-2">
-                                        <div>
-                                          <!-- Year A Selection -->
-                                          <div class="dropdown d-inline-block">
-                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                      type="button" id="unsat-year1-dropdown" data-bs-toggle="dropdown">2024</button>
-                                              <div class="dropdown-menu" id="unsat-year1-dropdown">
-                                                  <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                  <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                  <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                  <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                  <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                  <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                  <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                  <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                  <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                  <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                  <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                  <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                              </div> 
-                                          </div>
-                                          <span>VS</span>
-                                          <!-- Year B Selection -->
-                                          <div class="dropdown d-inline-block">
-                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
-                                                      type="button" id="unsat-year2-dropdown" data-bs-toggle="dropdown">2025</button>
-                                              <div class="dropdown-menu" id="unsat-year2-dropdown">
-                                                  <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                  <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                  <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                  <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                  <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                  <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                  <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                  <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                  <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                  <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                  <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                  <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                  <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                              </div> 
-                                          </div>
-                                      </div>
-                                      </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                          
-
-                          <div class="row flex-grow">
-                              <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body card-rounded">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="card-title card-title-dash">Sample Title</h4>
-                                        </div>
                         
-                                    </div>
-                                </div>
-                              </div>
-                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+
+                        <div class="col-lg-4 d-flex flex-column">
+                          <!-- Lab Supplies Section -->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h4 class="card-title card-title-dash fw-bold">Sample Title</h4>
-                                        
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                          <h4>Laboratory Supplies</h4>
+                                          <div class="lab-supplies-count">
+                                            Total: <span id="lab-total-count">0</span>
+                                            Critical: <span id="lab-critical-count" class="lab-critical-count">0</span>
+                                          </div>
+                                        </div>
+                                        <div class="lab-search-container">
+                                          <input type="text" id="lab-search-supplies" class="lab-search-input" placeholder="Search supplies...">
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="lab-stock-legend">
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-normal"></span> Normal
+                                        </div>
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-warning"></span> Low
+                                        </div>
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-critical"></span> Critical
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="lab-table-container">
+                                        <table class="lab-supplies-table">
+                                          <thead>
+                                            <tr>
+                                              <th>Status</th>
+                                              <th>Item Code</th>
+                                              <th>Description</th>
+                                              <th>Stock</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="lab-supplies-data">
+                                            <!-- Data will be loaded here -->
+                                            <tr>
+                                              <td colspan="4" style="text-align: center;">Loading laboratory supplies...</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
                                     </div>
-                            
-                                  
+                                  </div>
                                 </div>
-                            </div>        
+                              </div>
                             </div>
                           </div>
-                        </div>
+                          
+                          <!--Reagents Section-->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4>Reagent Supplies</h4>
+                                        <div class="reagent-supplies-count">
+                                          Total: <span id="reagent-total-count">0</span>
+                                          Critical: <span id="reagent-critical-count">0</span> <!-- Fixed typo here -->
+                                        </div>
+                                        <div class="reagent-search-container">
+                                          <input type="text" id="reagent-search-supplies" class="reagent-search-input" placeholder="Search reagents...">
+                                        </div>
+                                      </div>
                         
-
-                          <div class="col-lg-4 d-flex flex-column">
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                                <h3>sample1</h3>
-                                          <div class="add-items d-flex mb-0">
-                                            
-
-                                          </div>
+                                      <div class="reagent-stock-legend">
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-normal"></span> Normal
                                         </div>
-                                        
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-warning"></span> Low
+                                        </div>
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-critical"></span> Critical
+                                        </div>
+                                      </div>
+                        
+                                      <div class="reagent-table-container">
+                                        <table class="reagent-supplies-table">
+                                          <thead>
+                                            <tr>
+                                              <th>Status</th>
+                                              <th>Item Code</th>
+                                              <th>Description</th>
+                                              <th>Stock</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="reagent-supplies-data">
+                                            <tr>
+                                              <td colspan="4" style="text-align: center;">Loading reagent supplies...</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h4>Timeliness of Lab</h4>
-                                        </div>
-                                       
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h3>Sample2</h3>
-                                        </div>
-                                      </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            </div>
-
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                           <h4>sTimelines </h4>
-                                          <div class="d-flex align-items-center">
-                                          </div>
-                                      </div>                                      
-                                        <!-- Scrollable Container -->
-                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
-                                          <!-- Data will be inserted dynamically here -->
-                                        </div>
-                                        <!-- End Scrollable Container -->
-                                      </div>
-                                    </div>
-                                   
-                                  </div>
-                                </div>
-                              </div>
-                            </div>   
                           </div>
+                        
+                        
+                          <!-- Sample2 Section -->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h3>Sample2</h3>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        
+                          <!-- Reagent Section -->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4>Reagent Supplies</h4>
+                                        <div class="d-flex align-items-center">
+                                        </div>
+                                      </div>                                      
+                                      <!-- Scrollable Container -->
+                                      <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
+                                        <!-- Data will be inserted dynamically here -->
+                                      </div>
+                                      <!-- End Scrollable Container -->
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>   
                         </div>
                       </div>
                     </div>
@@ -1093,6 +1317,8 @@
         <script src="/js/cardSummary.js"></script>
         <script src="/js/labTracking.js"></script>
         <script src="/js/neometrics.js"></script>
+        <script src="/js/labSupplies.js"></script>
+        <script src="/js/reagentSupplies.js"></script>
 
         <!-- Custom Scripts (Ensure DOM is ready before running) -->
         <script>
