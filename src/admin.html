@@ -209,9 +209,9 @@
             <div class="collapse" id="nscsl-admin">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="admin.html">Overview</a></li>
-                <li class="nav-item"> <a class="nav-link" href="buttons.html">Accounting</a></li>
-                <li class="nav-item"> <a class="nav-link" href="buttons.html">Supply</a></li>
-                <li class="nav-item"> <a class="nav-link" href="buttons.html">Purchasing</a></li>
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Supply</a></li>
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Purchasing</a></li>
               </ul>
             </div>
           </li>
@@ -368,25 +368,24 @@
                         </div>
                         <div class="col-lg-4 d-flex flex-column">
                           <div class="row flex-grow">
-                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                              <div class="card bg-primary card-rounded">
-                                <div class="card-body pb-0">
-                                  <h4 class="card-title card-title-dash text-white mb-4">Status Summary</h4>
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
                                   <div class="row">
-                                    <div class="col-sm-4">
-                                      <p class="status-summary-ight-white mb-1">Active Facilies</p>
-                                      <h2 class="text-info">700</h2>
-                                    </div>
-                                    <div class="col-sm-4">
-                                      <p class="status-summary-ight-white mb-1">Inactive Facilities</p>
-                                      <h2 class="text-info">357</h2>
-                                    </div>
-                                    <div class="col-sm-4">
-                                      <p class="status-summary-ight-white mb-1">Closed Facilities</p>
-                                      <h2 class="text-info">200</h2>
-                                    </div>
-                                    <div class="col-sm-8">
-                                      <br>
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="card-title card-title-dash">Todo list</h4>
+                                        <div class="add-items d-flex mb-0">
+                                          <button class="add btn btn-icons btn-rounded btn-primary text-white" data-bs-toggle="modal" data-bs-target="#todoModal">
+                                            <i class="mdi mdi-plus"></i>
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="list-wrapper">
+                                        <ul class="todo-list todo-list-rounded" id="todoList">
+                                          <!-- Newly added tasks will appear here -->
+                                        </ul>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
