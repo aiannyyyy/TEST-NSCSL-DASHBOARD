@@ -1,8 +1,30 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let selectedYearA = 2024; // Default previous year
-    let selectedYearB = 2025; // Default current year
+    let selectedYearA = new Date().getFullYear() - 1; // last year
+    let selectedYearB = new Date().getFullYear();     // current year
     let selectedProvince2 = "Batangas"; // Default province
-    let selectedMonthRange = "January"; // Default month selection
+
+    // Get current date and set default month range based on it
+    const today = new Date();
+    const currentMonth = today.getMonth(); // 0-based (0 = January, 1 = February, etc.)
+    
+    // Create the month range string based on current month
+    const monthRanges = [
+        "January",
+        "January-February",
+        "January-March",
+        "January-April",
+        "January-May",
+        "January-June",
+        "January-July",
+        "January-August",
+        "January-September",
+        "January-October",
+        "January-November",
+        "January-December"
+    ];
+    
+    // Set default month range based on current month (0-based index)
+    let selectedMonthRange = monthRanges[currentMonth]; // Default to current month's range
 
     function updateDropdownText2() {
         document.getElementById("yearDropdownBtnA").textContent = selectedYearA;

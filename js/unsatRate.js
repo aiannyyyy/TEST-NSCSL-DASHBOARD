@@ -1,5 +1,5 @@
-let selectedYear1 = 2024;
-let selectedYear2 = 2025;
+let selectedYear1 = new Date().getFullYear() - 1; // last year
+let selectedYear2 = new Date().getFullYear();     // current year
 let unsatChart = null;
 
 document.addEventListener("DOMContentLoaded", function () {

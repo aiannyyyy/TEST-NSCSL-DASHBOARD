@@ -1,8 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let selectedYear = 2025;
-    let selectedMonth = "January";
+    let selectedYear = new Date().getFullYear();
     let selectedType = "Data Entry";  // Default is Data Entry
     let myChart; // Declare myChart globally
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    let selectedMonth = monthNames[new Date().getMonth()]; // ← auto set to current month
 
     updateDropdownText();
     fetchChartData();

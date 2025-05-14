@@ -9,9 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cardTitle = document.querySelector(".card-title-dash1");
 
-    let selectedYearA = "2024";
-    let selectedYearB = "2025";
-    let selectedMonth = "January";
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    let selectedMonth = monthNames[new Date().getMonth()]; // ← auto set to current month
+
+    let selectedYearA = new Date().getFullYear() - 1; // last year
+    let selectedYearB = new Date().getFullYear();     // current year
+
+
 
     function updateTitle() {
         cardTitle.innerHTML = `Comparison of Trend for Daily Received Samples <br> (${selectedMonth} ${selectedYearA} vs. ${selectedMonth} ${selectedYearB})`;

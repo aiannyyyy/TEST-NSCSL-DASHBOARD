@@ -1,6 +1,6 @@
 let myChart;
-let yearA = 2024;
-let yearB = 2025;
+let yearA = new Date().getFullYear() - 1; // last year
+let yearB = new Date().getFullYear();     // current year
 let sampleType = "Received";
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -1,7 +1,38 @@
 document.addEventListener("DOMContentLoaded", async function () {
     const ctx = document.getElementById("cumulativeAnnualSamples")?.getContext("2d");
     let chartInstance;
-    let cumulativeMode = "January"; // Default month selection
+
+    // Get current date and set default month range based on it
+    const today = new Date();
+    const currentMonth = today.getMonth(); // 0-based (0 = January, 1 = February, etc.)
+    
+    // Create the month range string based on current month
+    const monthRanges = [
+        "January",
+        "January-February",
+        "January-March", 
+        "January-April",
+        "January-May",
+        "January-June",
+        "January-July",
+        "January-August",
+        "January-September",
+        "January-October",
+        "January-November",
+        "January-December"
+    ];
+    
+    // Set default month range based on current month (0-based index)
+    let cumulativeMode = monthRanges[currentMonth]; // Default to current month's range
+
+    // Update dropdown button text with default value
+    const monthDropdownBtn = document.getElementById("monthDropdownBtn2");
+    if (monthDropdownBtn) {
+        monthDropdownBtn.textContent = cumulativeMode;
+    } else {
+        console.error("❌ monthDropdown2 button element not found!");
+    }
+
     const titleElement = document.querySelector(".card-title-dash4"); // Title element
 
     async function fetchData() {
@@ -145,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         item.addEventListener("click", function (event) {
             event.preventDefault();
             cumulativeMode = this.getAttribute("data-month");
-            document.getElementById("monthDropdown2").textContent = cumulativeMode;
+            document.getElementById("monthDropdownBtn2").textContent = cumulativeMode;
 
             // Update the chart title based on the selected month range
             titleElement.textContent = `Cumulative Annual Census of Samples Received (${cumulativeMode})`;

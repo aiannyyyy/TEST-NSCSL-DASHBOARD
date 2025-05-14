@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let selectedYear1 = 2024; // Default previous year
-    let selectedYear2 = 2025; // Default current year
+    let selectedYear1 = new Date().getFullYear() - 1; // last year
+    let selectedYear2 = new Date().getFullYear();     // current year
     let selectedProvince = "Batangas"; // Default province
     let selectedMonth = 1; // Default month as a number (1 = January)
 

@@ -1,12 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let selectYear = 2025;
-    let selectMonth = "January";
+    // Set default year to current year
+    let selectYear = new Date().getFullYear();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+    let selectMonth = monthNames[new Date().getMonth()];
+
     let pieChart = null;
 
     function updateDropdownText() {
-        document.getElementById("error-year-dropdown").textContent = selectYear;
-        document.getElementById("error-month-dropdown").textContent = selectMonth;
+        document.getElementById("error-year-dropdown-btn").textContent = selectYear;
+        document.getElementById("error-month-dropdown-btn").textContent = selectMonth;
     }
+
+    // Set initial dropdown text when page loads
+    updateDropdownText();
 
     document.querySelectorAll("#error-year-dropdown .dropdown-item").forEach(item => {
         item.addEventListener("click", function (event) {
@@ -56,18 +63,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // Allows custom sizing
-                    aspectRatio: 0.8, // Adjust this value to resize (1.5 = wider, 0.8 = taller)
+                    maintainAspectRatio: false, 
+                    aspectRatio: 0.8,
                     layout: {
-                        padding: 20 // Adds padding inside the chart
+                        padding: 20 
                     },
                     plugins: {
                         legend: {
-                            position: 'bottom',  // Moves legend below the chart
-                            align: 'center', // Center the legend horizontally
+                            position: 'bottom',
+                            align: 'center',
                             labels: {
                                 font: {
-                                    size: 12 // Adjust the legend font size if necessary
+                                    size: 12
                                 }
                             }
                         },
