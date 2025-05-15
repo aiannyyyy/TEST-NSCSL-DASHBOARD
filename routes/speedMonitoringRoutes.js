@@ -1,3 +1,5 @@
+
+/*
 const express = require("express");
 const router = express.Router();
 const getOracleConnection = require("../config/oracleConnection");
@@ -62,6 +64,121 @@ router.get("/", async (req, res) => {
                 u."FIRSTNAME", TO_CHAR(sa."DTRECV", 'YYYY-MM')
             ORDER BY 
                 u."FIRSTNAME", month
+        `;
+
+        connection = await getOracleConnection();
+
+        const result = await connection.execute(
+            query,
+            { startDate, endDate: formattedEndDate },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        res.json({ data: result.rows });
+
+    } catch (error) {
+        console.error("❌ Error:", error);
+        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error("❌ Error closing connection:", err);
+            }
+        }
+    }
+});
+
+module.exports = router;
+
+*/
+
+const express = require("express");
+const router = express.Router();
+const getOracleConnection = require("../config/oracleConnection");
+const oracledb = require("oracledb");
+
+router.get("/", async (req, res) => {
+    let connection;
+
+    try {
+        const { year, month, type } = req.query;
+
+        if (!year || !month || !type) {
+            return res.status(400).json({ error: "Missing required query parameters: year, month, and type" });
+        }
+
+        const monthNum = parseInt(month, 10);
+        const startDate = `${year}-${month.padStart(2, '0')}-01 00:00:00`;
+        const lastDay = new Date(year, monthNum, 0).getDate();
+        const formattedEndDate = `${year}-${month.padStart(2, '0')}-${lastDay} 23:59:59`;
+
+        const columnMap = {
+            entry: {
+                techColumn: `"INIT_TECH"`,
+                startColumn: `"INIT_START"`,
+                endColumn: `"INIT_END"`
+            },
+            verification: {
+                techColumn: `"VER_TECH"`,
+                startColumn: `"VER_START"`,
+                endColumn: `"VER_END"`
+            }
+        };
+
+        const cols = columnMap[type.toLowerCase()];
+        if (!cols) {
+            return res.status(400).json({ error: "Invalid type. Use 'entry' or 'verification'." });
+        }
+
+        const query = `
+            WITH combined_data AS (
+                SELECT 
+                    u."FIRSTNAME",
+                    TO_CHAR(sa."DTRECV", 'YYYY-MM') AS month,
+                    ROUND(AVG((sa.${cols.endColumn} - sa.${cols.startColumn}) * 86400)) AS avg_seconds,
+                    COUNT(sa."LABNO") AS sample_count
+                FROM 
+                    "PHMSDS"."SAMPLE_DEMOG_ARCHIVE" sa
+                JOIN 
+                    "PHSECURE"."USERS" u ON sa.${cols.techColumn} = u."USER_ID"
+                WHERE 
+                    sa."DTRECV" >= TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND
+                    sa."DTRECV" <= TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') AND
+                    u."FIRSTNAME" IN ('ABIGAIL', 'ANGELICA', 'JAY ARR', 'Mary Rose')
+                GROUP BY 
+                    u."FIRSTNAME", TO_CHAR(sa."DTRECV", 'YYYY-MM')
+
+                UNION ALL
+
+                SELECT 
+                    u."FIRSTNAME",
+                    TO_CHAR(sm."DTRECV", 'YYYY-MM') AS month,
+                    ROUND(AVG((sm.${cols.endColumn} - sm.${cols.startColumn}) * 86400)) AS avg_seconds,
+                    COUNT(sm."LABNO") AS sample_count
+                FROM 
+                    "PHMSDS"."SAMPLE_DEMOG_MASTER" sm
+                JOIN 
+                    "PHSECURE"."USERS" u ON sm.${cols.techColumn} = u."USER_ID"
+                WHERE 
+                    sm."DTRECV" >= TO_TIMESTAMP(:startDate, 'YYYY-MM-DD HH24:MI:SS') AND
+                    sm."DTRECV" <= TO_TIMESTAMP(:endDate, 'YYYY-MM-DD HH24:MI:SS') AND
+                    u."FIRSTNAME" IN ('ABIGAIL', 'ANGELICA', 'JAY ARR', 'Mary Rose')
+                GROUP BY 
+                    u."FIRSTNAME", TO_CHAR(sm."DTRECV", 'YYYY-MM')
+            )
+            SELECT 
+                FIRSTNAME,
+                month,
+                ROUND(SUM(avg_seconds * sample_count) / NULLIF(SUM(sample_count), 0)) AS monthly_avg_init_time_seconds,
+                SUM(sample_count) AS total_samples
+            FROM 
+                combined_data
+            GROUP BY 
+                FIRSTNAME, month
+            ORDER BY 
+                FIRSTNAME, month
         `;
 
         connection = await getOracleConnection();
