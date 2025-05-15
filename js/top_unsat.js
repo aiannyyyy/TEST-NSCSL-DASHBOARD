@@ -1,3 +1,5 @@
+
+/*
 $(document).ready(function () {
     // Default view: By Numbers
     fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59", "numbers");
@@ -8,6 +10,19 @@ $(document).ready(function () {
         fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59", selectedType);
     });
 });
+
+*/
+
+$(document).ready(function () {
+    const { from, to } = getDefaultDateRange();
+    fetchTopUnsatisfactoryContributors(from, to, "numbers");
+
+    $("input[name='btnradio']").change(function () {
+        let selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
+        fetchTopUnsatisfactoryContributors(from, to, selectedType);
+    });
+});
+
 
 function fetchTopUnsatisfactoryContributors(fromDate, toDate, type) {
     let requestUrl =

@@ -3,7 +3,7 @@ $(document).ready(function () {
     fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59");
 });
 
-// ✅ Function to set default dates
+/* ✅ Function to set default dates
 function setDefaultDates() {
     let defaultFrom = "2025-01-01T00:00";
     let defaultTo = "2025-01-31T23:59";
@@ -11,6 +11,44 @@ function setDefaultDates() {
     $("#dateTimeFrom").val(defaultFrom);
     $("#dateTimeTo").val(defaultTo);
 }
+
+*/
+
+function updateMonthYearLabel(dateStr) {
+    const date = new Date(dateStr);
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+    $(".selected-month-year").text(`For the month of ${month} ${year}`);
+}
+
+
+function setDefaultDates() {
+    const now = new Date();
+    const firstDay = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01T00:00`;
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0); // last day of the month
+    const lastDayFormatted = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, "0")}-${String(lastDay.getDate()).padStart(2, "0")}T23:59`;
+
+    $("#dateTimeFrom").val(firstDay);
+    $("#dateTimeTo").val(lastDayFormatted);
+
+    // ✅ Update header text
+    updateMonthYearLabel(firstDay);
+}
+
+
+
+function getDefaultDateRange() {
+    let now = new Date();
+    let firstDay = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0);
+    let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59);
+
+    let formattedFrom = `${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-${String(firstDay.getDate()).padStart(2, '0')} 00:00`;
+    let formattedTo = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')} 23:59`;
+
+    return { from: formattedFrom, to: formattedTo };
+}
+
+
 
 // ✅ Reset defaults when modal is opened
 $("#dateRangeModal").on("show.bs.modal", function () {
@@ -40,7 +78,8 @@ function applyDateFilter() {
     let year = fromDateObj.getFullYear();
 
     // ✅ Update the header text dynamically
-    $(".selected-month-year").text(`For the month of ${month} ${year}`);
+    updateMonthYearLabel(fromDate);
+
 
     // ✅ Get selected radio button (numbers or percentages)
     let selectedType = $("input[name='btnradio']:checked").attr("id") === "btnradio1" ? "numbers" : "percentages";
