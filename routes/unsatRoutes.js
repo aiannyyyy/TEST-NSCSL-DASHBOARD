@@ -39,7 +39,7 @@ router.get("/top-unsatisfactory", async (req, res) => {
                     ON ra."MNEMONIC" = ldr."MNEMONIC"
                 WHERE 
                     rpa."ADRS_TYPE" = '1'
-                    AND ldr."MNEMONIC" IN ('DE', 'INS', 'E101', 'E100', 'E102', 'E103', 'E107', 'E109', 'UD', 'ODC', 'NDE', 'NE', 'E108')
+                    AND ldr."MNEMONIC" IN ('DE', 'INS', 'E101', 'E100', 'E102', 'E103', 'E107', 'E109', 'UD', 'ODC', 'NE', 'E108')
                     AND sda."LABNO" NOT LIKE '_______8%'
                     AND sda."DTRECV" >= TO_DATE(:date_from, 'YYYY-MM-DD HH24:MI:SS')
                     AND sda."DTRECV" <= TO_DATE(:date_to, 'YYYY-MM-DD HH24:MI:SS')

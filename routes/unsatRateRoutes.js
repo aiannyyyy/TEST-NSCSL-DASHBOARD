@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
             TO_CHAR(sda.DTRECV, 'YYYY-MM') AS month,
             ROUND(
                 COUNT(DISTINCT CASE 
-                    WHEN ra.MNEMONIC IN ('DE', 'E101', 'E100', 'E102', 'E103', 'E107', 'E109', 'UD', 'ODC', 'NDE', 'NE', 'E108') 
+                    WHEN ra.MNEMONIC IN ('DE', 'E101', 'E100', 'E102', 'E103', 'E107', 'E109', 'UD', 'ODC', 'NE', 'E108') 
                         AND sda.SPECTYPE IN (20, 87, 1, 18)
                     THEN sda.LABNO 
                 END) / NULLIF(COUNT(DISTINCT CASE 

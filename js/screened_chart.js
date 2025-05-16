@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedYear1 = new Date().getFullYear() - 1; // last year
     let selectedYear2 = new Date().getFullYear();     // current year
     let selectedProvince = "Batangas"; // Default province
-    let selectedMonth = "January"; // Default month
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    let selectedMonth = monthNames[new Date().getMonth()]; // ← auto set to current month
 
     function updateDropdownText() {
         document.getElementById("yearDropdownBtn1").textContent = selectedYear1;

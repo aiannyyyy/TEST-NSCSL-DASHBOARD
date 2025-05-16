@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedYear1 = new Date().getFullYear() - 1; // last year
     let selectedYear2 = new Date().getFullYear();     // current year
     let selectedProvince = "Batangas"; // Default province
-    let selectedMonth = 1; // Default month as a number (1 = January)
+    // Set the selected month based on today's date
+    let selectedMonth = new Date().getMonth() + 1;
 
     // Month name to number mapping
     const monthMap = {
