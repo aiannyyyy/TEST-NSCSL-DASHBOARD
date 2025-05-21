@@ -1017,26 +1017,91 @@
                         </div>
 
                           <div class="row flex-grow">
-                              <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body card-rounded">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="card-title card-title-dash">Events</h4>
-                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: blac;">Add New Event</button>
+                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body card-rounded">
+                                  <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title card-title-dash">Notebook</h4>
+                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Add Notebook</button>
+                                  </div>
+                                  <!-- Add Notebook Modal -->
+                                  <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="addEventModalLabel">Search Criteria</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div id="eventsList">
-                                            <!-- Event items will be dynamically added here -->
-                                        </div>
-                                        <div class="list align-items-center pt-3">
-                                            <div class="wrapper w-100">
-                                                <p class="mb-0">
-                                                    <a href="#" class="fw-bold text-primary" data-bs-toggle="modal" data-bs-target="#viewAllEventsModal" onclick="showAllEvents()">Show all</a>
-                                                </p>
+                                        <div class="modal-body">
+                                          <div class="row">
+                                            <!-- Left Side: Form -->
+                                            <div class="col-md-6">
+                                              <div class="alert alert-info mb-3">
+                                                <small>Enter search criteria in one or more fields below.</small>
+                                              </div>
+                                              <form id="notebookForm">
+                                                <div class="mb-3">
+                                                  <label for="labno" class="form-label">Lab Number</label>
+                                                  <input type="text" class="form-control search-field" id="labno" name="labno">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                  <label for="labid" class="form-label">Filter Card Number</label>
+                                                  <input type="text" class="form-control search-field" id="labid" name="labid">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                  <label for="fname" class="form-label">First Name</label>
+                                                  <input type="text" class="form-control search-field" id="fname" name="fname">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                  <label for="lname" class="form-label">Last Name</label>
+                                                  <input type="text" class="form-control search-field" id="lname" name="lname">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                  <label for="submid" class="form-label">Facility Code</label>
+                                                  <input type="text" class="form-control search-field" id="submid" name="submid">
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                  <button type="submit" class="btn btn-primary text-white search-button" disabled>Search</button>
+                                                  <button type="button" class="btn btn-danger text-white reset-button">Reset</button>
+                                                </div>
+                                              </form>
                                             </div>
+
+                                            <!-- Right Side: Table -->
+                                            <div class="col-md-6">
+                                              <div class="table-responsive mt-2" style="max-height: 500px; overflow-y: auto;">
+                                                <table id="notebookTable" class="table table-sm table-bordered table-striped">
+                                                  <thead>
+                                                    <tr>
+                                                      <th>Lab No</th>
+                                                      <th>Filter Card No</th>
+                                                      <th>First Name</th>
+                                                      <th>Last Name</th>
+                                                      <th>Gender</th>
+                                                      <th>DOB</th>
+                                                      <th>Birth Weight</th>
+                                                      <th>Facility Code</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    <!-- Results will appear here -->
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
+                                      </div>
                                     </div>
+                                  </div>
                                 </div>
                               </div>
+                            </div>
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body">
@@ -1129,59 +1194,7 @@
                             </div>
                           </div>
                         </div>
-                        <!-- Add Event Modal -->
-                        <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                      <form id="eventForm">
-                                          <div class="mb-3">
-                                              <label class="form-label">Event Name</label>
-                                              <input type="text" class="form-control" id="eventName" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Location</label>
-                                              <input type="text" class="form-control" id="eventLocation" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Date & Time</label>
-                                              <input type="datetime-local" class="form-control" id="eventDateTime" required>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Description</label>
-                                              <textarea class="form-control" id="eventDescription" required></textarea>
-                                          </div>
-                                          <div class="mb-3">
-                                              <label class="form-label">Event Host</label>
-                                              <input type="text" class="form-control" id="eventHost" required>
-                                          </div>
-                                          <button type="button" class="btn btn-white text-dark fw-bold" onclick="addEvent()">Add Event</button>
-                                      </form>
-                                  </div>
-                              </div>
-                          </div>
-                        </div>
-
-                        <!-- View All Events Modal -->
-                        <div class="modal fade" id="viewAllEventsModal" tabindex="-1" aria-labelledby="viewAllEventsModalLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-lg">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="viewAllEventsModalLabel">All Events</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                      <div id="allEventsList">
-                                          <!-- All events will be dynamically displayed here -->
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                        </div>
+                      
                                                                         <!--
                         <div class="col-lg-4 d-flex flex-column">
                           <div class="row flex-grow">
@@ -1628,6 +1641,7 @@
     <script src="/js/julianDate.js"></script>
     <script src="/js/reportGen.js"></script>
     <script src="/js/timeliness.js"></script>
+    <script src="/js/patient_notebook.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
