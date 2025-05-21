@@ -142,6 +142,23 @@
   color: black !important;
 }
 
+#notebookTable tbody tr:hover {
+  background-color: #e0f0ff; /* Light blue background on hover */
+  color: blue; /* Text color blue on hover */
+  cursor: pointer; /* Show pointer cursor to indicate it's clickable */
+}
+
+table.table-sm td {
+  padding: 6px 12px;
+  vertical-align: top;
+}
+table.table-sm td:first-child {
+  font-weight: bold;
+  width: 200px;
+  white-space: nowrap;
+}
+
+
   </style>
   <body class="with-welcome-text">
     <!--
@@ -1017,6 +1034,7 @@
                         </div>
 
                           <div class="row flex-grow">
+                            <!-- Your existing notebook card, modals and table -->
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                               <div class="card card-rounded">
                                 <div class="card-body card-rounded">
@@ -1024,77 +1042,156 @@
                                     <h4 class="card-title card-title-dash">Notebook</h4>
                                     <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Add Notebook</button>
                                   </div>
-                                  <!-- Add Notebook Modal -->
+
+                                  <!-- Search Modal -->
                                   <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
                                       <div class="modal-content rounded-3">
                                         <div class="modal-header">
                                           <h5 class="modal-title" id="addEventModalLabel">Search Criteria</h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                          <div class="row">
-                                            <!-- Left Side: Form -->
-                                            <div class="col-md-6">
-                                              <div class="alert alert-info mb-3">
-                                                <small>Enter search criteria in one or more fields below.</small>
-                                              </div>
-                                              <form id="notebookForm">
-                                                <div class="mb-3">
-                                                  <label for="labno" class="form-label">Lab Number</label>
-                                                  <input type="text" class="form-control search-field" id="labno" name="labno">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                  <label for="labid" class="form-label">Filter Card Number</label>
-                                                  <input type="text" class="form-control search-field" id="labid" name="labid">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                  <label for="fname" class="form-label">First Name</label>
-                                                  <input type="text" class="form-control search-field" id="fname" name="fname">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                  <label for="lname" class="form-label">Last Name</label>
-                                                  <input type="text" class="form-control search-field" id="lname" name="lname">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                  <label for="submid" class="form-label">Facility Code</label>
-                                                  <input type="text" class="form-control search-field" id="submid" name="submid">
-                                                </div>
-
-                                                <div class="d-flex gap-2">
-                                                  <button type="submit" class="btn btn-primary text-white search-button" disabled>Search</button>
-                                                  <button type="button" class="btn btn-danger text-white reset-button">Reset</button>
-                                                </div>
-                                              </form>
+                                          <div class="alert alert-info mb-3">
+                                            <small>Enter search criteria in one or more fields below.</small>
+                                          </div>
+                                          <form id="notebookForm">
+                                            <div class="mb-2">
+                                              <label for="labno" class="form-label">Lab Number</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="labno" name="labno" style="max-width: 100%;">
                                             </div>
+                                            <div class="mb-2">
+                                              <label for="labid" class="form-label">Filter Card Number</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="labid" name="labid" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-2">
+                                              <label for="fname" class="form-label">First Name</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="fname" name="fname" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-2">
+                                              <label for="lname" class="form-label">Last Name</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="lname" name="lname" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-3">
+                                              <label for="submid" class="form-label">Facility Code</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="submid" name="submid" style="max-width: 100%;">
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                              <button type="submit" class="btn btn-primary btn-sm text-white search-button" disabled>Search</button>
+                                              <button type="button" class="btn btn-danger btn-sm text-white reset-button">Reset</button>
+                                            </div>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
 
-                                            <!-- Right Side: Table -->
-                                            <div class="col-md-6">
-                                              <div class="table-responsive mt-2" style="max-height: 500px; overflow-y: auto;">
-                                                <table id="notebookTable" class="table table-sm table-bordered table-striped">
-                                                  <thead>
-                                                    <tr>
-                                                      <th>Lab No</th>
-                                                      <th>Filter Card No</th>
-                                                      <th>First Name</th>
-                                                      <th>Last Name</th>
-                                                      <th>Gender</th>
-                                                      <th>DOB</th>
-                                                      <th>Birth Weight</th>
-                                                      <th>Facility Code</th>
-                                                    </tr>
-                                                  </thead>
+                                  <!-- Results Modal -->
+                                  <div class="modal fade" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 90vw;">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header d-flex justify-content-between align-items-center">
+                                          <h5 class="modal-title" id="resultsModalLabel">Search Results</h5>
+                                          <div>
+                                            <button type="button" class="btn btn-secondary btn-sm me-2 text-white" id="backToSearchBtn">Back to Search</button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                            <table id="notebookTable" class="table table-sm table-bordered table-striped">
+                                              <thead>
+                                                <tr>
+                                                  <th>Lab No</th>
+                                                  <th>Filter Card No</th>
+                                                  <th>First Name</th>
+                                                  <th>Last Name</th>
+                                                  <th>Gender</th>
+                                                  <th>DOB</th>
+                                                  <th>Birth Weight</th>
+                                                  <th>Facility Code</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <!-- Results will appear here -->
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Details Modal -->
+                                  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="detailsModalLabel">Notebook Details</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="container-fluid">
+                                            <div class="row">
+                                              <!-- Left Section: Table -->
+                                              <div class="col-md-5"> <!-- Adjust width to take less space -->
+                                                <table class="table table-bordered table-sm" style="font-size: 13px;">
+                                                  <colgroup>
+                                                    <col style="width: 40%;"> <!-- Label column -->
+                                                    <col style="width: 60%;"> <!-- Value column -->
+                                                  </colgroup>
                                                   <tbody>
-                                                    <!-- Results will appear here -->
+                                                    <tr><th>Lab No</th><td id="detailLabNo"></td></tr>
+                                                    <tr><th>Form No</th><td id="detailFormNo"></td></tr>
+                                                    <tr><th>Last Name</th><td id="detailLName"></td></tr>
+                                                    <tr><th>First Name</th><td id="detailFName"></td></tr>
+                                                    <tr><th>Birth</th><td id="detailDOB"></td></tr>
+                                                    <tr><th>Collection</th><td id="detailDOC"></td></tr>
+                                                    <tr><th>Specimen Type</th><td id="detailSpectype"></td></tr>
+                                                    <tr><th>Milk Type</th><td id="detailMilkType"></td></tr>
+                                                    <tr><th>Sex</th><td id="detailSex"></td></tr>
+                                                    <tr><th>Birth Weight</th><td id="detailBirthWt"></td></tr>
+                                                    <tr><th>Birth Order</th><td id="detailBirthOrder"></td></tr>
+                                                    <tr><th>Blood Transfused</th><td id="detailBloodTransfused"></td></tr>
+                                                    <tr><th>Transfused Date</th><td id="detailTransfusedDate"></td></tr>
+                                                    <tr><th>Gestation Age</th><td id="detailGestationAge"></td></tr>
+                                                    <tr><th>Specimen Age</th><td id="detailSpecimenAge"></td></tr>
+                                                    <tr><th>Age at Collection</th><td id="detailAgeAtCollection"></td></tr>
+                                                    <tr><th>Date Received</th><td id="detailDateReceived"></td></tr>
+                                                    <tr><th>Date Reported</th><td id="detailDateReported"></td></tr>
+                                                    <tr><th>Clinical Status</th><td id="detailClinicalStatus"></td></tr>
+                                                    <tr><th>Physician ID</th><td id="detailPhysicianId"></td></tr>
+                                                    <tr><th>Birth Hospital ID</th><td id="detailBirthHospId"></td></tr>
+                                                    <tr><th>Birth Hospital Name</th><td id="detailBirthHospName"></td></tr>
+                                                    <tr><th>Facility Code</th><td id="detailSubmId"></td></tr>
                                                   </tbody>
                                                 </table>
                                               </div>
+
+                                            <div class="col-md-7">
+                                              <div class="table-responsive">
+                                                <table id="resultsDetailsTable" class="table table-bordered table-sm text-center" style="font-size: 13px;">
+                                                  <thead class="table-light">
+                                                    <tr>
+                                                      <th>Group</th>
+                                                      <th>Disorder</th>
+                                                      <th>Mnemonic</th>
+                                                      <th>Result</th>
+                                                      <th>Text</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody></tbody> <!-- Added tbody for dynamic content -->
+                                                </table>
+                                              </div>
+                                            </div>
+
+
                                             </div>
                                           </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary text-white" id="backToTableBtn">Back to Table</button>
+                                          <button type="button" class="btn btn-primary text-white" id="backToSearchFromDetailsBtn">Back to Search</button>
                                         </div>
                                       </div>
                                     </div>
@@ -1642,6 +1739,7 @@
     <script src="/js/reportGen.js"></script>
     <script src="/js/timeliness.js"></script>
     <script src="/js/patient_notebook.js"></script>
+    <script src="/js/patient_details.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 

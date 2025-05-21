@@ -79,8 +79,6 @@ router.get("/", async (req, res) => {
                 ${tableAlias}."SUBMID",
                 RPA."DESCR1",
                 SN."NOTES"
-            ORDER BY
-                ${tableAlias}."LABNO" DESC
         `;
 
         const queryArchive = queryBase("SD", "SAMPLE_DEMOG_ARCHIVE");
