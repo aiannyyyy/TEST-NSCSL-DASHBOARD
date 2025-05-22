@@ -70,6 +70,8 @@ app.use("/api/patient-info", require("./routes/patient_notebookRoutes")); // for
 app.use("/api/patient-details", require("./routes/patient-detailsRoutes")); // for patient details
 app.use("/api", require("./routes/notebookRoutes")); // for patient details
 
+app.use("/api/notebook-query", require("./routes/notebookQuery")); // for patient details
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log error

@@ -170,7 +170,43 @@ table.table-sm td:first-child {
   margin-bottom: 0.4rem;
 }
 
+/*
+ #resultsModal .modal-content {
+    font-size: 13px;
+  }
 
+  #notebookTable {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  #notebookTable th,
+  #notebookTable td {
+    padding: 4px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+
+  #notebookTable th:nth-child(1),
+  #notebookTable td:nth-child(1) { width: 110px; }
+  #notebookTable th:nth-child(2),
+  #notebookTable td:nth-child(2) { width: 100px; }
+  #notebookTable th:nth-child(3),
+  #notebookTable td:nth-child(3) { width: 100px; }
+  #notebookTable th:nth-child(4),
+  #notebookTable td:nth-child(4) { width: 100px; }
+  #notebookTable th:nth-child(5),
+  #notebookTable td:nth-child(5) { width: 80px; }
+  #notebookTable th:nth-child(6),
+  #notebookTable td:nth-child(6) { width: 100px; }
+  #notebookTable th:nth-child(7),
+  #notebookTable td:nth-child(7) { width: 90px; }
+  #notebookTable th:nth-child(8),
+  #notebookTable td:nth-child(8) { width: 90px; }
+*/
   </style>
   <body class="with-welcome-text">
     <!--
@@ -1055,6 +1091,10 @@ table.table-sm td:first-child {
                                     <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Online Search</button>
                                   </div>
 
+                                  <div class="displayInfo">
+                                    <h1>Testing</h1>
+                                  </div>
+
                                   <!-- Search Modal -->
                                   <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-md modal-dialog-centered">
@@ -1100,7 +1140,7 @@ table.table-sm td:first-child {
 
                                   <!-- Results Modal -->
                                   <div class="modal fade" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 90vw;">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 55vw;">
                                       <div class="modal-content rounded-3">
                                         <div class="modal-header d-flex justify-content-between align-items-center">
                                           <h5 class="modal-title" id="resultsModalLabel">Search Results</h5>
@@ -1147,7 +1187,7 @@ table.table-sm td:first-child {
                                             <div class="row">
                                               <!-- Left Section: Table -->
                                               <div class="col-md-5">
-                                                <table class="table table-bordered table-sm" style="font-size: 13px;">
+                                                <table class="table table-bordered table-sm text-center" style="font-size: 13px;">
                                                   <colgroup>
                                                     <col style="width: 40%;">
                                                     <col style="width: 60%;">
@@ -1201,7 +1241,13 @@ table.table-sm td:first-child {
                                                 <div class="mt-3 p-2 border rounded" style="font-size: 13px;">
                                                   <h5>Notebook Details</h5>
                                                   <div id="notebookContainer" style="max-height: 350px; overflow-y: auto;">
-
+                                                    <!-- Existing notebook entries will be displayed here -->
+                                                  </div>
+                                                  <!-- Add Notebook Button -->
+                                                  <div class="mt-3 d-flex justify-content-end">
+                                                    <button type="button" class="btn btn-primary btn-sm text-white" id="openAddNotebookBtn" data-bs-toggle="modal" data-bs-target="#addNotebookModal">
+                                                      Add Notebook
+                                                    </button>
                                                   </div>
                                                 </div>
                                                 <!-- End of Specimen Detail Section -->
@@ -1213,6 +1259,33 @@ table.table-sm td:first-child {
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary text-white" id="backToTableBtn">Back to Table</button>
                                           <button type="button" class="btn btn-primary text-white" id="backToSearchFromDetailsBtn">Back to Search</button>
+                                        </div>
+                                        
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Add Notebook Modal -->
+                                  <div class="modal fade" id="addNotebookModal" tabindex="-1" aria-labelledby="addNotebookModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="addNotebookModalLabel">Add Notebook Entry</h5>
+                                          <!-- Close button in modal header -->
+                                          <button type="button" class="btn-close" id="closeAddNotebookBtn" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <form id="addNotebookForm">
+                                            <div class="mb-3">
+                                              <label for="notebookNotes" class="form-label">Notes</label>
+                                              <textarea class="form-control" id="notebookNotes" name="notebookNotes" rows="6" placeholder="Enter your notes here..."></textarea>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <!-- Cancel button in modal footer -->
+                                          <button type="button" class="btn btn-secondary text-white" id="cancelAddNotebookBtn">Cancel</button>
+                                          <button type="button" class="btn btn-primary text-white" id="saveNotebookBtn">Save Changes</button>
                                         </div>
                                       </div>
                                     </div>
@@ -1763,6 +1836,7 @@ table.table-sm td:first-child {
     <script src="/js/patient_notebook.js"></script>
     <script src="/js/patient_details.js"></script>
     <script src="/js/notebook-details.js"></script>
+    <script src="/js/addNotebook.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
