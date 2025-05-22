@@ -1,8 +1,10 @@
 // Function to fetch and display patient details
 async function fetchPatientDetails(labno, labid) {
-  // Show loading state
+  console.log("🔍 fetchPatientDetails called with:", { labno, labid });
+  
   const detailsBody = document.querySelector("#detailsModal .modal-body");
   const originalContent = detailsBody.innerHTML;
+
   detailsBody.innerHTML = `
     <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
       <div class="spinner-border text-primary" role="status">
@@ -13,59 +15,59 @@ async function fetchPatientDetails(labno, labid) {
   `;
 
   try {
-    // Fetch patient details using your existing route with labno and labid params
     const response = await fetch(`http://localhost:3000/api/patient-details?labno=${labno}&labid=${labid}`);
-    
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || "Failed to fetch patient details");
     }
-    
+
     const data = await response.json();
-    
+    console.log("📋 Patient data received:", data);
+
     if (data.length === 0) {
       detailsBody.innerHTML = originalContent;
       alert("No details found for this patient.");
       return;
     }
-    
-    // Use the first record for general patient info
+
     const patientInfo = data[0];
+    console.log("👤 Patient info:", { 
+      fname: patientInfo.FNAME, 
+      lname: patientInfo.LNAME,
+      labno: patientInfo.LABNO 
+    });
     
-    // Restore original content first
     detailsBody.innerHTML = originalContent;
-    
-    // Update all the detail fields
+
+    // Basic Info
     document.getElementById("detailLabNo").textContent = patientInfo.LABNO || "";
     document.getElementById("detailFormNo").textContent = patientInfo.LABID || "";
     document.getElementById("detailLName").textContent = patientInfo.LNAME || "";
     document.getElementById("detailFName").textContent = patientInfo.FNAME || "";
-    
-    // Format date of birth (combine BIRTHDT and BIRTHTM)
+
     const birthDate = patientInfo.BIRTHDT ? new Date(patientInfo.BIRTHDT).toLocaleDateString() : "";
     const birthTime = patientInfo.BIRTHTM || "";
     document.getElementById("detailDOB").textContent = birthTime ? `${birthDate} ${birthTime}` : birthDate;
-    
-    // Format date of collection (combine DTCOLL and TMCOLL)
+
     const collectionDate = patientInfo.DTCOLL ? new Date(patientInfo.DTCOLL).toLocaleDateString() : "";
     const collectionTime = patientInfo.TMCOLL || "";
     document.getElementById("detailDOC").textContent = collectionTime ? `${collectionDate} ${collectionTime}` : collectionDate;
-    
-    document.getElementById("detailSpectype").textContent = patientInfo.SPECTYPE === "1" ? "NBS-5 test" : patientInfo.SPECTYPE === "2" ? "Repeat Unsat" : patientInfo.SPECTYPE === "3" ? "Repeat Abnormal" : patientInfo.SPECTYPE === "4" ? "Repeat Normal" : patientInfo.SPECTYPE === "5" ? "Monitoring" : patientInfo.SPECTYPE === "6" ? "ARCHIVED" : patientInfo.SPECTYPE === "8" ? "QC (G6PD)" : patientInfo.SPECTYPE === "9" ? "PT Samples (CDC)" : patientInfo.SPECTYPE === "18" ? "NBS 5 +LEU" : patientInfo.SPECTYPE === "20" ? "ENBS" : patientInfo.SPECTYPE === "21" ? "Other Disorders" : patientInfo.SPECTYPE === "22" ? "Rpt-ENBS" : patientInfo.SPECTYPE === "87" ? "Unfit" : patientInfo.SPECTYPE === "96" ? "Serum": "";
+
+    document.getElementById("detailSpectype").textContent = {
+      "1": "NBS-5 test", "2": "Repeat Unsat", "3": "Repeat Abnormal", "4": "Repeat Normal",
+      "5": "Monitoring", "6": "ARCHIVED", "8": "QC (G6PD)", "9": "PT Samples (CDC)",
+      "18": "NBS 5 +LEU", "20": "ENBS", "21": "Other Disorders", "22": "Rpt-ENBS",
+      "87": "Unfit", "96": "Serum"
+    }[patientInfo.SPECTYPE] || "";
+
     document.getElementById("detailMilkType").textContent = patientInfo.MILKTYPE || "";
     document.getElementById("detailSex").textContent = patientInfo.SEX === "1" ? "Male" : patientInfo.SEX === "2" ? "Female" : "";
     document.getElementById("detailBirthWt").textContent = patientInfo.BIRTHWT || "";
-    
-    // Handle birth order - might not be in your data
     document.getElementById("detailBirthOrder").textContent = patientInfo.BIRTHORDER || "";
-    
-    // Handle transfusion info
     document.getElementById("detailBloodTransfused").textContent = patientInfo.TRANSFUS ? "Yes" : "No";
     document.getElementById("detailTransfusedDate").textContent = patientInfo.TRANSFUSDT ? new Date(patientInfo.TRANSFUSDT).toLocaleDateString() : "";
-    
     document.getElementById("detailGestationAge").textContent = patientInfo.GESTAGE || "";
-    
-    // Calculate specimen age if both dates are available
+
     let specimenAge = "";
     if (patientInfo.DTRECV && patientInfo.DTCOLL) {
       const receivedDate = new Date(patientInfo.DTRECV);
@@ -75,7 +77,7 @@ async function fetchPatientDetails(labno, labid) {
       specimenAge = `${diffDays} days`;
     }
     document.getElementById("detailSpecimenAge").textContent = specimenAge;
-    
+
     document.getElementById("detailAgeAtCollection").textContent = patientInfo.AGECOLL || "";
     document.getElementById("detailDateReceived").textContent = patientInfo.DTRECV ? new Date(patientInfo.DTRECV).toLocaleDateString() : "";
     document.getElementById("detailDateReported").textContent = patientInfo.DTRPTD ? new Date(patientInfo.DTRPTD).toLocaleDateString() : "";
@@ -85,80 +87,312 @@ async function fetchPatientDetails(labno, labid) {
     document.getElementById("detailBirthHospName").textContent = patientInfo.PROVIDER_DESCR1 || "";
     document.getElementById("detailSubmId").textContent = patientInfo.SUBMID || "";
 
-    // Populate the result details table
+    // Populate results table
     const resultTableBody = document.querySelector("#resultsDetailsTable tbody");
-    resultTableBody.innerHTML = ""; // Clear existing rows
+    if (resultTableBody) {
+      resultTableBody.innerHTML = "";
 
-    data.forEach((item) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${item.GROUP_NAME || ""}</td>
-        <td>${item.DISORDER_NAME || ""}</td>
-        <td>${item.MNEMONIC || ""}</td>
-        <td>${item.DESCR1 || ""}</td>
-        <td>${item.DISORDERRESULTTEXT || ""}</td>
-      `;
-      resultTableBody.appendChild(row);
-    });
+      data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.GROUP_NAME || ""}</td>
+          <td>${item.DISORDER_NAME || ""}</td>
+          <td>${item.MNEMONIC || ""}</td>
+          <td>${item.DESCR1 || ""}</td>
+          <td>${item.DISORDERRESULTTEXT || ""}</td>
+        `;
+        resultTableBody.appendChild(row);
+      });
+    }
 
-    
+    // Fetch Notebook details with a small delay to ensure modal is fully rendered
+    console.log("📔 About to fetch notebook details...");
+    setTimeout(async () => {
+      await fetchNotebookDetails(patientInfo.FNAME, patientInfo.LNAME);
+    }, 200);
+
   } catch (error) {
-    console.error("Error fetching patient details:", error);
+    console.error("❌ Error fetching patient details:", error);
     detailsBody.innerHTML = originalContent;
     alert(`Error: ${error.message || "Failed to load patient details"}`);
   }
 }
 
-// Modify the existing table row click handler
+async function fetchNotebookDetails(fname, lname) {
+  console.log("=== NOTEBOOK FETCH START ===");
+  console.log("1. Function called with:", { fname, lname });
+
+  const notebookContainer = document.getElementById("notebookContainer");
+  if (!notebookContainer) {
+    console.error("ERROR: notebookContainer element not found!");
+    return;
+  }
+
+  notebookContainer.innerHTML = `
+    <div class="d-flex justify-content-center align-items-center py-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="ms-2">Loading notebook entries...</div>
+    </div>
+  `;
+
+  try {
+    const encodedFname = encodeURIComponent(fname || '');
+    const encodedLname = encodeURIComponent(lname || '');
+    const url = `http://localhost:3000/api/notebook-details?fname=${encodedFname}&lname=${encodedLname}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}: ${response.statusText}` }));
+      throw new Error(errorData.error || `Failed to fetch notebook details (${response.status})`);
+    }
+
+    const responseData = await response.json();
+
+    let data = Array.isArray(responseData?.data) ? responseData.data : (Array.isArray(responseData) ? responseData : []);
+    if (data.length === 0) {
+      notebookContainer.innerHTML = `
+        <div class="text-center py-4 text-muted">
+          <i class="fas fa-book-open fa-2x mb-2"></i>
+          <p class="mb-0">No notebook entries found for <strong>${fname} ${lname}</strong></p>
+        </div>
+      `;
+      return;
+    }
+
+        let entriesHTML = `
+      <div class="list-group">
+    `;
+
+    data.forEach((entry, index) => {
+      let createdDate = "N/A", createdTime = "N/A", modifiedDateTime = "N/A";
+
+      if (entry.CREATE_DT) {
+        const dt = new Date(entry.CREATE_DT);
+        createdDate = dt.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        createdTime = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      }
+
+      if (entry.LASTMOD) {
+        const mod = new Date(entry.LASTMOD);
+        modifiedDateTime = mod.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' +
+          mod.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      }
+
+      let remarks = entry.NOTES || 'No remarks recorded';
+      if (remarks.length > 300) remarks = remarks.substring(0, 300) + '...';
+      remarks = remarks.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#39;');
+
+      entriesHTML += `
+        <div class="list-group-item mb-2 shadow-sm rounded border">
+          <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.LABNO || 'N/A'}</p>
+          <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
+          <p class="mb-1"><strong>👤 Tech:</strong> ${
+            (() => {
+              const techs = {
+                "222": "AAMORFE",
+                "202": "ABBRUTAS",
+                "223": "ATDELEON",
+                "148": "GEYEDRA",
+                "87":  "MCDIMAILIG",
+                "145": "KGSTAROSA",
+                "210": "MRGOMEZ",
+                "86":  "VMWAGAN",
+                "129": "JMAPELADO"
+              };
+              return techs[entry.USER_ID] || 'N/A';
+            })()
+          }</p>
+          <p class="mb-1"><strong>✏️ Last Modified:</strong> ${modifiedDateTime}</p>
+          <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
+        </div>
+      `;
+    });
+
+    entriesHTML += `
+      <div class="text-end mt-3">
+        <small class="text-muted">Total entries: ${data.length}</small>
+      </div>
+    </div>`;
+
+    notebookContainer.innerHTML = entriesHTML;
+    console.log("✅ Notebook table loaded");
+
+  } catch (error) {
+    console.error("❌ Error in fetchNotebookDetails:", error);
+    notebookContainer.innerHTML = `
+      <div class="alert alert-danger mb-0">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Error Loading Notebook:</strong> ${error.message}
+        <details class="mt-2">
+          <summary style="cursor: pointer;">Technical Details</summary>
+          <pre style="font-size: 11px; margin-top: 10px;">${error.stack || error.toString()}</pre>
+        </details>
+      </div>
+    `;
+  }
+}
+
+
+// Test functions for debugging
+function testNotebookContainer() {
+  console.log("🧪 Testing notebook container...");
+  const container = document.getElementById("notebookContainer");
+  
+  if (container) {
+    container.innerHTML = `
+      <div class="alert alert-success mb-0">
+        <i class="fas fa-check-circle"></i> 
+        <strong>Container Test Successful!</strong><br>
+        <small>Time: ${new Date().toLocaleTimeString()}</small>
+      </div>
+    `;
+    console.log("✅ Notebook container test PASSED");
+    return true;
+  } else {
+    console.error("❌ Notebook container test FAILED - Element not found");
+    alert("❌ Notebook container not found in DOM!");
+    return false;
+  }
+}
+
+async function testNotebookAPI(fname = "TEST", lname = "USER") {
+  console.log("🧪 Testing notebook API...");
+  
+  try {
+    const url = `http://localhost:3000/api/notebook-details?fname=${fname}&lname=${lname}`;
+    console.log("Testing URL:", url);
+    
+    const response = await fetch(url);
+    const responseData = {
+      status: response.status,
+      ok: response.ok,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    };
+    
+    console.log("API Response Info:", responseData);
+    
+    if (!response.ok) {
+      console.error("❌ API test FAILED - Response not OK");
+      return null;
+    }
+    
+    const data = await response.json();
+    console.log("API Response Data:", data);
+    console.log("✅ API test PASSED");
+    
+    return data;
+  } catch (error) {
+    console.error("❌ API test FAILED:", error);
+    return null;
+  }
+}
+
+// Enhanced table row click handler with better debugging
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 DOM Content Loaded - Initializing event listeners");
+  
   const tableBody = document.querySelector("#notebookTable tbody");
   const resultsModalEl = document.getElementById("resultsModal");
   const detailsModalEl = document.getElementById("detailsModal");
+  
+  if (!tableBody) {
+    console.error("❌ Table body not found (#notebookTable tbody)");
+    return;
+  }
+  
+  if (!resultsModalEl || !detailsModalEl) {
+    console.error("❌ Modal elements not found", { 
+      resultsModal: !!resultsModalEl, 
+      detailsModal: !!detailsModalEl 
+    });
+    return;
+  }
   
   // Bootstrap modal instances
   let resultsModal = bootstrap.Modal.getInstance(resultsModalEl) || new bootstrap.Modal(resultsModalEl);
   let detailsModal = bootstrap.Modal.getInstance(detailsModalEl) || new bootstrap.Modal(detailsModalEl);
   
-  // Delegation pattern - listen for clicks on the table body
+  console.log("✅ Modal instances created");
+  
+  // Table row click handler with event delegation
   tableBody.addEventListener("click", (event) => {
-    // Find closest row if the click happened on a child element
-    const row = event.target.closest("tr");
-    if (!row) return; // Exit if no row was clicked
+    console.log("🖱️ Table click detected");
     
-    // Get the required data from the row cells
-    const labno = row.cells[0].textContent;
-    const labid = row.cells[1].textContent;
+    // Find the closest row
+    const row = event.target.closest("tr");
+    if (!row) {
+      console.log("No row found for click event");
+      return;
+    }
+    
+    // Extract data from row cells
+    const labno = row.cells[0]?.textContent?.trim();
+    const labid = row.cells[1]?.textContent?.trim();
+    
+    console.log("Row data extracted:", { labno, labid });
     
     if (!labno || !labid) {
+      console.error("❌ Missing required data from row");
       alert("Missing required information to fetch details");
       return;
     }
     
-    // Fetch and display patient details
-    fetchPatientDetails(labno, labid);
+    console.log("🔄 Hiding results modal and showing details modal");
     
     // Hide results modal and show details modal
     resultsModal.hide();
-    detailsModal.show();
+    
+    // Small delay to ensure modal transition is smooth
+    setTimeout(() => {
+      detailsModal.show();
+      
+      // Fetch patient details after modal is shown
+      setTimeout(() => {
+        fetchPatientDetails(labno, labid);
+      }, 100);
+    }, 300);
   });
   
-  // Existing button handlers
+  // Back button handlers
   const backToTableBtn = document.getElementById("backToTableBtn");
   const backToSearchFromDetailsBtn = document.getElementById("backToSearchFromDetailsBtn");
   const searchModalEl = document.getElementById("addEventModal");
-  let searchModal = bootstrap.Modal.getInstance(searchModalEl) || new bootstrap.Modal(searchModalEl);
   
-  backToTableBtn.addEventListener("click", () => {
-    detailsModal.hide();
-    setTimeout(() => {
-      resultsModal.show();
-    }, 300);
-  });
+  if (searchModalEl) {
+    let searchModal = bootstrap.Modal.getInstance(searchModalEl) || new bootstrap.Modal(searchModalEl);
+    
+    if (backToTableBtn) {
+      backToTableBtn.addEventListener("click", () => {
+        console.log("🔄 Back to table clicked");
+        detailsModal.hide();
+        setTimeout(() => {
+          resultsModal.show();
+        }, 300);
+      });
+    }
+    
+    if (backToSearchFromDetailsBtn) {
+      backToSearchFromDetailsBtn.addEventListener("click", () => {
+        console.log("🔄 Back to search clicked");
+        detailsModal.hide();
+        setTimeout(() => {
+          searchModal.show();
+        }, 300);
+      });
+    }
+  }
   
-  backToSearchFromDetailsBtn.addEventListener("click", () => {
-    detailsModal.hide();
-    setTimeout(() => {
-      searchModal.show();
-    }, 300);
-  });
+  console.log("✅ All event handlers initialized successfully");
 });
+
+// Global functions for manual testing (accessible from console)
+window.testNotebookContainer = testNotebookContainer;
+window.testNotebookAPI = testNotebookAPI;
+window.fetchNotebookDetails = fetchNotebookDetails;

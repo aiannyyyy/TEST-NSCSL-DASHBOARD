@@ -49,37 +49,30 @@ router.get("/", async (req, res) => {
 
         const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
-        const queryBase = (tableAlias, tableName) => `
-            SELECT
-                ${tableAlias}."LABNO",
-                ${tableAlias}."LABID",
-                ${tableAlias}."FNAME",
-                ${tableAlias}."LNAME",
-                ${tableAlias}."SEX",
-                ${tableAlias}."BIRTHDT",
-                ${tableAlias}."BIRTHWT",
-                ${tableAlias}."SUBMID",
-                RPA."DESCR1",
-                SN."NOTES"
-            FROM
-                PHMSDS.${tableName} ${tableAlias}
-            JOIN PHMSDS.REF_PROVIDER_ADDRESS RPA
-                ON ${tableAlias}."SUBMID" = RPA."PROVIDERID"
-            JOIN PHMSDS.SAMPLE_NOTES SN
-                ON ${tableAlias}."LABNO" = SN."LABNO"
-            ${whereClause}
-            GROUP BY
-                ${tableAlias}."LABNO",
-                ${tableAlias}."LABID",
-                ${tableAlias}."FNAME",
-                ${tableAlias}."LNAME",
-                ${tableAlias}."SEX",
-                ${tableAlias}."BIRTHDT",
-                ${tableAlias}."BIRTHWT",
-                ${tableAlias}."SUBMID",
-                RPA."DESCR1",
-                SN."NOTES"
-        `;
+        
+     const queryBase = (tableAlias, tableName) => `
+        SELECT
+            ${tableAlias}."LABNO",
+            MAX(${tableAlias}."LABID") AS "LABID",
+            MAX(${tableAlias}."FNAME") AS "FNAME",
+            MAX(${tableAlias}."LNAME") AS "LNAME",
+            MAX(${tableAlias}."SEX") AS "SEX",
+            MAX(${tableAlias}."BIRTHDT") AS "BIRTHDT",
+            MAX(${tableAlias}."BIRTHWT") AS "BIRTHWT",
+            MAX(${tableAlias}."SUBMID") AS "SUBMID",
+            MAX(RPA."DESCR1") AS "DESCR1",
+            MAX(SN."NOTES") AS "NOTES"
+        FROM
+            PHMSDS.${tableName} ${tableAlias}
+        JOIN PHMSDS.REF_PROVIDER_ADDRESS RPA
+            ON ${tableAlias}."SUBMID" = RPA."PROVIDERID"
+        JOIN PHMSDS.SAMPLE_NOTES SN
+            ON ${tableAlias}."LABNO" = SN."LABNO"
+        ${whereClause}
+        GROUP BY
+            ${tableAlias}."LABNO"
+    `;
+
 
         const queryArchive = queryBase("SD", "SAMPLE_DEMOG_ARCHIVE");
         const queryMaster = queryBase("SD", "SAMPLE_DEMOG_MASTER");

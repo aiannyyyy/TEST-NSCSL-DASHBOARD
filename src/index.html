@@ -158,6 +158,18 @@ table.table-sm td:first-child {
   white-space: nowrap;
 }
 
+/* notebook */
+.list-group-item {
+  background-color: #fff;
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.list-group-item p {
+  margin-bottom: 0.4rem;
+}
+
 
   </style>
   <body class="with-welcome-text">
@@ -1039,8 +1051,8 @@ table.table-sm td:first-child {
                               <div class="card card-rounded">
                                 <div class="card-body card-rounded">
                                   <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="card-title card-title-dash">Notebook</h4>
-                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Add Notebook</button>
+                                    <h4 class="card-title card-title-dash">Notebooks</h4>
+                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Online Search</button>
                                   </div>
 
                                   <!-- Search Modal -->
@@ -1127,18 +1139,18 @@ table.table-sm td:first-child {
                                     <div class="modal-dialog modal-xl modal-dialog-centered">
                                       <div class="modal-content rounded-3">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="detailsModalLabel">Notebook Details</h5>
+                                          <h5 class="modal-title" id="detailsModalLabel">Patient and Notebook Details</h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                           <div class="container-fluid">
                                             <div class="row">
                                               <!-- Left Section: Table -->
-                                              <div class="col-md-5"> <!-- Adjust width to take less space -->
+                                              <div class="col-md-5">
                                                 <table class="table table-bordered table-sm" style="font-size: 13px;">
                                                   <colgroup>
-                                                    <col style="width: 40%;"> <!-- Label column -->
-                                                    <col style="width: 60%;"> <!-- Value column -->
+                                                    <col style="width: 40%;">
+                                                    <col style="width: 60%;">
                                                   </colgroup>
                                                   <tbody>
                                                     <tr><th>Lab No</th><td id="detailLabNo"></td></tr>
@@ -1168,24 +1180,33 @@ table.table-sm td:first-child {
                                                 </table>
                                               </div>
 
-                                            <div class="col-md-7">
-                                              <div class="table-responsive">
-                                                <table id="resultsDetailsTable" class="table table-bordered table-sm text-center" style="font-size: 13px;">
-                                                  <thead class="table-light">
-                                                    <tr>
-                                                      <th>Group</th>
-                                                      <th>Disorder</th>
-                                                      <th>Mnemonic</th>
-                                                      <th>Result</th>
-                                                      <th>Text</th>
-                                                    </tr>
-                                                  </thead>
-                                                  <tbody></tbody> <!-- Added tbody for dynamic content -->
-                                                </table>
+                                              <!-- Right Section: Results Table -->
+                                              <div class="col-md-7">
+                                                <div class="table-responsive">
+                                                  <table id="resultsDetailsTable" class="table table-bordered table-sm text-center" style="font-size: 13px;">
+                                                    <thead class="table-light">
+                                                      <tr>
+                                                        <th>Group</th>
+                                                        <th>Disorder</th>
+                                                        <th>Mnemonic</th>
+                                                        <th>Result</th>
+                                                        <th>Text</th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                  </table>
+                                                </div>
+
+                                                <!-- Specimen Detail Section -->
+                                                <div class="mt-3 p-2 border rounded" style="font-size: 13px;">
+                                                  <h5>Notebook Details</h5>
+                                                  <div id="notebookContainer" style="max-height: 350px; overflow-y: auto;">
+
+                                                  </div>
+                                                </div>
+                                                <!-- End of Specimen Detail Section -->
+
                                               </div>
-                                            </div>
-
-
                                             </div>
                                           </div>
                                         </div>
@@ -1196,6 +1217,7 @@ table.table-sm td:first-child {
                                       </div>
                                     </div>
                                   </div>
+
                                 </div>
                               </div>
                             </div>
@@ -1740,6 +1762,7 @@ table.table-sm td:first-child {
     <script src="/js/timeliness.js"></script>
     <script src="/js/patient_notebook.js"></script>
     <script src="/js/patient_details.js"></script>
+    <script src="/js/notebook-details.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 

@@ -68,6 +68,7 @@ app.use("/api", require("./routes/labReagentRoutes")); //lab reagents
 
 app.use("/api/patient-info", require("./routes/patient_notebookRoutes")); // for patient details
 app.use("/api/patient-details", require("./routes/patient-detailsRoutes")); // for patient details
+app.use("/api", require("./routes/notebookRoutes")); // for patient details
 
 
 app.use((err, req, res, next) => {
