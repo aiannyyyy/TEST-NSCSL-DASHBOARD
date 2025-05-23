@@ -33,10 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
             
             const result = await response.json();
 
+            /*
+
             if (response.ok && result.success) {
                 localStorage.setItem("username", result.user.name); 
                 localStorage.setItem("dept", result.user.dept); // Save dept in localStorage if needed
-            
+                
+
                 // Redirect based on department
                 switch (result.user.dept) {
                     case "Admin":
@@ -59,6 +62,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert(result.message);
             }
             
+            */
+           if (response.ok && result.success) {
+                const { name, dept } = result.user;
+                localStorage.setItem("username", name);
+                localStorage.setItem("dept", dept);
+
+                const redirectMap = {
+                    "Admin": "/src/admin.html",
+                    "Laboratory": "/src/labindex.html",
+                    "Program": "/src/index.html",
+                    "Follow Up": "/src/followup.html"
+                };
+
+                window.location.href = redirectMap[dept] || "/src/admin.html";
+            } else {
+                alert(result.message);
+            }
+
         } catch (error) {
             console.error("Login error:", error);
             alert("Something went wrong. Please try again.");

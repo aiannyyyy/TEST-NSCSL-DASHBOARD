@@ -12,6 +12,20 @@ function filterReports(category, event) {
     });
 }
 
+function handleDropdownSelection(element, event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    const category = element.getAttribute("data-value");
+    const button = document.getElementById("dropdownMenuButton3");
+
+    // Update button text
+    button.textContent = element.textContent;
+
+    // Filter reports
+    filterReports(category, event);
+}
+
+
 
 // Default: Show only "daily" reports on page load
 document.addEventListener("DOMContentLoaded", function () {

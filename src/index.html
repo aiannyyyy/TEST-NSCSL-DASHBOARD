@@ -170,43 +170,96 @@ table.table-sm td:first-child {
   margin-bottom: 0.4rem;
 }
 
-/*
- #resultsModal .modal-content {
-    font-size: 13px;
-  }
+/* Custom styles for the patient notebooks table */
+#patientNotebooksTable {
+  font-size: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-  #notebookTable {
-    table-layout: fixed;
-    width: 100%;
-  }
+#patientNotebooksTable thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  padding: 12px 15px;
+  color: #495057;
+}
 
-  #notebookTable th,
-  #notebookTable td {
-    padding: 4px 6px;
+#patientNotebooksTable tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+#patientNotebooksTable tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+#patientNotebooksTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  margin: 0 2px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-view {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.btn-view:hover {
+  background-color: #1976d2;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-edit {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffcc02;
+}
+
+.btn-edit:hover {
+  background-color: #f57c00;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+@media (max-width: 768px) {
+  #patientNotebooksTable {
     font-size: 12px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
   }
+  
+  .btn-action {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  #patientNotebooksTable thead th,
+  #patientNotebooksTable tbody td {
+    padding: 8px 10px;
+  }
+}
 
-
-  #notebookTable th:nth-child(1),
-  #notebookTable td:nth-child(1) { width: 110px; }
-  #notebookTable th:nth-child(2),
-  #notebookTable td:nth-child(2) { width: 100px; }
-  #notebookTable th:nth-child(3),
-  #notebookTable td:nth-child(3) { width: 100px; }
-  #notebookTable th:nth-child(4),
-  #notebookTable td:nth-child(4) { width: 100px; }
-  #notebookTable th:nth-child(5),
-  #notebookTable td:nth-child(5) { width: 80px; }
-  #notebookTable th:nth-child(6),
-  #notebookTable td:nth-child(6) { width: 100px; }
-  #notebookTable th:nth-child(7),
-  #notebookTable td:nth-child(7) { width: 90px; }
-  #notebookTable th:nth-child(8),
-  #notebookTable td:nth-child(8) { width: 90px; }
-*/
+.compact-table td, 
+  .compact-table th {
+    padding: 4px 6px !important; /* vertical 2px, horizontal 4px */
+  }
   </style>
   <body class="with-welcome-text">
     <!--
@@ -329,9 +382,6 @@ table.table-sm td:first-child {
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="labindex.html">Overview</a></li>
                 <li class="nav-item"> <a class="nav-link" href="demographics.html">Demo & Unsat</a></li>
-                <!--
-                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
-                -->
               </ul>
             </div>
           </li>
@@ -538,7 +588,10 @@ table.table-sm td:first-child {
                             </div>
                         </div>                                   
                         </div>
+
+                        <!---->
                         <div class="col-lg-4 d-flex flex-column">
+                          
                           <div class="row flex-grow">
                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
                               <div class="card bg-primary card-rounded">
@@ -1092,9 +1145,27 @@ table.table-sm td:first-child {
                                   </div>
 
                                   <div class="displayInfo">
-                                    <h1>Testing</h1>
+                                    <div class="table-responsive">
+                                      <table class="table table-hover" id="patientNotebooksTable">
+                                        <thead class="table-light">
+                                          <tr>
+                                            <th scope="col" style="width: 40%;">First Name</th>
+                                            <th scope="col" style="width: 40%;">Last Name</th>
+                                            <th scope="col" style="width: 20%;" class="text-center">Actions</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody id="patientNotebooksTableBody">
+                                          <!-- Table rows will be populated here -->
+                                          <tr>
+                                            <td colspan="3" class="text-center text-muted py-4">
+                                              <i class="fas fa-book me-2"></i>
+                                              No notebook entries found
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
                                   </div>
-
                                   <!-- Search Modal -->
                                   <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-md modal-dialog-centered">
@@ -1175,127 +1246,149 @@ table.table-sm td:first-child {
                                   </div>
 
                                   <!-- Details Modal -->
+                                  <!-- Details Modal -->
                                   <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl modal-dialog-centered">
-                                      <div class="modal-content rounded-3">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title" id="detailsModalLabel">Patient and Notebook Details</h5>
-                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                      <div class="modal-content rounded-4 shadow-sm border-0">
+                                        <div class="modal-header bg-primary text-white">
+                                          <h5 class="modal-title fw-bold" id="detailsModalLabel">Patient and Notebook Details</h5>
+                                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
-                                          <div class="container-fluid">
-                                            <div class="row">
-                                              <!-- Left Section: Table -->
-                                              <div class="col-md-5">
-                                                <table class="table table-bordered table-sm text-center" style="font-size: 13px;">
-                                                  <colgroup>
-                                                    <col style="width: 40%;">
-                                                    <col style="width: 60%;">
-                                                  </colgroup>
-                                                  <tbody>
-                                                    <tr><th>Lab No</th><td id="detailLabNo"></td></tr>
-                                                    <tr><th>Form No</th><td id="detailFormNo"></td></tr>
-                                                    <tr><th>Last Name</th><td id="detailLName"></td></tr>
-                                                    <tr><th>First Name</th><td id="detailFName"></td></tr>
-                                                    <tr><th>Birth</th><td id="detailDOB"></td></tr>
-                                                    <tr><th>Collection</th><td id="detailDOC"></td></tr>
-                                                    <tr><th>Specimen Type</th><td id="detailSpectype"></td></tr>
-                                                    <tr><th>Milk Type</th><td id="detailMilkType"></td></tr>
-                                                    <tr><th>Sex</th><td id="detailSex"></td></tr>
-                                                    <tr><th>Birth Weight</th><td id="detailBirthWt"></td></tr>
-                                                    <tr><th>Birth Order</th><td id="detailBirthOrder"></td></tr>
-                                                    <tr><th>Blood Transfused</th><td id="detailBloodTransfused"></td></tr>
-                                                    <tr><th>Transfused Date</th><td id="detailTransfusedDate"></td></tr>
-                                                    <tr><th>Gestation Age</th><td id="detailGestationAge"></td></tr>
-                                                    <tr><th>Specimen Age</th><td id="detailSpecimenAge"></td></tr>
-                                                    <tr><th>Age at Collection</th><td id="detailAgeAtCollection"></td></tr>
-                                                    <tr><th>Date Received</th><td id="detailDateReceived"></td></tr>
-                                                    <tr><th>Date Reported</th><td id="detailDateReported"></td></tr>
-                                                    <tr><th>Clinical Status</th><td id="detailClinicalStatus"></td></tr>
-                                                    <tr><th>Physician ID</th><td id="detailPhysicianId"></td></tr>
-                                                    <tr><th>Birth Hospital ID</th><td id="detailBirthHospId"></td></tr>
-                                                    <tr><th>Birth Hospital Name</th><td id="detailBirthHospName"></td></tr>
-                                                    <tr><th>Facility Code</th><td id="detailSubmId"></td></tr>
-                                                  </tbody>
-                                                </table>
-                                              </div>
 
-                                              <!-- Right Section: Results Table -->
-                                              <div class="col-md-7">
-                                                <div class="table-responsive">
-                                                  <table id="resultsDetailsTable" class="table table-bordered table-sm text-center" style="font-size: 13px;">
-                                                    <thead class="table-light">
-                                                      <tr>
-                                                        <th>Group</th>
-                                                        <th>Disorder</th>
-                                                        <th>Mnemonic</th>
-                                                        <th>Result</th>
-                                                        <th>Text</th>
-                                                      </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
+                                        <div class="modal-body px-4 py-3">
+                                          <div class="container-fluid">
+                                            <div class="row gx-4">
+                                             <!-- Left Section: Patient Info Table -->
+                                            <div class="col-md-5 mb-2">
+                                              <div class="card shadow-sm" style="font-size: 12px;">
+                                                <div class="card-header py-1 px-2 bg-light fw-semibold text-center" style="font-size: 13px;">
+                                                  Patient Information
+                                                </div>
+                                                <div class="card-body p-2">
+                                                  <table class="table table-sm table-bordered mb-0 compact-table">
+                                                    <colgroup>
+                                                      <col style="width: 40%;">
+                                                      <col style="width: 60%;">
+                                                    </colgroup>
+                                                    <tbody class="text-start align-top">
+                                                      <tr><th scope="row">Lab No</th><td id="detailLabNo"></td></tr>
+                                                      <tr><th scope="row">Form No</th><td id="detailFormNo"></td></tr>
+                                                      <tr><th scope="row">Last Name</th><td id="detailLName"></td></tr>
+                                                      <tr><th scope="row">First Name</th><td id="detailFName"></td></tr>
+                                                      <tr><th scope="row">Birth</th><td id="detailDOB"></td></tr>
+                                                      <tr><th scope="row">Collection</th><td id="detailDOC"></td></tr>
+                                                      <tr><th scope="row">Specimen Type</th><td id="detailSpectype"></td></tr>
+                                                      <tr><th scope="row">Milk Type</th><td id="detailMilkType"></td></tr>
+                                                      <tr><th scope="row">Sex</th><td id="detailSex"></td></tr>
+                                                      <tr><th scope="row">Birth Weight</th><td id="detailBirthWt"></td></tr>
+                                                      <tr><th scope="row">Birth Order</th><td id="detailBirthOrder"></td></tr>
+                                                      <tr><th scope="row">Blood Transfused</th><td id="detailBloodTransfused"></td></tr>
+                                                      <tr><th scope="row">Transfused Date</th><td id="detailTransfusedDate"></td></tr>
+                                                      <tr><th scope="row">Gestation Age</th><td id="detailGestationAge"></td></tr>
+                                                      <tr><th scope="row">Specimen Age</th><td id="detailSpecimenAge"></td></tr>
+                                                      <tr><th scope="row">Age at Collection</th><td id="detailAgeAtCollection"></td></tr>
+                                                      <tr><th scope="row">Date Received</th><td id="detailDateReceived"></td></tr>
+                                                      <tr><th scope="row">Date Reported</th><td id="detailDateReported"></td></tr>
+                                                      <tr><th scope="row">Clinical Status</th><td id="detailClinicalStatus"></td></tr>
+                                                      <tr><th scope="row">Physician ID</th><td id="detailPhysicianId"></td></tr>
+                                                      <tr><th scope="row">Birth Hospital ID</th><td id="detailBirthHospId"></td></tr>
+                                                      <tr><th scope="row">Birth Hospital Name</th><td id="detailBirthHospName"></td></tr>
+                                                      <tr><th scope="row">Facility Code</th><td id="detailSubmId"></td></tr>
+                                                    </tbody>
                                                   </table>
                                                 </div>
+                                              </div>
+                                            </div>
 
-                                                <!-- Specimen Detail Section -->
-                                                <div class="mt-3 p-2 border rounded" style="font-size: 13px;">
-                                                  <h5>Notebook Details</h5>
-                                                  <div id="notebookContainer" style="max-height: 350px; overflow-y: auto;">
-                                                    <!-- Existing notebook entries will be displayed here -->
+
+
+                                              <!-- Right Section: Results + Notebook -->
+                                              <div class="col-md-7 d-flex flex-column gap-3">
+                                                <!-- Results Table -->
+                                                <div class="card shadow-sm flex-grow-1">
+                                                  <div class="card-header bg-light fw-semibold text-center">
+                                                    Results Details
                                                   </div>
-                                                  <!-- Add Notebook Button -->
-                                                  <div class="mt-3 d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-primary btn-sm text-white" id="openAddNotebookBtn" data-bs-toggle="modal" data-bs-target="#addNotebookModal">
-                                                      Add Notebook
-                                                    </button>
+                                                  <div class="table-responsive p-3" style="max-height: fit; overflow-y: auto;">
+                                                    <table id="resultsDetailsTable" class="table table-bordered table-sm text-center align-middle mb-0 compact-table" style="font-size: 14px;">
+                                                      <thead class="table-light">
+                                                        <tr>
+                                                          <th>Group</th>
+                                                          <th>Disorder</th>
+                                                          <th>Mnemonic</th>
+                                                          <th>Result</th>
+                                                          <th>Text</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody></tbody>
+                                                    </table>
                                                   </div>
                                                 </div>
-                                                <!-- End of Specimen Detail Section -->
 
+                                                <!-- Notebook Details -->
+                                                <div class="card shadow-sm">
+                                                  <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                                    <span class="fw-semibold">Notebook Details</span>
+                                                    <button type="button" class="btn btn-primary btn-sm text-white" data-bs-toggle="modal" data-bs-target="#addNotebookModal">
+                                                      <i class="fas fa-plus"></i> Add Notebook
+                                                    </button>
+                                                  </div>
+
+                                                  <div class="card-body p-3" style="max-height: 350px; overflow-y: auto; font-size: 14px;">
+                                                    <div id="notebookContainer" class="mb-3">
+                                                      <p class="text-muted mb-0">No notebook entries found.</p>
+                                                    </div>
+
+                                                    <div id="addednotebookContainer">
+                                                      <h5 class="mb-3 border-bottom pb-2">PDO Notebook</h5>
+                                                      <p class="text-muted mb-0">No notebook entries found.</p>
+                                                    </div>
+                                                  </div>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
                                         </div>
-                                        <div class="modal-footer">
+
+                                        <div class="modal-footer justify-content-between px-4">
                                           <button type="button" class="btn btn-secondary text-white" id="backToTableBtn">Back to Table</button>
                                           <button type="button" class="btn btn-primary text-white" id="backToSearchFromDetailsBtn">Back to Search</button>
                                         </div>
-                                        
                                       </div>
                                     </div>
                                   </div>
-
                                   <!-- Add Notebook Modal -->
                                   <div class="modal fade" id="addNotebookModal" tabindex="-1" aria-labelledby="addNotebookModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-md modal-dialog-centered">
-                                      <div class="modal-content rounded-3">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title" id="addNotebookModalLabel">Add Notebook Entry</h5>
-                                          <!-- Close button in modal header -->
-                                          <button type="button" class="btn-close" id="closeAddNotebookBtn" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                          <form id="addNotebookForm">
-                                            <div class="mb-3">
-                                              <label for="notebookNotes" class="form-label">Notes</label>
-                                              <textarea class="form-control" id="notebookNotes" name="notebookNotes" rows="6" placeholder="Enter your notes here..."></textarea>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                          <!-- Cancel button in modal footer -->
-                                          <button type="button" class="btn btn-secondary text-white" id="cancelAddNotebookBtn">Cancel</button>
-                                          <button type="button" class="btn btn-primary text-white" id="saveNotebookBtn">Save Changes</button>
-                                        </div>
+                                      <div class="modal-dialog modal-md modal-dialog-centered">
+                                          <div class="modal-content rounded-3">
+                                              <div class="modal-header">
+                                                  <h5 class="modal-title" id="addNotebookModalLabel">Add Notebook Entry</h5>
+                                                  <button type="button" class="btn-close" id="closeAddNotebookBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                              </div>
+                                              <div class="modal-body">
+                                                  <form id="addNotebookForm">
+                                                      <div class="mb-3">
+                                                          <label for="notebookNotes" class="form-label">Notes</label>
+                                                          <textarea class="form-control" id="notebookNotes" name="notebookNotes" rows="6" placeholder="Enter your notes here..." required></textarea>
+                                                      </div>
+                                                  </form>
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary text-white" id="cancelAddNotebookBtn" data-bs-dismiss="modal">Cancel</button>
+                                                  <button type="button" class="btn btn-primary text-white" id="saveNotebookBtn">
+                                                      <span id="saveButtonText">Save Changes</span>
+                                                      <span id="saveButtonSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                                                  </button>
+                                              </div>
+                                          </div>
                                       </div>
-                                    </div>
                                   </div>
 
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                              <div class="card card-rounded">
+                              <div class="card card-rounded" style="height: fit-content;">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
                                         <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
@@ -1305,9 +1398,9 @@ table.table-sm td:first-child {
                                                 Select Here
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                                              <a class="dropdown-item" href="#" onclick="filterReports('daily', event)">Daily</a>
-                                              <a class="dropdown-item" href="#" onclick="filterReports('monthly', event)">Monthly</a>
-                                              <a class="dropdown-item" href="#" onclick="filterReports('yearly', event)">Yearly</a>
+                                              <a class="dropdown-item" href="#" data-value="daily" onclick="handleDropdownSelection(this, event)">Daily</a>
+                                              <a class="dropdown-item" href="#" data-value="monthly" onclick="handleDropdownSelection(this, event)">Monthly</a>
+                                              <a class="dropdown-item" href="#" data-value="yearly" onclick="handleDropdownSelection(this, event)">Yearly</a>
                                           </div>
                                           
                                         </div>
@@ -1837,6 +1930,9 @@ table.table-sm td:first-child {
     <script src="/js/patient_details.js"></script>
     <script src="/js/notebook-details.js"></script>
     <script src="/js/addNotebook.js"></script>
+    <script src="/js/notebook-fetch.js"></script>
+
+    <script src="/js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 

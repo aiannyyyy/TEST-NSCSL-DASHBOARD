@@ -109,6 +109,7 @@ async function fetchPatientDetails(labno, labid) {
     console.log("📔 About to fetch notebook details...");
     setTimeout(async () => {
       await fetchNotebookDetails(patientInfo.FNAME, patientInfo.LNAME);
+      await fetchAddedNotebookDetails(patientInfo.FNAME, patientInfo.LNAME); // 👈 Add this line
     }, 200);
 
   } catch (error) {
@@ -238,6 +239,115 @@ async function fetchNotebookDetails(fname, lname) {
   }
 }
 
+async function fetchAddedNotebookDetails(fname, lname) {
+  console.log("=== ADDED NOTEBOOK FETCH START ===");
+  console.log("Function called with:", { fname, lname });
+
+  const notebookContainer = document.getElementById("addednotebookContainer");
+  if (!notebookContainer) {
+    console.error("ERROR: addednotebookContainer element not found!");
+    return;
+  }
+
+  notebookContainer.innerHTML = `
+    <div class="d-flex justify-content-center align-items-center py-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="ms-2">Loading additional notebook entries...</div>
+    </div>
+  `;
+
+  try {
+    const encodedFname = encodeURIComponent(fname || '');
+    const encodedLname = encodeURIComponent(lname || '');
+    const url = `http://localhost:3000/api/notebook-query?fname=${encodedFname}&lname=${encodedLname}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}: ${response.statusText}` }));
+      throw new Error(errorData.error || `Failed to fetch added notebook details (${response.status})`);
+    }
+
+    const responseData = await response.json();
+    let data = Array.isArray(responseData?.data) ? responseData.data : (Array.isArray(responseData) ? responseData : []);
+
+    if (data.length === 0) {
+      notebookContainer.innerHTML = `
+        <div class="text-center py-4 text-muted">
+          <i class="fas fa-book-open fa-2x mb-2"></i>
+          <p class="mb-0">No additional notebook entries found for <strong>${fname} ${lname}</strong></p>
+        </div>
+      `;
+      return;
+    }
+
+    let entriesHTML = `<div class="list-group">`;
+
+    data.forEach((entry) => {
+      // Format created date/time
+      let createdDate = "N/A", createdTime = "N/A";
+      if (entry.createDate) {
+        const dt = new Date(entry.createDate);
+        createdDate = dt.toLocaleDateString('en-US');
+        createdTime = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      }
+
+      // Format modified date/time
+      let modifiedDate = "N/A", modifiedTime = "N/A";
+      if (entry.modDate) {
+        const dtMod = new Date(entry.modDate);
+        modifiedDate = dtMod.toLocaleDateString('en-US');
+        modifiedTime = dtMod.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      }
+
+      // Format and escape remarks
+      let remarks = entry.notes || 'No remarks recorded';
+      if (remarks.length > 300) remarks = remarks.substring(0, 300) + '...';
+      remarks = remarks.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#39;');
+
+      entriesHTML += `
+        <div class="list-group-item mb-2 shadow-sm rounded border">
+          <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.labno || 'N/A'}</p>
+          <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
+          <p class="mb-1"><strong>👤 Created By:</strong> ${entry.techCreate || 'N/A'}</p>
+          <p class="mb-1"><strong>📆 Date Modified:</strong> ${modifiedDate} - ${modifiedTime}</p>
+          <p class="mb-1"><strong>👤 Modified By:</strong> ${entry.techMod || 'N/A'}</p>
+          <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
+        </div>
+      `;
+    });
+
+    entriesHTML += `</div>`;
+
+
+    entriesHTML += `
+      <div class="text-end mt-3">
+        <small class="text-muted">Total added entries: ${data.length}</small>
+      </div>
+    </div>`;
+
+    notebookContainer.innerHTML = entriesHTML;
+    console.log("✅ Added notebook entries loaded");
+
+  } catch (error) {
+    console.error("❌ Error in fetchAddedNotebookDetails:", error);
+    notebookContainer.innerHTML = `
+      <div class="alert alert-danger mb-0">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Error Loading Added Notebook:</strong> ${error.message}
+        <details class="mt-2">
+          <summary style="cursor: pointer;">Technical Details</summary>
+          <pre style="font-size: 11px; margin-top: 10px;">${error.stack || error.toString()}</pre>
+        </details>
+      </div>
+    `;
+  }
+}
 
 // Test functions for debugging
 function testNotebookContainer() {
@@ -396,3 +506,4 @@ document.addEventListener("DOMContentLoaded", () => {
 window.testNotebookContainer = testNotebookContainer;
 window.testNotebookAPI = testNotebookAPI;
 window.fetchNotebookDetails = fetchNotebookDetails;
+window.fetchAddedNotebookDetails = fetchAddedNotebookDetails;
