@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
     } else if (fname) {
         sql += " WHERE fname = ?";
         params.push(fname);
-    }
+    } 
 
     sql += " ORDER BY createDate DESC";
 
@@ -64,7 +64,8 @@ router.post("/", (req, res) => {
     console.log("Request body:", req.body);
     
     const { 
-        labno, 
+        labno,
+        labid,
         fname, 
         lname, 
         code, 
@@ -90,6 +91,7 @@ router.post("/", (req, res) => {
     // Prepare data with defaults for optional fields
     const notebookData = {
         labno: labno || '',
+        labid: labid || '',
         fname: fname || '',
         lname: lname || '',
         code: code || '',
@@ -104,11 +106,12 @@ router.post("/", (req, res) => {
     console.log("Processed notebook data:", notebookData);
 
     const sql = `INSERT INTO pdo_notebook 
-                 (labno, fname, lname, code, facility_name, notes, createDate, techCreate, modDate, techMod) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                 (labno, labid, fname, lname, code, facility_name, notes, createDate, techCreate, modDate, techMod) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const values = [
         notebookData.labno,
+        notebookData.labid,
         notebookData.fname,
         notebookData.lname,
         notebookData.code,
@@ -149,6 +152,7 @@ router.put("/:noteID", (req, res) => {
     
     const { 
         labno, 
+        labid,
         fname, 
         lname, 
         code, 
@@ -166,12 +170,13 @@ router.put("/:noteID", (req, res) => {
     }
 
     const sql = `UPDATE pdo_notebook 
-                 SET labno=?, fname=?, lname=?, code=?, facility_name=?, notes=?, 
+                 SET labno=?, labid=?, fname=?, lname=?, code=?, facility_name=?, notes=?, 
                      createDate=?, techCreate=?, modDate=?, techMod=? 
                  WHERE noteID=?`;
 
     const values = [
         labno || '',
+        labid || '',
         fname || '',
         lname || '',
         code || '',
