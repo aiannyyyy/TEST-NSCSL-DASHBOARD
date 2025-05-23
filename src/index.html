@@ -260,6 +260,67 @@ table.table-sm td:first-child {
   .compact-table th {
     padding: 4px 6px !important; /* vertical 2px, horizontal 4px */
   }
+
+
+  /* weather */
+  
+    .weather-widget {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      transition: all 0.3s ease;
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .weather-header h2 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .weather-body {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .weather-info {
+      text-align: center;
+    }
+
+    .weather-info p {
+      margin: 5px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .weather-info h3 {
+      font-size: 28px;
+      margin: 5px 0;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
   </style>
   <body class="with-welcome-text">
     <!--
@@ -593,6 +654,7 @@ table.table-sm td:first-child {
                         <div class="col-lg-4 d-flex flex-column">
                           
                           <div class="row flex-grow">
+                            <!--
                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
                               <div class="card bg-primary card-rounded">
                                 <div class="card-body pb-0">
@@ -616,6 +678,30 @@ table.table-sm td:first-child {
                                   </div>
                                 </div>
                               </div>
+                            </div>
+                            -->
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                                    <div class="weather-widget">
+                                      <div class="weather-header">
+                                        <h2>Weather Summary</h2>
+                                        <button class="refresh-btn" onclick="loadWeather()">Refresh</button>
+                                      </div>
+                                      <div class="weather-body">
+                                        <div class="weather-info" id="weather-city">
+                                          <p>City</p>
+                                          <h3>---</h3>
+                                        </div>
+                                        <div class="weather-info" id="weather-temp">
+                                          <p>Temperature</p>
+                                          <h3>--°C</h3>
+                                        </div>
+                                        <div class="weather-info" id="weather-status">
+                                          <p>Status</p>
+                                          <h3>---</h3>
+                                        </div>
+                                      </div>
+                                    </div>
+
                             </div>
 
                             <div class="col-md-6 col-lg-12 grid-margin stretch-card">
@@ -2017,6 +2103,26 @@ table.table-sm td:first-child {
       });
     </script>
     <!--END SCRIPT-->
+
+    <script>
+       function loadWeather() {
+        // Simulate data fetch
+        const cities = ['Manila', 'Cebu', 'Davao'];
+        const temps = [31, 28, 29, 27];
+        const statuses = ['Sunny', 'Rainy', 'Cloudy', 'Stormy'];
+
+        const city = cities[Math.floor(Math.random() * cities.length)];
+        const temp = temps[Math.floor(Math.random() * temps.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        document.getElementById('weather-city').querySelector('h3').textContent = city;
+        document.getElementById('weather-temp').querySelector('h3').textContent = temp + '°C';
+        document.getElementById('weather-status').querySelector('h3').textContent = status;
+      }
+
+      // Load on start
+      loadWeather();
+    </script>
 
     
     <!--SCRIPT FOR DATE FILTERING-->
