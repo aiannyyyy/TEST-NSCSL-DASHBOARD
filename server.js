@@ -16,34 +16,64 @@ app.use(cors());
 app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
 app.use(bodyParser.json());
 
-// Check if public directory exists
-const publicPath = path.join(__dirname, "public");
-console.log("Checking public directory:", publicPath);
-console.log("Public directory exists:", fs.existsSync(publicPath));
+// Check current directory and list all files
+console.log("Current directory:", __dirname);
+console.log("Files in current directory:", fs.readdirSync(__dirname));
 
-if (fs.existsSync(publicPath)) {
+// Check if public directory exists, if not, serve from current directory
+const publicPath = path.join(__dirname, "public");
+const hasPublicDir = fs.existsSync(publicPath);
+
+console.log("Checking public directory:", publicPath);
+console.log("Public directory exists:", hasPublicDir);
+
+if (hasPublicDir) {
   console.log("Files in public directory:", fs.readdirSync(publicPath));
+} else {
+  console.log("No public directory found, will serve HTML files from src directory");
 }
 
 // Serve login.html at the root URL with error handling
 app.get("/", (req, res) => {
-  const loginPath = path.join(__dirname, "public", "login.html");
-  console.log("Looking for login.html at:", loginPath);
+  // Try public directory first, then current directory
+  const loginPaths = [
+    path.join(__dirname, "public", "login.html"),
+    path.join(__dirname, "login.html")
+  ];
   
-  if (fs.existsSync(loginPath)) {
+  let loginPath = null;
+  for (const path of loginPaths) {
+    console.log("Checking for login.html at:", path);
+    if (fs.existsSync(path)) {
+      loginPath = path;
+      break;
+    }
+  }
+  
+  if (loginPath) {
+    console.log("Found login.html at:", loginPath);
     res.sendFile(loginPath);
   } else {
-    console.error("login.html not found at:", loginPath);
+    console.error("login.html not found in any expected location");
     res.status(404).send(`
       <h1>File Not Found</h1>
-      <p>login.html is missing from the public directory</p>
-      <p>Expected location: ${loginPath}</p>
+      <p>login.html is missing from both public directory and src directory</p>
+      <p>Checked locations:</p>
+      <ul>
+        ${loginPaths.map(p => `<li>${p}</li>`).join('')}
+      </ul>
+      <p>Current directory: ${__dirname}</p>
+      <p>Files in current directory: ${fs.readdirSync(__dirname).join(', ')}</p>
     `);
   }
 });
 
-// Serve other static files
-app.use(express.static(path.join(__dirname, "public")));
+// Serve other static files - try public first, then current directory
+if (hasPublicDir) {
+  app.use(express.static(path.join(__dirname, "public")));
+} else {
+  app.use(express.static(__dirname));
+}
 
 // Add a health check endpoint
 app.get("/health", (req, res) => {
