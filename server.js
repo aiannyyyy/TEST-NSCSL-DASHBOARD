@@ -17,6 +17,25 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
 
+// Fix path issue - Render seems to run from src/ directory
+const isRenderDeployment = __dirname.includes('/opt/render/project/src');
+console.log("🔍 Deployment Detection:");
+console.log("- __dirname:", __dirname);
+console.log("- isProduction:", isProduction);
+console.log("- isRenderDeployment:", isRenderDeployment);
+
+// Determine the correct public path based on environment and deployment platform
+let publicPath;
+if (isRenderDeployment) {
+  // On Render, we're already in the src directory, so HTML files are in current directory
+  publicPath = __dirname;
+  console.log("🚀 Render deployment detected - using current directory");
+} else if (isProduction) {
+  publicPath = path.join(__dirname, 'public');
+} else {
+  publicPath = path.join(__dirname, 'src');
+}
+
 // CORS configuration
 if (isDevelopment) {
   app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
@@ -31,12 +50,10 @@ const publicPath = isProduction
   : path.join(__dirname, 'src');
 
 console.log("🔍 Path Debug Info:");
-console.log("- __dirname:", __dirname);
-console.log("- isProduction:", isProduction);
-console.log("- publicPath:", publicPath);
+console.log("- Final publicPath:", publicPath);
 
-// Check if build created public directory
-if (isProduction) {
+// Check if build created public directory (only if not on Render)
+if (isProduction && !isRenderDeployment) {
   const buildPublicPath = path.join(__dirname, 'public');
   if (!fs.existsSync(buildPublicPath)) {
     console.log("⚠️  Public directory doesn't exist, falling back to src/");
@@ -77,7 +94,12 @@ if (fs.existsSync(publicPath)) {
 app.use(express.static(publicPath));
 
 // Additional static file routes for specific asset types
-app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
+if (isRenderDeployment) {
+  // On Render, assets are in the same directory structure
+  app.use('/assets', express.static(path.join(__dirname, 'assets')));
+} else {
+  app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
+}
 app.use('/css', express.static(publicPath));
 app.use('/js', express.static(publicPath));
 
