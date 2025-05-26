@@ -17,25 +17,6 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
 
-// Fix path issue - Render seems to run from src/ directory
-const isRenderDeployment = __dirname.includes('/opt/render/project/src');
-console.log("🔍 Deployment Detection:");
-console.log("- __dirname:", __dirname);
-console.log("- isProduction:", isProduction);
-console.log("- isRenderDeployment:", isRenderDeployment);
-
-// Determine the correct public path based on environment and deployment platform
-let publicPath;
-if (isRenderDeployment) {
-  // On Render, we're already in the src directory, so HTML files are in current directory
-  publicPath = __dirname;
-  console.log("🚀 Render deployment detected - using current directory");
-} else if (isProduction) {
-  publicPath = path.join(__dirname, 'public');
-} else {
-  publicPath = path.join(__dirname, 'src');
-}
-
 // CORS configuration
 if (isDevelopment) {
   app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
@@ -48,24 +29,6 @@ app.use(bodyParser.json());
 const publicPath = isProduction 
   ? path.join(__dirname, 'public') 
   : path.join(__dirname, 'src');
-
-console.log("🔍 Path Debug Info:");
-console.log("- Final publicPath:", publicPath);
-
-// Check if build created public directory (only if not on Render)
-if (isProduction && !isRenderDeployment) {
-  const buildPublicPath = path.join(__dirname, 'public');
-  if (!fs.existsSync(buildPublicPath)) {
-    console.log("⚠️  Public directory doesn't exist, falling back to src/");
-    // Fallback to src if public doesn't exist
-    const fallbackPath = path.join(__dirname, 'src');
-    if (fs.existsSync(fallbackPath)) {
-      console.log("✅ Using src/ as fallback");
-      // Override publicPath
-      app.locals.publicPath = fallbackPath;
-    }
-  }
-}
 
 console.log("Environment:", isProduction ? 'production' : 'development');
 console.log("Current directory:", __dirname);
@@ -94,22 +57,14 @@ if (fs.existsSync(publicPath)) {
 app.use(express.static(publicPath));
 
 // Additional static file routes for specific asset types
-if (isRenderDeployment) {
-  // On Render, assets are in the same directory structure
-  app.use('/assets', express.static(path.join(__dirname, 'assets')));
-} else {
-  app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
-}
+app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 app.use('/css', express.static(publicPath));
 app.use('/js', express.static(publicPath));
 
 // Main route - serve login.html at root
 app.get("/", (req, res) => {
-  // Use fallback path if set
-  const actualPublicPath = app.locals.publicPath || publicPath;
-  const loginPath = path.join(actualPublicPath, "login.html");
-  
-  console.log("🔍 Looking for login.html at:", loginPath);
+  const loginPath = path.join(publicPath, "login.html");
+  console.log("Looking for login.html at:", loginPath);
   
   if (fs.existsSync(loginPath)) {
     console.log("✅ Found login.html, serving file");
@@ -117,36 +72,22 @@ app.get("/", (req, res) => {
   } else {
     console.error("❌ login.html not found at:", loginPath);
     
-    // Try multiple fallback locations
-    const fallbackPaths = [
-      path.join(__dirname, "src", "login.html"),
-      path.join(__dirname, "public", "login.html"),
-      path.join(__dirname, "login.html")
-    ];
-    
-    let foundFile = false;
-    for (const fallbackPath of fallbackPaths) {
-      console.log("🔍 Trying fallback:", fallbackPath);
-      if (fs.existsSync(fallbackPath)) {
-        console.log("✅ Found login.html at fallback path:", fallbackPath);
-        res.sendFile(fallbackPath);
-        foundFile = true;
-        break;
-      }
-    }
-    
-    if (!foundFile) {
+    // Try alternative location
+    const altLoginPath = path.join(__dirname, "src", "login.html");
+    if (fs.existsSync(altLoginPath)) {
+      console.log("✅ Found login.html at alternative path:", altLoginPath);
+      res.sendFile(altLoginPath);
+    } else {
       // Provide debug information
       const debugInfo = {
         environment: isProduction ? 'production' : 'development',
         currentDir: __dirname,
-        publicPath: actualPublicPath,
+        publicPath: publicPath,
         expectedFile: loginPath,
         rootFiles: fs.existsSync(__dirname) ? fs.readdirSync(__dirname) : "Can't read root",
         srcExists: fs.existsSync(path.join(__dirname, "src")),
-        srcFiles: fs.existsSync(path.join(__dirname, "src")) ? fs.readdirSync(path.join(__dirname, "src")) : "src doesn't exist",
-        publicExists: fs.existsSync(path.join(__dirname, "public")),
-        publicFiles: fs.existsSync(path.join(__dirname, "public")) ? fs.readdirSync(path.join(__dirname, "public")) : "public doesn't exist"
+        publicExists: fs.existsSync(publicPath),
+        publicFiles: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : "Directory doesn't exist"
       };
       
       res.status(404).send(`
@@ -155,11 +96,9 @@ app.get("/", (req, res) => {
         <p><strong>Expected location:</strong> ${debugInfo.expectedFile}</p>
         <p><strong>Current directory:</strong> ${debugInfo.currentDir}</p>
         <p><strong>Public path:</strong> ${debugInfo.publicPath}</p>
+        <p><strong>Public directory exists:</strong> ${debugInfo.publicExists}</p>
+        <p><strong>Files in public directory:</strong> ${Array.isArray(debugInfo.publicFiles) ? debugInfo.publicFiles.join(', ') : debugInfo.publicFiles}</p>
         <p><strong>Root directory files:</strong> ${Array.isArray(debugInfo.rootFiles) ? debugInfo.rootFiles.join(', ') : debugInfo.rootFiles}</p>
-        <p><strong>Src exists:</strong> ${debugInfo.srcExists}</p>
-        <p><strong>Src files:</strong> ${Array.isArray(debugInfo.srcFiles) ? debugInfo.srcFiles.join(', ') : debugInfo.srcFiles}</p>
-        <p><strong>Public exists:</strong> ${debugInfo.publicExists}</p>
-        <p><strong>Public files:</strong> ${Array.isArray(debugInfo.publicFiles) ? debugInfo.publicFiles.join(', ') : debugInfo.publicFiles}</p>
       `);
     }
   }
