@@ -104,27 +104,6 @@ app.get("/", (req, res) => {
   }
 });
 
-// Explicit routes for HTML files (fallback)
-const htmlFiles = ['admin.html', 'login.html', 'index.html', 'demographics.html', 'followup.html', 'labindex.html', 'buttons.html'];
-
-htmlFiles.forEach(fileName => {
-  app.get(`/${fileName}`, (req, res) => {
-    const filePath = path.join(publicPath, fileName);
-    
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      // Try alternative path
-      const altPath = path.join(__dirname, 'src', fileName);
-      if (fs.existsSync(altPath)) {
-        res.sendFile(altPath);
-      } else {
-        res.status(404).send(`<h1>File Not Found</h1><p>${fileName} not found in either location.</p>`);
-      }
-    }
-  });
-});
-
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ 
