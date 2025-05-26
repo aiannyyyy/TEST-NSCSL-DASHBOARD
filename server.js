@@ -12,26 +12,58 @@ const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connec
 const mysqlDb1 = require("./config/inhouseConnection"); // ✅ Oracle Connection
 
 const app = express();
-app.use(cors());
-app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
+
+// Environment-specific configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = !isProduction;
+
+// CORS configuration
+if (isDevelopment) {
+  app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
+} else {
+  app.use(cors());
+}
 app.use(bodyParser.json());
 
-// Check current directory and list all files for debugging
+// Determine the correct public path based on environment
+const publicPath = isProduction 
+  ? path.join(__dirname, 'public') 
+  : path.join(__dirname, 'src');
+
+console.log("Environment:", isProduction ? 'production' : 'development');
 console.log("Current directory:", __dirname);
-console.log("Files in current directory:", fs.readdirSync(__dirname));
+console.log("Public path:", publicPath);
 
-// Set up the public directory path (HTML files are in src/public)
-const publicPath = path.join(__dirname, "src", "public");
-console.log("Checking public directory:", publicPath);
-console.log("Public directory exists:", fs.existsSync(publicPath));
-
-if (fs.existsSync(publicPath)) {
-  console.log("Files in public directory:", fs.readdirSync(publicPath));
+// Check if directories exist and log contents
+if (fs.existsSync(__dirname)) {
+  console.log("Root directory files:", fs.readdirSync(__dirname));
 }
 
-// Serve login.html at the root URL
+if (fs.existsSync(publicPath)) {
+  console.log("✅ Public directory exists:", publicPath);
+  console.log("Files in public directory:", fs.readdirSync(publicPath));
+} else {
+  console.log("❌ Public directory doesn't exist:", publicPath);
+  
+  // Check alternative paths
+  const altPath = path.join(__dirname, 'src');
+  if (fs.existsSync(altPath)) {
+    console.log("✅ Found alternative path:", altPath);
+    console.log("Files in src/:", fs.readdirSync(altPath));
+  }
+}
+
+// Serve static files from the public directory
+app.use(express.static(publicPath));
+
+// Additional static file routes for specific asset types
+app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
+app.use('/css', express.static(publicPath));
+app.use('/js', express.static(publicPath));
+
+// Main route - serve login.html at root
 app.get("/", (req, res) => {
-  const loginPath = path.join(__dirname, "src", "public", "login.html");
+  const loginPath = path.join(publicPath, "login.html");
   console.log("Looking for login.html at:", loginPath);
   
   if (fs.existsSync(loginPath)) {
@@ -40,38 +72,67 @@ app.get("/", (req, res) => {
   } else {
     console.error("❌ login.html not found at:", loginPath);
     
-    // List what's actually in the directories for debugging
-    const debugInfo = {
-      currentDir: __dirname,
-      filesInCurrentDir: fs.readdirSync(__dirname),
-      srcDirExists: fs.existsSync(path.join(__dirname, "src")),
-      filesInSrc: fs.existsSync(path.join(__dirname, "src")) ? fs.readdirSync(path.join(__dirname, "src")) : "Directory doesn't exist",
-      publicDirExists: fs.existsSync(publicPath),
-      filesInPublic: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : "Directory doesn't exist"
-    };
-    
-    res.status(404).send(`
-      <h1>File Not Found - Debug Info</h1>
-      <p><strong>Expected location:</strong> ${loginPath}</p>
-      <p><strong>Current directory:</strong> ${debugInfo.currentDir}</p>
-      <p><strong>Files in current directory:</strong> ${debugInfo.filesInCurrentDir.join(', ')}</p>
-      <p><strong>Src directory exists:</strong> ${debugInfo.srcDirExists}</p>
-      <p><strong>Files in src directory:</strong> ${debugInfo.filesInSrc}</p>
-      <p><strong>Public directory exists:</strong> ${debugInfo.publicDirExists}</p>
-      <p><strong>Files in public directory:</strong> ${debugInfo.filesInPublic}</p>
-    `);
+    // Try alternative location
+    const altLoginPath = path.join(__dirname, "src", "login.html");
+    if (fs.existsSync(altLoginPath)) {
+      console.log("✅ Found login.html at alternative path:", altLoginPath);
+      res.sendFile(altLoginPath);
+    } else {
+      // Provide debug information
+      const debugInfo = {
+        environment: isProduction ? 'production' : 'development',
+        currentDir: __dirname,
+        publicPath: publicPath,
+        expectedFile: loginPath,
+        rootFiles: fs.existsSync(__dirname) ? fs.readdirSync(__dirname) : "Can't read root",
+        srcExists: fs.existsSync(path.join(__dirname, "src")),
+        publicExists: fs.existsSync(publicPath),
+        publicFiles: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : "Directory doesn't exist"
+      };
+      
+      res.status(404).send(`
+        <h1>File Not Found - Debug Info</h1>
+        <p><strong>Environment:</strong> ${debugInfo.environment}</p>
+        <p><strong>Expected location:</strong> ${debugInfo.expectedFile}</p>
+        <p><strong>Current directory:</strong> ${debugInfo.currentDir}</p>
+        <p><strong>Public path:</strong> ${debugInfo.publicPath}</p>
+        <p><strong>Public directory exists:</strong> ${debugInfo.publicExists}</p>
+        <p><strong>Files in public directory:</strong> ${Array.isArray(debugInfo.publicFiles) ? debugInfo.publicFiles.join(', ') : debugInfo.publicFiles}</p>
+        <p><strong>Root directory files:</strong> ${Array.isArray(debugInfo.rootFiles) ? debugInfo.rootFiles.join(', ') : debugInfo.rootFiles}</p>
+      `);
+    }
   }
 });
 
-// Serve static files from the src/public directory
-app.use(express.static(path.join(__dirname, "src", "public")));
+// Explicit routes for HTML files (fallback)
+const htmlFiles = ['admin.html', 'login.html', 'index.html', 'demographics.html', 'followup.html', 'labindex.html', 'buttons.html'];
 
-// Add a health check endpoint
+htmlFiles.forEach(fileName => {
+  app.get(`/${fileName}`, (req, res) => {
+    const filePath = path.join(publicPath, fileName);
+    
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      // Try alternative path
+      const altPath = path.join(__dirname, 'src', fileName);
+      if (fs.existsSync(altPath)) {
+        res.sendFile(altPath);
+      } else {
+        res.status(404).send(`<h1>File Not Found</h1><p>${fileName} not found in either location.</p>`);
+      }
+    }
+  });
+});
+
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ 
     status: "OK", 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development"
+    environment: process.env.NODE_ENV || "development",
+    publicPath: publicPath,
+    publicExists: fs.existsSync(publicPath)
   });
 });
 
@@ -149,5 +210,6 @@ app.use("*", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Serving static files from: ${path.join(__dirname, "public")}`);
+  console.log(`📁 Serving static files from: ${publicPath}`);
+  console.log(`🌍 Environment: ${isProduction ? 'production' : 'development'}`);
 });

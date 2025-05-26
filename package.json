@@ -4,7 +4,10 @@
   "description": "Backend for my dashboard program using Node.js and Express",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "mkdir -p public && cp src/*.html public/ && echo 'HTML files copied to public directory'",
+    "dev": "node server.js",
+    "postbuild": "ls -la public/"
   },
   "keywords": [],
   "author": "",
@@ -26,5 +29,8 @@
     "oracledb": "^6.8.0",
     "socket.io": "^4.8.1",
     "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
