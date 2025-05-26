@@ -30,6 +30,26 @@ const publicPath = isProduction
   ? path.join(__dirname, 'public') 
   : path.join(__dirname, 'src');
 
+console.log("🔍 Path Debug Info:");
+console.log("- __dirname:", __dirname);
+console.log("- isProduction:", isProduction);
+console.log("- publicPath:", publicPath);
+
+// Check if build created public directory
+if (isProduction) {
+  const buildPublicPath = path.join(__dirname, 'public');
+  if (!fs.existsSync(buildPublicPath)) {
+    console.log("⚠️  Public directory doesn't exist, falling back to src/");
+    // Fallback to src if public doesn't exist
+    const fallbackPath = path.join(__dirname, 'src');
+    if (fs.existsSync(fallbackPath)) {
+      console.log("✅ Using src/ as fallback");
+      // Override publicPath
+      app.locals.publicPath = fallbackPath;
+    }
+  }
+}
+
 console.log("Environment:", isProduction ? 'production' : 'development');
 console.log("Current directory:", __dirname);
 console.log("Public path:", publicPath);
@@ -63,8 +83,11 @@ app.use('/js', express.static(publicPath));
 
 // Main route - serve login.html at root
 app.get("/", (req, res) => {
-  const loginPath = path.join(publicPath, "login.html");
-  console.log("Looking for login.html at:", loginPath);
+  // Use fallback path if set
+  const actualPublicPath = app.locals.publicPath || publicPath;
+  const loginPath = path.join(actualPublicPath, "login.html");
+  
+  console.log("🔍 Looking for login.html at:", loginPath);
   
   if (fs.existsSync(loginPath)) {
     console.log("✅ Found login.html, serving file");
@@ -72,22 +95,36 @@ app.get("/", (req, res) => {
   } else {
     console.error("❌ login.html not found at:", loginPath);
     
-    // Try alternative location
-    const altLoginPath = path.join(__dirname, "src", "login.html");
-    if (fs.existsSync(altLoginPath)) {
-      console.log("✅ Found login.html at alternative path:", altLoginPath);
-      res.sendFile(altLoginPath);
-    } else {
+    // Try multiple fallback locations
+    const fallbackPaths = [
+      path.join(__dirname, "src", "login.html"),
+      path.join(__dirname, "public", "login.html"),
+      path.join(__dirname, "login.html")
+    ];
+    
+    let foundFile = false;
+    for (const fallbackPath of fallbackPaths) {
+      console.log("🔍 Trying fallback:", fallbackPath);
+      if (fs.existsSync(fallbackPath)) {
+        console.log("✅ Found login.html at fallback path:", fallbackPath);
+        res.sendFile(fallbackPath);
+        foundFile = true;
+        break;
+      }
+    }
+    
+    if (!foundFile) {
       // Provide debug information
       const debugInfo = {
         environment: isProduction ? 'production' : 'development',
         currentDir: __dirname,
-        publicPath: publicPath,
+        publicPath: actualPublicPath,
         expectedFile: loginPath,
         rootFiles: fs.existsSync(__dirname) ? fs.readdirSync(__dirname) : "Can't read root",
         srcExists: fs.existsSync(path.join(__dirname, "src")),
-        publicExists: fs.existsSync(publicPath),
-        publicFiles: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : "Directory doesn't exist"
+        srcFiles: fs.existsSync(path.join(__dirname, "src")) ? fs.readdirSync(path.join(__dirname, "src")) : "src doesn't exist",
+        publicExists: fs.existsSync(path.join(__dirname, "public")),
+        publicFiles: fs.existsSync(path.join(__dirname, "public")) ? fs.readdirSync(path.join(__dirname, "public")) : "public doesn't exist"
       };
       
       res.status(404).send(`
@@ -96,9 +133,11 @@ app.get("/", (req, res) => {
         <p><strong>Expected location:</strong> ${debugInfo.expectedFile}</p>
         <p><strong>Current directory:</strong> ${debugInfo.currentDir}</p>
         <p><strong>Public path:</strong> ${debugInfo.publicPath}</p>
-        <p><strong>Public directory exists:</strong> ${debugInfo.publicExists}</p>
-        <p><strong>Files in public directory:</strong> ${Array.isArray(debugInfo.publicFiles) ? debugInfo.publicFiles.join(', ') : debugInfo.publicFiles}</p>
         <p><strong>Root directory files:</strong> ${Array.isArray(debugInfo.rootFiles) ? debugInfo.rootFiles.join(', ') : debugInfo.rootFiles}</p>
+        <p><strong>Src exists:</strong> ${debugInfo.srcExists}</p>
+        <p><strong>Src files:</strong> ${Array.isArray(debugInfo.srcFiles) ? debugInfo.srcFiles.join(', ') : debugInfo.srcFiles}</p>
+        <p><strong>Public exists:</strong> ${debugInfo.publicExists}</p>
+        <p><strong>Public files:</strong> ${Array.isArray(debugInfo.publicFiles) ? debugInfo.publicFiles.join(', ') : debugInfo.publicFiles}</p>
       `);
     }
   }
