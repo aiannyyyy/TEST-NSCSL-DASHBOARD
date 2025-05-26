@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const oracledb = require("oracledb");
 
-// Import MySQL & Oracle connections
+// Import MySQL & Oracle connections (config is at project root)
 const mysqlDb = require("./config/mysqlConnection"); // ✅ MySQL Connection
 const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connection
 const mysqlDb1 = require("./config/inhouseConnection"); // ✅ Oracle Connection
@@ -16,64 +16,55 @@ app.use(cors());
 app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
 app.use(bodyParser.json());
 
-// Check current directory and list all files
+// Check current directory and list all files for debugging
 console.log("Current directory:", __dirname);
 console.log("Files in current directory:", fs.readdirSync(__dirname));
 
-// Check if public directory exists, if not, serve from current directory
-const publicPath = path.join(__dirname, "public");
-const hasPublicDir = fs.existsSync(publicPath);
-
+// Set up the public directory path (HTML files are in src/public)
+const publicPath = path.join(__dirname, "src", "public");
 console.log("Checking public directory:", publicPath);
-console.log("Public directory exists:", hasPublicDir);
+console.log("Public directory exists:", fs.existsSync(publicPath));
 
-if (hasPublicDir) {
+if (fs.existsSync(publicPath)) {
   console.log("Files in public directory:", fs.readdirSync(publicPath));
-} else {
-  console.log("No public directory found, will serve HTML files from src directory");
 }
 
-// Serve login.html at the root URL with error handling
+// Serve login.html at the root URL
 app.get("/", (req, res) => {
-  // Try public directory first, then current directory
-  const loginPaths = [
-    path.join(__dirname, "public", "login.html"),
-    path.join(__dirname, "login.html")
-  ];
+  const loginPath = path.join(__dirname, "src", "public", "login.html");
+  console.log("Looking for login.html at:", loginPath);
   
-  let loginPath = null;
-  for (const path of loginPaths) {
-    console.log("Checking for login.html at:", path);
-    if (fs.existsSync(path)) {
-      loginPath = path;
-      break;
-    }
-  }
-  
-  if (loginPath) {
-    console.log("Found login.html at:", loginPath);
+  if (fs.existsSync(loginPath)) {
+    console.log("✅ Found login.html, serving file");
     res.sendFile(loginPath);
   } else {
-    console.error("login.html not found in any expected location");
+    console.error("❌ login.html not found at:", loginPath);
+    
+    // List what's actually in the directories for debugging
+    const debugInfo = {
+      currentDir: __dirname,
+      filesInCurrentDir: fs.readdirSync(__dirname),
+      srcDirExists: fs.existsSync(path.join(__dirname, "src")),
+      filesInSrc: fs.existsSync(path.join(__dirname, "src")) ? fs.readdirSync(path.join(__dirname, "src")) : "Directory doesn't exist",
+      publicDirExists: fs.existsSync(publicPath),
+      filesInPublic: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : "Directory doesn't exist"
+    };
+    
     res.status(404).send(`
-      <h1>File Not Found</h1>
-      <p>login.html is missing from both public directory and src directory</p>
-      <p>Checked locations:</p>
-      <ul>
-        ${loginPaths.map(p => `<li>${p}</li>`).join('')}
-      </ul>
-      <p>Current directory: ${__dirname}</p>
-      <p>Files in current directory: ${fs.readdirSync(__dirname).join(', ')}</p>
+      <h1>File Not Found - Debug Info</h1>
+      <p><strong>Expected location:</strong> ${loginPath}</p>
+      <p><strong>Current directory:</strong> ${debugInfo.currentDir}</p>
+      <p><strong>Files in current directory:</strong> ${debugInfo.filesInCurrentDir.join(', ')}</p>
+      <p><strong>Src directory exists:</strong> ${debugInfo.srcDirExists}</p>
+      <p><strong>Files in src directory:</strong> ${debugInfo.filesInSrc}</p>
+      <p><strong>Public directory exists:</strong> ${debugInfo.publicDirExists}</p>
+      <p><strong>Files in public directory:</strong> ${debugInfo.filesInPublic}</p>
     `);
   }
 });
 
-// Serve other static files - try public first, then current directory
-if (hasPublicDir) {
-  app.use(express.static(path.join(__dirname, "public")));
-} else {
-  app.use(express.static(__dirname));
-}
+// Serve static files from the src/public directory
+app.use(express.static(path.join(__dirname, "src", "public")));
 
 // Add a health check endpoint
 app.get("/health", (req, res) => {
@@ -95,11 +86,11 @@ connectOracle()
     // Don't exit the process, just log the error
   });
 
-// Import and register EXE execution routes
+// Import and register EXE execution routes (routes are at project root)
 const exeRoutes = require("./routes/exeRoutes");
 app.use("/api/run-exe", exeRoutes);
 
-// Register Routes
+// Register Routes (all routes are at project root)
 app.use("/api/facility-visits", require("./routes/facilityRoutes")); // MySQL CRUD
 app.use("/api/unsat", require("./routes/unsatRoutes"));
 app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section (Oracle)
