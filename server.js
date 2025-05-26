@@ -5,7 +5,6 @@ const cors = require("cors");
 const path = require("path");
 const oracledb = require("oracledb");
 
-
 // Import MySQL & Oracle connections
 const mysqlDb = require("./config/mysqlConnection"); // ✅ MySQL Connection
 const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connection
@@ -16,11 +15,15 @@ app.use(cors());
 app.use(cors({ origin: "http://127.0.0.1:5501", credentials: true }));
 app.use(bodyParser.json());
 
-// ✅ Serve static files
-app.use("/js", express.static(path.join(__dirname, "public/js")));
+// Serve login.html at the root URL
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+// Serve other static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Establish Oracle Connection and store it globally in app.locals
+// Establish Oracle Connection and store it globally in app.locals
 connectOracle()
   .then((db) => {
     app.locals.oracleDb = db; // ✅ Store Oracle connection globally
@@ -30,16 +33,16 @@ connectOracle()
     console.error("❌ Oracle connection error:", err);
   });
 
-  // ✅ Import and register EXE execution routes
+// Import and register EXE execution routes
 const exeRoutes = require("./routes/exeRoutes");
 app.use("/api/run-exe", exeRoutes);
 
-// ✅ Register Routes
+// Register Routes
 app.use("/api/facility-visits", require("./routes/facilityRoutes")); // MySQL CRUD
 app.use("/api/unsat", require("./routes/unsatRoutes"));
 app.use("/api/unsat", require("./routes/rateRoutes")); // Unsatisfactory Section (Oracle)
 app.use("/api/oracle", require("./routes/oracleRoutes")); // Future Oracle routes
-app.use("/api/inc-dec", require("./routes/inc_decRoutes")); 
+app.use("/api/inc-dec", require("./routes/inc_decRoutes"));
 app.use("/api/auth", require("./routes/loginRoutes")); // ✅ Authentication Routes
 app.use("/api", require("./routes/exeRoutes")); // ✅ Register EXE Routes
 app.use("/api/timeliness", require("./routes/timelinessRoutes"));
@@ -72,22 +75,20 @@ app.use("/api", require("./routes/notebookRoutes")); // for patient details
 
 app.use("/api/notebook-query", require("./routes/notebookQuery")); // for patient details
 
-
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log error
   res.status(500).json({ error: "Internal Server Error", details: err.message });
 });
 
-// ✅ Debugging Route - Check if OracleDB is Set
+// Debugging Route - Check if OracleDB is Set
 app.get("/api/check-oracle", (req, res) => {
   if (!app.locals.oracleDb) {
-      return res.status(500).json({ error: "Oracle connection is not initialized" });
+    return res.status(500).json({ error: "Oracle connection is not initialized" });
   }
   res.json({ message: "✅ Oracle connection is active!" });
 });
 
-
-// ✅ Start Server
+// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
