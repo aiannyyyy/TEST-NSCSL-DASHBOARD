@@ -49,9 +49,6 @@ function fetchVisits() {
                                 onclick="openModal(${visit.id}, '${visit.facility_code}', '${visit.facility_name}', '${visit.date_visited}', '${visit.province}', '${visit.status}', '${remarks.replace(/'/g, "\\'")}')">
                             Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteVisit(${visit.id})">
-                            Delete
-                        </button>
                     </td>
                 </tr>
 `);

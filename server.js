@@ -206,8 +206,10 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found", path: req.originalUrl });
 });
 
-// Start Server
+/* Start Server
 const PORT = process.env.PORT || 3000;
+*/
+const PORT = process.env.PORT || 10000; // default fallback but Render will provide PORT
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📁 Serving static files from: ${publicPath}`);
