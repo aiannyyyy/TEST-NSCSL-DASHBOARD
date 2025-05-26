@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NSCSL DASHBOARD </title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+    
+  </head>
+  <style>
+    .table-responsive {
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+    }
+
+    .table-header {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .custom-btn {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+    border: none;
+    }
+
+    .custom-btn:hover {
+        background-color: #218838 !important; /* Darker Green */
+        color: white !important;
+    }
+
+    #marketingOverview {
+        width: 100% !important;
+        height: 600px !important; /* ⬆️ Increased from 500px to 600px */
+    }
+
+    .chart-container {
+        height: 650px !important; /* Adjust container height */
+    }
+
+    .button-custom {
+    background-color: #0d6efd; /* Blue background */
+    color: white !important; /* White text */
+    border: 2px solid #0d6efd; /* Blue border */
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .button-custom:hover {
+      background-color: white; /* White background on hover */
+      color: #0d6efd !important; /* Blue text on hover */
+      border: 2px solid #0d6efd; /* Keep the blue border */
+  }
+
+
+  .table-container {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    display: block;
+    max-height: none; /* Remove max-height to prevent extra space */
+  }
+
+  .custom-table {
+      min-width: 10px; /* Ensure table doesn't shrink */
+      border-collapse: collapse;
+      text-align: center;
+  }
+
+  .custom-table thead {
+      position: sticky;
+      top: 0;
+      background: #004085; /* Dark blue header */
+      color: white;
+      z-index: 2;
+  }
+
+  .custom-table th, .custom-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  .nav .nav-item {
+  padding: 10px 0; /* Adds vertical spacing */
+}
+
+.nav .nav-link {
+  padding: 12px 15px; /* Adjust link padding for better spacing */
+  border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+}
+
+.table-header th {
+    color: black !important;      /* Set text color to black */
+    font-weight: bold !important; /* Make the text bold */
+}
+
+.limited-width {
+    max-width: 200px; /* Adjust this value as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.limited-width-wrap {
+    max-width: 200px; /* Adjust this value as needed */
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.color{
+  color: black !important;
+}
+
+#notebookTable tbody tr:hover {
+  background-color: #e0f0ff; /* Light blue background on hover */
+  color: blue; /* Text color blue on hover */
+  cursor: pointer; /* Show pointer cursor to indicate it's clickable */
+}
+
+table.table-sm td {
+  padding: 6px 12px;
+  vertical-align: top;
+}
+table.table-sm td:first-child {
+  font-weight: bold;
+  width: 200px;
+  white-space: nowrap;
+}
+
+/* notebook */
+.list-group-item {
+  background-color: #fff;
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.list-group-item p {
+  margin-bottom: 0.4rem;
+}
+
+/* Custom styles for the patient notebooks table */
+#patientNotebooksTable {
+  font-size: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#patientNotebooksTable thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  padding: 12px 15px;
+  color: #495057;
+}
+
+#patientNotebooksTable tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+#patientNotebooksTable tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+#patientNotebooksTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  margin: 0 2px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-view {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.btn-view:hover {
+  background-color: #1976d2;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-edit {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffcc02;
+}
+
+.btn-edit:hover {
+  background-color: #f57c00;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+@media (max-width: 768px) {
+  #patientNotebooksTable {
+    font-size: 12px;
+  }
+  
+  .btn-action {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  #patientNotebooksTable thead th,
+  #patientNotebooksTable tbody td {
+    padding: 8px 10px;
+  }
+}
+
+.compact-table td, 
+  .compact-table th {
+    padding: 4px 6px !important; /* vertical 2px, horizontal 4px */
+  }
+
+
+  /* weather */
+  
+    .weather-widget {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      transition: all 0.3s ease;
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .weather-header h2 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .weather-body {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .weather-info {
+      text-align: center;
+    }
+
+    .weather-info p {
+      margin: 5px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .weather-info h3 {
+      font-size: 28px;
+      margin: 5px 0;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  </style>
+  <body class="with-welcome-text">
+    <!--
+    <div class="container-scroller">
+      <div class="row p-0 m-0 proBanner" id="proBanner">
+        <div class="col-md-12 p-0 m-0">
+          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
+            <div class="ps-lg-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
+                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" class="btn me-2 buy-now-btn border-0">Buy Now</a>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <a href="https://www.bootstrapdash.com/product/star-admin-pro/"><i class="ti-home me-3 text-white"></i></a>
+              <button id="bannerClose" class="btn border-0 p-0">
+                <i class="ti-close text-white"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      -->
+      
+      <!-- partial:partials/_navbar.html -->
+      <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+          <div class="me-3">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+              <span class="icon-menu"></span>
+            </button>
+          </div>
+          <div>
+            <a class="navbar-brand brand-logo" href="index.html">
+              <img src="assets/images/nscsl.PNG" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="index.html">
+              <img src="assets/images/nscsl logo copy.png" alt="logo" />
+            </a>
+          </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-top">
+          <ul class="navbar-nav">
+            <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+              <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to PDO Dashboard </h3>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+              <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="img-xs rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image"> </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                  <div class="dropdown-header text-center">
+                    <img class="img-md rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image">
+                    <p class="mb-1 mt-3 fw-semibold" id="user-name1">Loading...</p>  <!-- Name will be inserted here -->
+                    <p class="fw-light text-muted mb-0" id="user-email">Loading...</p>  <!-- Email will be inserted here -->
+                </div>
+                <!--
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a>
+                -->
+                <a class="dropdown-item" id="logout">
+                  <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out
+                </a>              
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+       <!-- partial:partials/_sidebar.html -->
+     <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-admin" aria-expanded="false" aria-controls="nscsl-admin">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">ADMIN</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-admin">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Supply & Purchasing</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
+              <i class="mdi mdi-office-building menu-icon"></i>
+              <span class="menu-title"> PDO </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-pdo">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/index.html">Overview</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+                -->
+              </ul>
+            </div>
+          </li> 
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-lab" aria-expanded="false" aria-controls="nscsl-lab">
+              <i class="mdi mdi-flask-outline menu-icon"></i>
+              <span class="menu-title">LABORATORY</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-lab">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/labindex.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/demographics.html">Demo & Unsat</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
+                -->
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-followup" aria-expanded="false" aria-controls="nscsl-followup">
+              <i class="mdi mdi-stethoscope menu-icon"></i>
+              <span class="menu-title">FOLLOWUP</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-followup">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/followup.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
+
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="home-tab">
+                  <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                    <!--
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#buttons" role="tab" aria-selected="false">Buttons</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#reports" role="tab" aria-controls="reports" aria-selected="false">Reports</a>
+                        </li>
+                    </ul>
+                    -->
+                    <!--
+                    <div>
+                      <div class="btn-wrapper">
+                        <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                        <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                        <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                  
+                  <div class="tab-content tab-content-basic">
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                      <!--
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="statistics-details d-flex align-items-center justify-content-between">
+                            <div>
+                              <p class="statistics-title">Bounce Rate</p>
+                              <h3 class="rate-percentage">32.53%</h3>
+                              <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span></p>
+                            </div>
+                            <div>
+                              <p class="statistics-title">Page Views</p>
+                              <h3 class="rate-percentage">7,682</h3>
+                              <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.1%</span></p>
+                            </div>
+                            <div>
+                              <p class="statistics-title">New Sessions</p>
+                              <h3 class="rate-percentage">68.8</h3>
+                              <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+                            </div>
+                            <div class="d-none d-md-block">
+                              <p class="statistics-title">Avg. Time on Site</p>
+                              <h3 class="rate-percentage">2m:35s</h3>
+                              <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
+                            </div>
+                            <div class="d-none d-md-block">
+                              <p class="statistics-title">New Sessions</p>
+                              <h3 class="rate-percentage">68.8</h3>
+                              <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+                            </div>
+                            <div class="d-none d-md-block">
+                              <p class="statistics-title">Avg. Time on Site</p>
+                              <h3 class="rate-percentage">2m:35s</h3>
+                              <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      -->
+                      <div class="row">
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <!-- Header Section -->
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash"> Cumulative Sample Screened Per Province </h4>
+                                                <h5 class="card-subtitle card-subtitle-dash" id="chartTitle2">2024 vs 2025</h5>
+                                            </div>
+                                            <div>
+                                                <!-- Year Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnA" data-bs-toggle="dropdown">2024</button>
+                                                    <div class="dropdown-menu" id="yearDropdownA">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                    <span> VS </span>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnB" data-bs-toggle="dropdown">2025</button>
+                                                    <div class="dropdown-menu" id="yearDropdownB">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Province Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="provinceDropdownBtn2" data-bs-toggle="dropdown">Batangas</button>
+                                                    <div class="dropdown-menu" id="provinceDropdown2">
+                                                        <a class="dropdown-item" href="#" data-province="Cavite">Cavite</a>
+                                                        <a class="dropdown-item" href="#" data-province="Laguna">Laguna</a>
+                                                        <a class="dropdown-item" href="#" data-province="Batangas">Batangas</a>
+                                                        <a class="dropdown-item" href="#" data-province="Rizal">Rizal</a>
+                                                        <a class="dropdown-item" href="#" data-province="Quezon">Quezon</a>
+                                                    </div>
+                                                </div>
+                                                <!-- Month Selection -->
+                                                <div class="dropdown d-inline-block mb-2">
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn2" data-bs-toggle="dropdown">January</button>
+                                                  <div class="dropdown-menu" id="monthDropdown2">
+                                                    <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
+                                                    <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                        
+                                        <!-- Chart Section -->
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="marketingOverview2"></canvas>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <!-- Table Section -->
+                                        <div class="mt-3">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row" class="table-light">Year</th>
+                                                        <th id="yearPrev2" class="table-light">2024</th>
+                                                        <th id="yearCurrent2" class="table-light">2025</th>
+                                                        <th class="table-light"><span style="color: green;">INC</span>/<span style="color: red;">DEC</span></th>
+                                                        <th class="table-light">%</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row" class="table-light">Total Screened</th>
+                                                        <td id="totalPrev2" class="table-light">3049</td>
+                                                        <td id="totalCurrent2" class="table-light">3133</td>
+                                                        <td id="incDec2" class="table-light">84</td>
+                                                        <td id="percentChange2" class="table-light">2.76% Increase</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                                   
+                        </div>
+
+                        <!---->
+                        <div class="col-lg-4 d-flex flex-column">
+                          
+                          <div class="row flex-grow">
+                            <!--
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                              <div class="card bg-primary card-rounded">
+                                <div class="card-body pb-0">
+                                  <h4 class="card-title card-title-dash text-white mb-4">Status Summary</h4>
+                                  <div class="row">
+                                    <div class="col-sm-4">
+                                      <p class="status-summary-ight-white mb-1">Active Facilies</p>
+                                      <h2 class="text-info">700</h2>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <p class="status-summary-ight-white mb-1">Inactive Facilities</p>
+                                      <h2 class="text-info">357</h2>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <p class="status-summary-ight-white mb-1">Closed Facilities</p>
+                                      <h2 class="text-info">200</h2>
+                                    </div>
+                                    <div class="col-sm-8">
+                                      <br>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            -->
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                                    <div class="weather-widget">
+                                      <div class="weather-header">
+                                        <h2>Weather Summary</h2>
+                                        <button class="refresh-btn" onclick="loadWeather()">Refresh</button>
+                                      </div>
+                                      <div class="weather-body">
+                                        <div class="weather-info" id="weather-city">
+                                          <p>City</p>
+                                          <h3>---</h3>
+                                        </div>
+                                        <div class="weather-info" id="weather-temp">
+                                          <p>Temperature</p>
+                                          <h3>--°C</h3>
+                                        </div>
+                                        <div class="weather-info" id="weather-status">
+                                          <p>Status</p>
+                                          <h3>---</h3>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <h4>NSCSL Julian Date</h4>
+                                    
+                                    <!-- Computed Julian Date Section -->
+                                    <div class="col-lg-6">
+                                      <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
+                                        <div>
+                                          <p class="text-small mb-2">Computed Julian Date</p>
+                                          <input type="date" id="datePicker" class="form-control mb-2">
+                                          <button class="btn btn-primary button-custom" onclick="computeJulianDate()">Compute</button>
+                                          <h4 class="mb-0 fw-bold" id="julianDateDisplay">--</h4>
+                                        </div>
+                                      </div>
+                                    </div>
+                            
+                                    <!-- Computed Calendar Date Section -->
+                                    <div class="col-lg-6">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                          <p class="text-small mb-2">Computed Calendar Date</p>
+                                          <input type="number" id="julianInput" class="form-control mb-2" placeholder="Enter Julian Date">
+                                          <input type="number" id="yearInput" class="form-control mb-2" placeholder="Enter Year">
+                                          <button class="btn btn-primary button-custom" onclick="computeCalendarDate()">Compute</button>
+                                          <h4 class="mb-0 fw-bold" id="calendarDateDisplay">--</h4>
+                                        </div>
+                                      </div>
+                                    </div>
+                            
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash1">Monthly Total Screened Samples </h4>
+                                                <h5 id="chartTitle" class="card-subtitle card-subtitle-dash fw-bold">{selected by yearDropdown1} vs {selected by yearDropdown2}</h5>
+                                            </div>
+                                            <div>
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtn1" data-bs-toggle="dropdown">
+                                                        2024
+                                                    </button>
+                                                    <div class="dropdown-menu" id="yearDropdown1">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                    <span> VS </span>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtn2" data-bs-toggle="dropdown">
+                                                        2025
+                                                    </button>
+                                                    <div class="dropdown-menu" id="yearDropdown2">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+                                                </div>
+                        
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="provinceDropdownBtn" data-bs-toggle="dropdown">
+                                                        Batangas
+                                                    </button>
+                                                    <div class="dropdown-menu" id="provinceDropdown">
+                                                        <a class="dropdown-item" href="#" data-province="Cavite">Cavite</a>
+                                                        <a class="dropdown-item" href="#" data-province="Laguna">Laguna</a>
+                                                        <a class="dropdown-item" href="#" data-province="Batangas">Batangas</a>
+                                                        <a class="dropdown-item" href="#" data-province="Rizal">Rizal</a>
+                                                        <a class="dropdown-item" href="#" data-province="Quezon">Quezon</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                        
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="marketingOverview"></canvas>
+                                        </div>
+                        
+                                        <table class="table mt-3">
+                                          <!-- Month Selection (Fixed IDs) -->
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn" data-bs-toggle="dropdown">
+                                              January
+                                            </button>
+                                            <div class="dropdown-menu" id="monthDropdown">
+                                              <a class="dropdown-item" href="#" data-month="January">January</a>
+                                              <a class="dropdown-item" href="#" data-month="February">February</a>
+                                              <a class="dropdown-item" href="#" data-month="March">March</a>
+                                              <a class="dropdown-item" href="#" data-month="April">April</a>
+                                              <a class="dropdown-item" href="#" data-month="May">May</a>
+                                              <a class="dropdown-item" href="#" data-month="June">June</a>
+                                              <a class="dropdown-item" href="#" data-month="July">July</a>
+                                              <a class="dropdown-item" href="#" data-month="August">August</a>
+                                              <a class="dropdown-item" href="#" data-month="September">September</a>
+                                              <a class="dropdown-item" href="#" data-month="October">October</a>
+                                              <a class="dropdown-item" href="#" data-month="November">November</a>
+                                              <a class="dropdown-item" href="#" data-month="December">December</a>
+                                            </div>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row" class="table-light">Year</th>
+                                                    <th id="yearPrev" class="table-light">2024</th>
+                                                    <th id="yearCurrent" class="table-light">2025</th>
+                                                    <th class="table-light">
+                                                      <span style="color: green;">INC</span>/<span style="color: red;">DEC</span>
+                                                    </th>                                                  
+                                                    <th class="table-light">%</th>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" class="table-light">Total Screened</th>
+                                                    <td id="totalPrev" class="table-light">3049</td>
+                                                    <td id="totalCurrent" class="table-light">3133</td>
+                                                    <td id="incDec" class="table-light">84</td>
+                                                    <td id="percentChange" class="table-light">2.76% Increase</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                          <!--
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded table-darkBGImg">
+                                <div class="card-body">
+                                  <div class="col-sm-8">
+                                    <h3 class="text-white upgrade-info mb-0"> Enhance your <span class="fw-bold">Campaign</span> for better outreach </h3>
+                                    <a href="#" class="btn btn-info upgrade-btn">Upgrade Account!</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          -->
+
+                          <!--
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="d-sm-flex justify-content-between align-items-start">
+                                    <div>
+                                      <h4 class="card-title card-title-dash">Pending Requests</h4>
+                                      <p class="card-subtitle card-subtitle-dash">You have 50+ new requests</p>
+                                    </div>
+                                    <div>
+                                      <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i>Add new member</button>
+                                    </div>
+                                  </div>
+                                  <div class="table-responsive  mt-1">
+                                    <table class="table select-table">
+                                      <thead>
+                                        <tr>
+                                          <th>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false" id="check-all"><i class="input-helper"></i></label>
+                                            </div>
+                                          </th>
+                                          <th>Customer</th>
+                                          <th>Company</th>
+                                          <th>Progress</th>
+                                          <th>Status</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="d-flex ">
+                                              <img src="assets/images/faces/face1.jpg" alt="">
+                                              <div>
+                                                <h6>Brandon Washington</h6>
+                                                <p>Head admin</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <h6>Company name 1</h6>
+                                            <p>company type</p>
+                                          </td>
+                                          <td>
+                                            <div>
+                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                                <p class="text-success">79%</p>
+                                                <p>85/162</p>
+                                              </div>
+                                              <div class="progress progress-md">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="badge badge-opacity-warning">In progress</div>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="d-flex">
+                                              <img src="assets/images/faces/face2.jpg" alt="">
+                                              <div>
+                                                <h6>Laura Brooks</h6>
+                                                <p>Head admin</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <h6>Company name 1</h6>
+                                            <p>company type</p>
+                                          </td>
+                                          <td>
+                                            <div>
+                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                                <p class="text-success">65%</p>
+                                                <p>85/162</p>
+                                              </div>
+                                              <div class="progress progress-md">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="badge badge-opacity-warning">In progress</div>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="d-flex">
+                                              <img src="assets/images/faces/face3.jpg" alt="">
+                                              <div>
+                                                <h6>Wayne Murphy</h6>
+                                                <p>Head admin</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <h6>Company name 1</h6>
+                                            <p>company type</p>
+                                          </td>
+                                          <td>
+                                            <div>
+                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                                <p class="text-success">65%</p>
+                                                <p>85/162</p>
+                                              </div>
+                                              <div class="progress progress-md">
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 38%" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="badge badge-opacity-warning">In progress</div>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="d-flex">
+                                              <img src="assets/images/faces/face4.jpg" alt="">
+                                              <div>
+                                                <h6>Matthew Bailey</h6>
+                                                <p>Head admin</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <h6>Company name 1</h6>
+                                            <p>company type</p>
+                                          </td>
+                                          <td>
+                                            <div>
+                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                                <p class="text-success">65%</p>
+                                                <p>85/162</p>
+                                              </div>
+                                              <div class="progress progress-md">
+                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="badge badge-opacity-danger">Pending</div>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="d-flex">
+                                              <img src="assets/images/faces/face5.jpg" alt="">
+                                              <div>
+                                                <h6>Katherine Butler</h6>
+                                                <p>Head admin</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <h6>Company name 1</h6>
+                                            <p>company type</p>
+                                          </td>
+                                          <td>
+                                            <div>
+                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
+                                                <p class="text-success">65%</p>
+                                                <p>85/162</p>
+                                              </div>
+                                              <div class="progress progress-md">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div class="badge badge-opacity-success">Completed</div>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          -->
+
+                          <div class="row flex-grow">
+                            <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="card-title card-title-dash">Facility Visits</h4>
+                                            <div class="d-flex">
+                                                <button class="btn btn-white fw-bold me-2" data-bs-toggle="modal" data-bs-target="#visitModal">
+                                                    <i class="mdi mdi-account-plus"></i> Add Facility Visit
+                                                </button>
+                                                <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                                    <i class="mdi mdi-file-excel"></i> Export
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Scrollable Table -->
+                                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table select-table">
+                                                <thead class="table-header">
+                                                    <tr>
+                                                        <th>Facility Code</th>
+                                                        <th>Facility Name</th>
+                                                        <th>Date and Time Visited</th>
+                                                        <th>Province</th>
+                                                        <th>Remarks</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="visitTable">
+                                                    <!-- Data will be inserted dynamically via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add/Edit Facility Visit Modal -->
+                        <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="visitModalLabel">Add Facility Visit</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form id="visitForm">
+                                  <input type="hidden" id="visitId">
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Code</label>
+                                    <input type="text" class="form-control" id="facilityCode" required >
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Name</label>
+                                    <input type="text" class="form-control" id="facilityName" required readonly>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Date and Time Visited</label>
+                                    <input type="datetime-local" class="form-control" id="dateVisited" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Province</label>
+                                    <select class="form-control" id="province" required>
+                                      <option value="">-- Select Province --</option>
+                                      <option value="Cavite">Cavite</option>
+                                      <option value="Laguna">Laguna</option>
+                                      <option value="Batangas">Batangas</option>
+                                      <option value="Rizal">Rizal</option>
+                                      <option value="Quezon">Quezon</option>
+                                    </select>
+                                  </div>
+                        
+                                  <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-control" id="status" required>
+                                      <option value="">-- Select Status --</option>
+                                      <option value="1">Active</option>
+                                      <option value="0">Inactive</option>
+                                      <option value="2">Closed</option> <!-- Added Closed Status -->
+                                    </select>
+                                  </div>
+                        
+                                  <div class="mb-3">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea class="form-control" id="remarks" rows="3" placeholder="Enter any remarks or notes about this visit"></textarea>
+                                  </div>
+                        
+                                  <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Export Date Range Modal -->
+                        <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exportModalLabel">Export Facility Visits</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form id="exportForm">
+                                  <div class="mb-3">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="datetime-local" class="form-control" id="exportStartDate" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">End Date</label>
+                                    <input type="datetime-local" class="form-control" id="exportEndDate" required>
+                                  </div>
+                                  
+                                  <div class="alert alert-info">
+                                    <small>Select a date range to export facility visits within that period.</small>
+                                  </div>
+
+                                  <button type="button" class="btn btn-white text-dark fw-bold" onclick="exportToExcel()">
+                                    <i class="mdi mdi-file-excel"></i> Export to Excel
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                          <div class="row flex-grow">
+                            <!-- Your existing notebook card, modals and table -->
+                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body card-rounded">
+                                  <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title card-title-dash">Notebooks</h4>
+                                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#addEventModal" style="color: black;">Online Search</button>
+                                  </div>
+
+                                  <div class="displayInfo">
+                                    <div class="table-responsive">
+                                      <table class="table table-hover" id="patientNotebooksTable">
+                                        <thead class="table-light">
+                                          <tr>
+                                            <th scope="col" style="width: 40%;">First Name</th>
+                                            <th scope="col" style="width: 40%;">Last Name</th>
+                                            <th scope="col" style="width: 20%;" class="text-center">Actions</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody id="patientNotebooksTableBody">
+                                          <!-- Table rows will be populated here -->
+                                          <tr>
+                                            <td colspan="3" class="text-center text-muted py-4">
+                                              <i class="fas fa-book me-2"></i>
+                                              No notebook entries found
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                  <!-- Search Modal -->
+                                  <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-md modal-dialog-centered">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="addEventModalLabel">Search Criteria</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="alert alert-info mb-3">
+                                            <small>Enter search criteria in one or more fields below.</small>
+                                          </div>
+                                          <form id="notebookForm">
+                                            <div class="mb-2">
+                                              <label for="labno" class="form-label">Lab Number</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="labno" name="labno" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-2">
+                                              <label for="labid" class="form-label">Filter Card Number</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="labid" name="labid" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-2">
+                                              <label for="fname" class="form-label">First Name</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="fname" name="fname" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-2">
+                                              <label for="lname" class="form-label">Last Name</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="lname" name="lname" style="max-width: 100%;">
+                                            </div>
+                                            <div class="mb-3">
+                                              <label for="submid" class="form-label">Facility Code</label>
+                                              <input type="text" class="form-control form-control-sm search-field" id="submid" name="submid" style="max-width: 100%;">
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                              <button type="submit" class="btn btn-primary btn-sm text-white search-button" disabled>Search</button>
+                                              <button type="button" class="btn btn-danger btn-sm text-white reset-button">Reset</button>
+                                            </div>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Results Modal -->
+                                  <div class="modal fade" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 55vw;">
+                                      <div class="modal-content rounded-3">
+                                        <div class="modal-header d-flex justify-content-between align-items-center">
+                                          <h5 class="modal-title" id="resultsModalLabel">Search Results</h5>
+                                          <div>
+                                            <button type="button" class="btn btn-secondary btn-sm me-2 text-white" id="backToSearchBtn">Back to Search</button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                            <table id="notebookTable" class="table table-sm table-bordered table-striped">
+                                              <thead>
+                                                <tr>
+                                                  <th>Lab No</th>
+                                                  <th>Filter Card No</th>
+                                                  <th>First Name</th>
+                                                  <th>Last Name</th>
+                                                  <th>Gender</th>
+                                                  <th>DOB</th>
+                                                  <th>Birth Weight</th>
+                                                  <th>Facility Code</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <!-- Results will appear here -->
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Details Modal -->
+                                  <!-- Details Modal -->
+                                  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                      <div class="modal-content rounded-4 shadow-sm border-0">
+                                        <div class="modal-header bg-primary text-white">
+                                          <h5 class="modal-title fw-bold" id="detailsModalLabel">Patient and Notebook Details</h5>
+                                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+
+                                        <div class="modal-body px-4 py-3">
+                                          <div class="container-fluid">
+                                            <div class="row gx-4">
+                                             <!-- Left Section: Patient Info Table -->
+                                            <div class="col-md-5 mb-2">
+                                              <div class="card shadow-sm" style="font-size: 12px;">
+                                                <div class="card-header py-1 px-2 bg-light fw-semibold text-center" style="font-size: 13px;">
+                                                  Patient Information
+                                                </div>
+                                                <div class="card-body p-2">
+                                                  <table class="table table-sm table-bordered mb-0 compact-table">
+                                                    <colgroup>
+                                                      <col style="width: 40%;">
+                                                      <col style="width: 60%;">
+                                                    </colgroup>
+                                                    <tbody class="text-start align-top">
+                                                      <tr><th scope="row">Lab No</th><td id="detailLabNo"></td></tr>
+                                                      <tr><th scope="row">Form No</th><td id="detailFormNo"></td></tr>
+                                                      <tr><th scope="row">Last Name</th><td id="detailLName"></td></tr>
+                                                      <tr><th scope="row">First Name</th><td id="detailFName"></td></tr>
+                                                      <tr><th scope="row">Birth</th><td id="detailDOB"></td></tr>
+                                                      <tr><th scope="row">Collection</th><td id="detailDOC"></td></tr>
+                                                      <tr><th scope="row">Specimen Type</th><td id="detailSpectype"></td></tr>
+                                                      <tr><th scope="row">Milk Type</th><td id="detailMilkType"></td></tr>
+                                                      <tr><th scope="row">Sex</th><td id="detailSex"></td></tr>
+                                                      <tr><th scope="row">Birth Weight</th><td id="detailBirthWt"></td></tr>
+                                                      <tr><th scope="row">Birth Order</th><td id="detailBirthOrder"></td></tr>
+                                                      <tr><th scope="row">Blood Transfused</th><td id="detailBloodTransfused"></td></tr>
+                                                      <tr><th scope="row">Transfused Date</th><td id="detailTransfusedDate"></td></tr>
+                                                      <tr><th scope="row">Gestation Age</th><td id="detailGestationAge"></td></tr>
+                                                      <tr><th scope="row">Specimen Age</th><td id="detailSpecimenAge"></td></tr>
+                                                      <tr><th scope="row">Age at Collection</th><td id="detailAgeAtCollection"></td></tr>
+                                                      <tr><th scope="row">Date Received</th><td id="detailDateReceived"></td></tr>
+                                                      <tr><th scope="row">Date Reported</th><td id="detailDateReported"></td></tr>
+                                                      <tr><th scope="row">Clinical Status</th><td id="detailClinicalStatus"></td></tr>
+                                                      <tr><th scope="row">Physician ID</th><td id="detailPhysicianId"></td></tr>
+                                                      <tr><th scope="row">Birth Hospital ID</th><td id="detailBirthHospId"></td></tr>
+                                                      <tr><th scope="row">Birth Hospital Name</th><td id="detailBirthHospName"></td></tr>
+                                                      <tr><th scope="row">Facility Code</th><td id="detailSubmId"></td></tr>
+                                                    </tbody>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            </div>
+
+
+
+                                              <!-- Right Section: Results + Notebook -->
+                                              <div class="col-md-7 d-flex flex-column gap-3">
+                                                <!-- Results Table -->
+                                                <div class="card shadow-sm flex-grow-1">
+                                                  <div class="card-header bg-light fw-semibold text-center">
+                                                    Results Details
+                                                  </div>
+                                                  <div class="table-responsive p-3" style="max-height: fit; overflow-y: auto;">
+                                                    <table id="resultsDetailsTable" class="table table-bordered table-sm text-center align-middle mb-0 compact-table" style="font-size: 14px;">
+                                                      <thead class="table-light">
+                                                        <tr>
+                                                          <th>Group</th>
+                                                          <th>Disorder</th>
+                                                          <th>Mnemonic</th>
+                                                          <th>Result</th>
+                                                          <th>Text</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody></tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+
+                                                <!-- Notebook Details -->
+                                                <div class="card shadow-sm">
+                                                  <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                                    <span class="fw-semibold">Notebook Details</span>
+                                                    <button type="button" class="btn btn-primary btn-sm text-white" data-bs-toggle="modal" data-bs-target="#addNotebookModal">
+                                                      <i class="fas fa-plus"></i> Add Notebook
+                                                    </button>
+                                                  </div>
+
+                                                  <div class="card-body p-3" style="max-height: 350px; overflow-y: auto; font-size: 14px;">
+                                                    <div id="notebookContainer" class="mb-3">
+                                                      <p class="text-muted mb-0">No notebook entries found.</p>
+                                                    </div>
+
+                                                    <div id="addednotebookContainer">
+                                                      <h5 class="mb-3 border-bottom pb-2">PDO Notebook</h5>
+                                                      <p class="text-muted mb-0">No notebook entries found.</p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div class="modal-footer justify-content-between px-4">
+                                          <button type="button" class="btn btn-secondary text-white" id="backToTableBtn">Back to Table</button>
+                                          <button type="button" class="btn btn-primary text-white" id="backToSearchFromDetailsBtn">Back to Search</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- Add Notebook Modal -->
+                                  <div class="modal fade" id="addNotebookModal" tabindex="-1" aria-labelledby="addNotebookModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog modal-md modal-dialog-centered">
+                                          <div class="modal-content rounded-3">
+                                              <div class="modal-header">
+                                                  <h5 class="modal-title" id="addNotebookModalLabel">Add Notebook Entry</h5>
+                                                  <button type="button" class="btn-close" id="closeAddNotebookBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                              </div>
+                                              <div class="modal-body">
+                                                  <form id="addNotebookForm">
+                                                      <div class="mb-3">
+                                                          <label for="notebookNotes" class="form-label">Notes</label>
+                                                          <textarea class="form-control" id="notebookNotes" name="notebookNotes" rows="6" placeholder="Enter your notes here..." required></textarea>
+                                                      </div>
+                                                  </form>
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary text-white" id="cancelAddNotebookBtn" data-bs-dismiss="modal">Cancel</button>
+                                                  <button type="button" class="btn btn-primary text-white" id="saveNotebookBtn">
+                                                      <span id="saveButtonText">Save Changes</span>
+                                                      <span id="saveButtonSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                                                  </button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                              <div class="card card-rounded" style="height: fit-content;">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h4 class="card-title card-title-dash fw-bold">Report Generation</h4>
+                                        <div class="dropdown">
+                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-0" type="button"
+                                                id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Select Here
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                              <a class="dropdown-item" href="#" data-value="daily" onclick="handleDropdownSelection(this, event)">Daily</a>
+                                              <a class="dropdown-item" href="#" data-value="monthly" onclick="handleDropdownSelection(this, event)">Monthly</a>
+                                              <a class="dropdown-item" href="#" data-value="yearly" onclick="handleDropdownSelection(this, event)">Yearly</a>
+                                          </div>
+                                          
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Scrollable list container -->
+                                    <div id="reportContainer" style="max-height: 150px; overflow-y: auto;">
+                                        <ul class="bullet-line-list" id="reportList">
+                                            <!-- Daily Reports (Default View) -->
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Filtercard Monitoring</span></div>
+                                                    <p onclick="runExe('daily1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSF Performance Report</span></div>
+                                                    <p onclick="runExe('daily2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Result Tracking System</span></div>
+                                                    <p onclick="runExe('daily3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="daily">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Sample Per Province</span></div>
+                                                    <p onclick="runExe('daily4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Monthly Reports -->
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">MENU FOR PDO</span></div>
+                                                    <p onclick="runExe('monthly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Report</span></div>
+                                                    <p onclick="runExe('monthly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">New Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly3')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="monthly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Quezon Sample Receipt</span></div>
+                                                    <p onclick="runExe('monthly4')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <!-- Yearly Reports -->
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">NSRC Reports</span></div>
+                                                    <p onclick="runExe('yearly1')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                            <li class="yearly" style="display: none;">
+                                                <div class="d-flex justify-content-between">
+                                                    <div><span class="text-light-green">Total Sample Receipt</span></div>
+                                                    <p onclick="runExe('yearly2')" style="cursor:pointer; color:blue;">Run</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>        
+                            </div>
+                          </div>
+                        </div>
+                      
+                                                                        <!--
+                        <div class="col-lg-4 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="card-title card-title-dash">Todo list</h4>
+                                        <div class="add-items d-flex mb-0">
+                                          <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?">
+                                          <button class="add btn btn-icons btn-rounded btn-primary todo-list-add-btn text-white me-0 pl-12p"><i class="mdi mdi-plus"></i></button>
+                                        </div>
+                                      </div>
+                                      <div class="list-wrapper">
+                                        <ul class="todo-list todo-list-rounded">
+                                          <li class="d-block">
+                                            <div class="form-check w-100">
+                                              <label class="form-check-label">
+                                                <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                                              </label>
+                                              <div class="d-flex mt-2">
+                                                <div class="ps-4 text-small me-3">24 June 2020</div>
+                                                <div class="badge badge-opacity-warning me-3">Due tomorrow</div>
+                                                <i class="mdi mdi-flag ms-2 flag-color"></i>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li class="d-block">
+                                            <div class="form-check w-100">
+                                              <label class="form-check-label">
+                                                <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                                              </label>
+                                              <div class="d-flex mt-2">
+                                                <div class="ps-4 text-small me-3">23 June 2020</div>
+                                                <div class="badge badge-opacity-success me-3">Done</div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li>
+                                            <div class="form-check w-100">
+                                              <label class="form-check-label">
+                                                <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                                              </label>
+                                              <div class="d-flex mt-2">
+                                                <div class="ps-4 text-small me-3">24 June 2020</div>
+                                                <div class="badge badge-opacity-success me-3">Done</div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li class="border-bottom-0">
+                                            <div class="form-check w-100">
+                                              <label class="form-check-label">
+                                                <input class="checkbox" type="checkbox"> Lorem Ipsum is simply dummy text of the printing <i class="input-helper rounded"></i>
+                                              </label>
+                                              <div class="d-flex mt-2">
+                                                <div class="ps-4 text-small me-3">24 June 2020</div>
+                                                <div class="badge badge-opacity-danger me-3">Expired</div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        -->
+                          <!-- Bootstrap Modal for Adding To-Do -->
+                          <div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="todoModalLabel">Add Todo Item</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <input type="text" id="todoInput" class="form-control" placeholder="Enter task">
+                                  <input type="date" id="todoDate" class="form-control mt-2">
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" id="saveTodo">Save</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- To-Do List Section -->
+                          <div class="col-lg-4 d-flex flex-column">
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                          <h4 class="card-title card-title-dash">Todo list</h4>
+                                          <div class="add-items d-flex mb-0">
+                                            <button class="add btn btn-icons btn-rounded btn-primary text-white" data-bs-toggle="modal" data-bs-target="#todoModal">
+                                              <i class="mdi mdi-plus"></i>
+                                            </button>
+                                          </div>
+                                        </div>
+                                        <div class="list-wrapper">
+                                          <ul class="todo-list todo-list-rounded" id="todoList">
+                                            <!-- Newly added tasks will appear here -->
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <h4 class="card-title card-title-dash">Facilities Visits By this Month</h4>
+                                        </div>
+                                        <div>
+                                          <canvas class="my-auto" id="doughnutChart" style="height: 500px; width: 400px"></canvas>
+                                        </div>
+                                        <div id="doughnutChart-legend" class="mt-5 text-center"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                  <div>
+                                                    <h4 class="card-title card-title-dash2">Timeliness of NBS </h4> <span class="province">Province</span> <br>
+                                                </div>
+                                                
+                                                    <div>
+                                                        <div class="dropdown">
+                                                            <!-- Year 1 Dropdown -->
+                                                            <button class="btn btn-light dropdown-toggle" type="button" id="year1Dropdown" data-bs-toggle="dropdown">Year</button>
+                                                            <div class="dropdown-menu" id="year1Menu">
+                                                                <a class="dropdown-item" href="#" time-year1-value="2024">2024</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2023">2023</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2022">2022</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2021">2021</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2020">2020</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2019">2019</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2018">2018</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2017">2017</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2016">2016</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2015">2015</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2014">2014</a>
+                                                                <a class="dropdown-item" href="#" time-year1-value="2013">2013</a>
+                                                            </div>
+                                                            <span> VS </span>
+                                                            <!-- Year 2 Dropdown -->
+                                                            <button class="btn btn-light dropdown-toggle" type="button" id="year2Dropdown" data-bs-toggle="dropdown">Year</button>
+                                                            <div class="dropdown-menu" id="year2Menu">
+                                                                <a class="dropdown-item" href="#" time-year2-value="2025">2025</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2024">2024</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2023">2023</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2022">2022</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2021">2021</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2020">2020</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2019">2019</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2018">2018</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2017">2017</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2016">2016</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2015">2015</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2014">2014</a>
+                                                                <a class="dropdown-item" href="#" time-year2-value="2013">2013</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Table for AOC (hidden initially) -->
+                                                  <table class="custom-table" id="aocTable" style="display: none;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th rowspan="3">Month</th>
+                                                            <th colspan="6">AOC</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th colspan="2">AVE</th>
+                                                            <th colspan="2">MED</th>
+                                                            <th colspan="2">MOD</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th id="year1">2024</th>
+                                                            <th id="year2">2025</th>
+                                                            <th id="year1">2024</th>
+                                                            <th id="year2">2025</th>
+                                                            <th id="year1">2024</th>
+                                                            <th id="year2">2025</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="month">Jan</td>
+                                                            <td id="aoc-ave-year1">-</td><td id="aoc-ave-year2">-</td>
+                                                            <td id="aoc-med-year1">-</td><td id="aoc-med-year2">-</td>
+                                                            <td id="aoc-mod-year1">-</td><td id="aoc-mod-year2">-</td>
+                                                        </tr>
+                                                    </tbody>
+                                                  </table>
+
+                                                  <!-- Table for Transit Time (hidden initially) -->
+                                                  <table class="custom-table" id="transitTimeTable" style="display: none;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th rowspan="3">Month</th>
+                                                            <th colspan="6">Transit Time</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th colspan="2">AVE</th>
+                                                            <th colspan="2">MED</th>
+                                                            <th colspan="2">MOD</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th id="year11">2024</th>
+                                                            <th id="year22">2025</th>
+                                                            <th id="year11">2024</th>
+                                                            <th id="year22">2025</th>
+                                                            <th id="year11">2024</th>
+                                                            <th id="year22">2025</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="month1">Jan</td>
+                                                            <td id="transit-ave-year1">-</td><td id="transit-ave-year2">-</td>
+                                                            <td id="transit-med-year1">-</td><td id="transit-med-year2">-</td>
+                                                            <td id="transit-mod-year1">-</td><td id="transit-mod-year2">-</td>
+                                                        </tr>
+                                                    </tbody>
+                                                  </table>
+
+                                                  <!-- Table for Age Upon Receipt -->
+                                                  <table class="custom-table" id="ageUponReceiptTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th rowspan="3">Month</th>
+                                                            <th colspan="6">Age Upon Receipt</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th colspan="2">AVE</th>
+                                                            <th colspan="2">MED</th>
+                                                            <th colspan="2">MOD</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th id="year111">2024</th>
+                                                            <th id="year222">2025</th>
+                                                            <th id="year111">2024</th>
+                                                            <th id="year222">2025</th>
+                                                            <th id="year111">2024</th>
+                                                            <th id="year222">2025</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="month11">Jan</td>
+                                                            <td id="age-ave-year1">-</td><td id="age-ave-year2">-</td>
+                                                            <td id="age-med-year1">-</td><td id="age-med-year2">-</td>
+                                                            <td id="age-mod-year1">-</td><td id="age-mod-year2">-</td>
+                                                        </tr>
+                                                    </tbody>
+                                                  </table>
+                                                <!-- Month and Province Dropdowns -->
+                                                <div class="dropdown mt-3">
+                                                    <!-- Month Dropdown -->
+                                                    <button class="btn btn-light dropdown-toggle" type="button" id="monthDropdownButton" data-bs-toggle="dropdown">Select Month</button>
+                                                    <div class="dropdown-menu" id="monthMenu">
+                                                        <a class="dropdown-item" href="#" time-month-value="Jan">Jan</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Feb">Feb</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Mar">Mar</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Apr">Apr</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="May">May</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Jun">Jun</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Jul">Jul</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Aug">Aug</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Sept">Sept</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Oct">Oct</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Nov">Nov</a>
+                                                        <a class="dropdown-item" href="#" time-month-value="Dec">Dec</a>
+                                                    </div>
+
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg" type="button" id="provinceDropdownButton" data-bs-toggle="dropdown">
+                                                        Select Province
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="provinceDropdownButton">
+                                                        <a class="dropdown-item province-item" time-prov-value="Cavite">Cavite</a>
+                                                        <a class="dropdown-item province-item" time-prov-value="Laguna">Laguna</a>
+                                                        <a class="dropdown-item province-item" time-prov-value="Batangas">Batangas</a>
+                                                        <a class="dropdown-item province-item" time-prov-value="Rizal">Rizal</a>
+                                                        <a class="dropdown-item province-item" time-prov-value="Quezon">Quezon</a>
+                                                    </div>
+                                                    <button class="btn btn-light" id="prevButton" style="margin-right: 10px;">Prev</button>
+                                                    <button class="btn btn-light" id="nextButton">Next</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <h4 class="card-title card-title-dash">
+                                            Top Unsatisfactory Sample Contributor <br>
+                                            <span class="selected-month-year text-primary">For the month of January 2025</span>
+                                          </h4>
+                                        </div>                                                                          
+                                        <!-- Scrollable Container -->
+                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
+                                          <!-- Data will be inserted dynamically here -->
+                                        </div>
+                                        <!-- End Scrollable Container -->
+                                      </div>
+                                    </div>
+                                    <br>
+                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                                      <label class="btn btn-outline-primary" for="btnradio1">By Numbers</label>
+                                    
+                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                                      <label class="btn btn-outline-primary" for="btnradio2">By Percentages</label>
+                                      
+                                       <!-- Button to Open Modal -->
+                                       <button class="btn btn-success custom-btn" data-bs-toggle="modal" data-bs-target="#dateRangeModal">
+                                        Select Date Range
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="dateRangeModalLabel">Select Date & Time Range</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <label for="dateTimeFrom" class="form-label">Date & Time From:</label>
+                                          <input type="datetime-local" id="dateTimeFrom" class="form-control">
+
+                                          <label for="dateTimeTo" class="form-label mt-2">Date & Time To:</label>
+                                          <input type="datetime-local" id="dateTimeTo" class="form-control">
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                          <button type="button" class="btn btn-success custom-btn" onclick="applyDateFilter()">Apply</button>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+
+          <!-- partial:partials/_footer.html 
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
+              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
+            </div>
+          </footer>
+          -->
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="/public/js/off-canvas.js"></script>
+    <script src="/js/template.js"></script>
+    <script src="/js/settings.js"></script>
+    <script src="/js/hoverable-collapse.js"></script>
+    <script src="/js/todolist.js"></script>
+    <script src="/js/event.js"></script>
+    <!-- endinject -->
+
+    <!--script for pdo visit-->
+    <script src="/routes/facilityRoutes.js"></script>
+    <script src="/routes/oracleRoutes.js"></script>
+    <script src="/routes/unsatRoutes.js"></script>
+    
+    <script src="/js/date_visited.js"></script>
+    <script src="/js/unsat_modal.js"></script>
+
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    Latest Chart.js Data Labels Plugin
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    -->
+    <!--GRAPH JS-->
+
+    <script src="/js/top_unsat.js"></script>
+    <script src="/js/facility_chart.js"></script>
+    <script src="/js/screened_chart.js"></script>
+    <script src="/js/screened_province.js"></script>
+    <script src="/js/pdo_visit.js"></script>
+    <script src="/js/julianDate.js"></script>
+    <script src="/js/reportGen.js"></script>
+    <script src="/js/timeliness.js"></script>
+    <script src="/js/patient_notebook.js"></script>
+    <script src="/js/patient_details.js"></script>
+    <script src="/js/notebook-details.js"></script>
+    <script src="/js/addNotebook.js"></script>
+    <script src="/js/notebook-fetch.js"></script>
+
+    <script src="/js/auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    
+    <!-- Include SheetJS library for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+            <!-- Latest Chart.js v4 -->
+  
+    <!--end inject-->
+
+    <!-- Custom js for this page-->
+    <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
+
+    <!--SCRIPT FOR LOGOUT-->
+    <script>
+      document.getElementById("logout").addEventListener("click", function () {
+          localStorage.removeItem("username"); // Clear stored user data
+          window.location.href = "login.html"; // Redirect to login page
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPLAY USERNAME BASE ON THE USER-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Get stored username from localStorage
+          const username = localStorage.getItem("username");
+  
+          if (username) {
+              document.getElementById("user-name").textContent = username;
+          }
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const userName = localStorage.getItem("username"); // Get the stored name
+
+      if (userName) {
+          document.getElementById("user-name").textContent = userName; // Set Name in Header
+          document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
+      } else {
+          document.getElementById("user-name").textContent = "Guest";
+          document.getElementById("dropdown-name").textContent = "Guest";
+      }
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPALYING NAME ALSO-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const userName = localStorage.getItem("username") || "Guest"; 
+      const userEmail = localStorage.getItem("email") || "No Email"; 
+
+      // Set the username and email in the dropdown
+      document.getElementById("user-name1").textContent = userName;
+      document.getElementById("user-email").textContent = userEmail;
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DATE PICKER-->
+    <script>
+      $(document).ready(function () {
+          $('#dateTimeFrom').datepicker({
+              format: 'yyyy-mm-dd HH:ii',
+              autoclose: true,
+              todayHighlight: true
+          });
+          $('#dateTimeTo').datepicker({
+              format: 'yyyy-mm-dd HH:ii',
+              autoclose: true,
+              todayHighlight: true
+          });
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <script>
+       function loadWeather() {
+        // Simulate data fetch
+        const cities = ['Manila', 'Cebu', 'Davao'];
+        const temps = [31, 28, 29, 27];
+        const statuses = ['Sunny', 'Rainy', 'Cloudy', 'Stormy'];
+
+        const city = cities[Math.floor(Math.random() * cities.length)];
+        const temp = temps[Math.floor(Math.random() * temps.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        document.getElementById('weather-city').querySelector('h3').textContent = city;
+        document.getElementById('weather-temp').querySelector('h3').textContent = temp + '°C';
+        document.getElementById('weather-status').querySelector('h3').textContent = status;
+      }
+
+      // Load on start
+      loadWeather();
+    </script>
+
+    
+    <!--SCRIPT FOR DATE FILTERING-->
+    <!--END SCRIPT-->
+    
+    <!-- End custom js for this page-->
+
+    
+  </body>
+</html>

@@ -1,0 +1,540 @@
+(function($) {
+  'use strict';
+  $(function() {
+    if ($("#performanceLine").length) { 
+      const ctx = document.getElementById('performanceLine');
+      var graphGradient = document.getElementById("performanceLine").getContext('2d');
+      var graphGradient2 = document.getElementById("performanceLine").getContext('2d');
+      var saleGradientBg = graphGradient.createLinearGradient(5, 0, 5, 100);
+      saleGradientBg.addColorStop(0, 'rgba(26, 115, 232, 0.18)');
+      saleGradientBg.addColorStop(1, 'rgba(26, 115, 232, 0.02)');
+      var saleGradientBg2 = graphGradient2.createLinearGradient(100, 0, 50, 150);
+      saleGradientBg2.addColorStop(0, 'rgba(0, 208, 255, 0.19)');
+      saleGradientBg2.addColorStop(1, 'rgba(0, 208, 255, 0.03)');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["SUN","sun", "MON", "mon", "TUE","tue", "WED", "wed", "THU", "thu", "FRI", "fri", "SAT"],
+          datasets: [{
+            label: 'This week',
+            data: [50, 110, 60, 290, 200, 115, 130, 170, 90, 210, 240, 280, 200],
+            backgroundColor: saleGradientBg,
+            borderColor: [
+                '#1F3BB3',
+            ],
+            borderWidth: 1.5,
+            fill: true, // 3: no fill
+            pointBorderWidth: 1,
+            pointRadius: [4, 4, 4, 4, 4,4, 4, 4, 4, 4,4, 4, 4],
+            pointHoverRadius: [2, 2, 2, 2, 2,2, 2, 2, 2, 2,2, 2, 2],
+            pointBackgroundColor: ['#1F3BB3)', '#1F3BB3', '#1F3BB3', '#1F3BB3','#1F3BB3)', '#1F3BB3', '#1F3BB3', '#1F3BB3','#1F3BB3)', '#1F3BB3', '#1F3BB3', '#1F3BB3','#1F3BB3)'],
+            pointBorderColor: ['#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff',],
+        },{
+          label: 'Last week',
+          data: [30, 150, 190, 250, 120, 150, 130, 20, 30, 15, 40, 95, 180],
+          backgroundColor: saleGradientBg2,
+          borderColor: [
+              '#52CDFF',
+          ],
+          borderWidth: 1.5,
+          fill: true, // 3: no fill
+          pointBorderWidth: 1,
+          pointRadius: [0, 0, 0, 4, 0],
+          pointHoverRadius: [0, 0, 0, 2, 0],
+          pointBackgroundColor: ['#52CDFF)', '#52CDFF', '#52CDFF', '#52CDFF','#52CDFF)', '#52CDFF', '#52CDFF', '#52CDFF','#52CDFF)', '#52CDFF', '#52CDFF', '#52CDFF','#52CDFF)'],
+            pointBorderColor: ['#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff',],
+      }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          elements: {
+            line: {
+                tension: 0.4,
+            }
+          },
+        
+          scales: {
+            y: {
+              border: {
+                display: false
+              },
+              grid: {
+                display: true,
+                color:"#F0F0F0",
+                drawBorder: false,
+              },
+              ticks: {
+                beginAtZero: false,
+                autoSkip: true,
+                maxTicksLimit: 4,
+                color:"#6B778C",
+                font: {
+                  size: 10,
+                }
+              }
+            },
+            x: {
+              border: {
+                display: false
+              },
+              grid: {
+                display: false,
+                drawBorder: false,
+              },
+              ticks: {
+                beginAtZero: false,
+                autoSkip: true,
+                maxTicksLimit: 7,
+                color:"#6B778C",
+                font: {
+                  size: 10,
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+                display: false,
+            }
+          }
+        },
+        plugins: [{
+          afterDatasetUpdate: function (chart, args, options) {
+              const chartId = chart.canvas.id;
+              var i;
+              const legendId = `${chartId}-legend`;
+              const ul = document.createElement('ul');
+              for(i=0;i<chart.data.datasets.length; i++) {
+                  ul.innerHTML += `
+                  <li>
+                    <span style="background-color: ${chart.data.datasets[i].borderColor}"></span>
+                    ${chart.data.datasets[i].label}
+                  </li>
+                `;
+              }
+              return document.getElementById(legendId).appendChild(ul);
+            }
+        }]
+      });
+    }
+
+    if ($("#status-summary").length) { 
+      const statusSummaryChartCanvas = document.getElementById('status-summary');
+      new Chart(statusSummaryChartCanvas, {
+        type: 'line',
+        data: {
+          labels: ["SUN", "MON", "TUE", "WED", "THU", "FRI"],
+          datasets: [{
+              label: '# of Votes',
+              data: [50, 68, 70, 10, 12, 80],
+              backgroundColor: "#ffcc00",
+              borderColor: [
+                  '#01B6A0',
+              ],
+              borderWidth: 2,
+              fill: false, // 3: no fill
+              pointBorderWidth: 0,
+              pointRadius: [0, 0, 0, 0, 0, 0],
+              pointHoverRadius: [0, 0, 0, 0, 0, 0],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          elements: {
+            line: {
+                tension: 0.4,
+            }
+        },
+          scales: {
+            y: {
+              border: {
+                display: false
+              },
+              display: false,
+              grid: {
+                display: false,
+              },
+            },
+            x: {
+              border: {
+                display: false
+              },
+              display: false,
+              grid: {
+                display: false,
+              }
+            }
+          },
+          plugins: {
+            legend: {
+                display: false,
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if ($("#marketingOverview").length) {
+          fetch("/api/inc-dec/monthly-labno-count")
+              .then(response => response.json())
+              .then(data => {
+                  if (!data || data.length === 0) {
+                      console.error("No data received for chart");
+                      return;
+                  }
+  
+                  // Extracting months and counts for 2024 & 2025
+                  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                  let labno2024 = new Array(12).fill(0);
+                  let labno2025 = new Array(12).fill(0);
+  
+                  data.forEach(row => {
+                      let year = row.MONTH_YEAR.split("-")[0];
+                      let monthIndex = parseInt(row.MONTH_YEAR.split("-")[1]) - 1; // Convert to zero-based index
+                      if (year === "2024") labno2024[monthIndex] = row.TOTAL_LABNO;
+                      if (year === "2025") labno2025[monthIndex] = row.TOTAL_LABNO;
+                  });
+  
+                  // Create Chart
+                  const marketingOverviewCanvas = document.getElementById("marketingOverview");
+                  new Chart(marketingOverviewCanvas, {
+                      type: "bar",
+                      data: {
+                          labels: months,
+                          datasets: [
+                              {
+                                  label: "2024",
+                                  data: labno2024,
+                                  backgroundColor: "#52CDFF",
+                                  borderColor: "#52CDFF",
+                                  borderWidth: 0,
+                                  barPercentage: 0.35,
+                                  fill: true,
+                              },
+                              {
+                                  label: "2025",
+                                  data: labno2025,
+                                  backgroundColor: "#1F3BB3",
+                                  borderColor: "#1F3BB3",
+                                  borderWidth: 0,
+                                  barPercentage: 0.35,
+                                  fill: true,
+                              },
+                          ],
+                      },
+                      options: {
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          elements: { line: { tension: 0.4 } },
+                          scales: {
+                              y: {
+                                  border: { display: false },
+                                  grid: { display: true, drawTicks: false, color: "#F0F0F0" },
+                                  ticks: { beginAtZero: false, autoSkip: true, maxTicksLimit: 4, color: "#6B778C", font: { size: 10 } },
+                              },
+                              x: {
+                                  border: { display: false },
+                                  stacked: true,
+                                  grid: { display: false },
+                                  ticks: { autoSkip: true, maxTicksLimit: 7, color: "#6B778C", font: { size: 10 } },
+                              },
+                          },
+                          plugins: {
+                              legend: { display: false },
+                          },
+                      },
+                      plugins: [
+                          {
+                              afterDatasetUpdate: function (chart, args, options) {
+                                  const chartId = chart.canvas.id;
+                                  const legendId = `${chartId}-legend`;
+                                  const ul = document.createElement("ul");
+                                  chart.data.datasets.forEach(dataset => {
+                                      ul.innerHTML += `<li>
+                                          <span style="background-color: ${dataset.borderColor}"></span>
+                                          ${dataset.label}
+                                      </li>`;
+                                  });
+                                  document.getElementById(legendId)?.appendChild(ul);
+                              },
+                          },
+                      ],
+                  });
+  
+                  // Update Table Values
+                  document.querySelector(".table-light:nth-child(2)").innerText = labno2024[0];
+                  document.querySelector(".table-light:nth-child(3)").innerText = labno2025[0];
+                  document.querySelector(".table-light:nth-child(4)").innerText = labno2025[0] - labno2024[0];
+                  document.querySelector(".table-light:nth-child(5)").innerText =
+                      ((labno2025[0] - labno2024[0]) / labno2024[0] * 100).toFixed(2) + "%";
+              })
+              .catch(error => console.error("Error fetching chart data:", error));
+      }
+  });
+
+    if ($('#totalVisitors').length) {
+      var bar = new ProgressBar.Circle(totalVisitors, {
+        color: '#fff',
+        // This has to be the same size as the maximum width to
+        // prevent clipping
+        strokeWidth: 15,
+        trailWidth: 15, 
+        easing: 'easeInOut',
+        duration: 1400,
+        text: {
+          autoStyleContainer: false
+        },
+        from: {
+          color: '#52CDFF',
+          width: 15
+        },
+        to: {
+          color: '#677ae4',
+          width: 15
+        },
+        // Set default step function for all animate calls
+        step: function(state, circle) {
+          circle.path.setAttribute('stroke', state.color);
+          circle.path.setAttribute('stroke-width', state.width);
+  
+          var value = Math.round(circle.value() * 100);
+          if (value === 0) {
+            circle.setText('');
+          } else {
+            circle.setText(value);
+          }
+  
+        }
+      });
+  
+      bar.text.style.fontSize = '0rem';
+      bar.animate(.64); // Number from 0.0 to 1.0
+    }
+
+    if ($('#visitperday').length) {
+      var bar = new ProgressBar.Circle(visitperday, {
+        color: '#fff',
+        // This has to be the same size as the maximum width to
+        // prevent clipping
+        strokeWidth: 15,
+        trailWidth: 15,
+        easing: 'easeInOut',
+        duration: 1400,
+        text: {
+          autoStyleContainer: false
+        },
+        from: {
+          color: '#34B1AA',
+          width: 15
+        },
+        to: {
+          color: '#677ae4',
+          width: 15
+        },
+        // Set default step function for all animate calls
+        step: function(state, circle) {
+          circle.path.setAttribute('stroke', state.color);
+          circle.path.setAttribute('stroke-width', state.width);
+  
+          var value = Math.round(circle.value() * 100);
+          if (value === 0) {
+            circle.setText('');
+          } else {
+            circle.setText(value);
+          }
+  
+        }
+      });
+  
+      bar.text.style.fontSize = '0rem';
+      bar.animate(.34); // Number from 0.0 to 1.0
+    }
+/*
+    $(document).ready(function () {
+      if ($("#doughnutChart").length) {
+          $.ajax({
+              url: "/chart-data",
+              method: "GET",
+              success: function (data) {
+                  const doughnutChartCanvas = document.getElementById("doughnutChart");
+  
+                  if (window.doughnutChartInstance) {
+                      window.doughnutChartInstance.destroy();
+                  }
+  
+                  // ✅ Ensure ChartDataLabels is properly registered
+                  if (typeof ChartDataLabels !== "undefined") {
+                      Chart.register(ChartDataLabels);
+                  } else {
+                      console.error("ChartDataLabels plugin is missing!");
+                  }
+  
+                  window.doughnutChartInstance = new Chart(doughnutChartCanvas, {
+                      type: "doughnut",
+                      data: {
+                          labels: ["Active", "Inactive", "Closed"],
+                          datasets: [{
+                              data: [data.active, data.inactive, data.closed],
+                              backgroundColor: ["#1F3BB3", "#FDD0C7", "#52CDFF"],
+                          }]
+                      },
+                      options: {
+                          cutout: 90,
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                              legend: {
+                                  display: true,
+                                  position: "bottom",
+                                  labels: {
+                                      color: "#6B778C",
+                                      font: { size: 12 }
+                                  }
+                              },
+                              datalabels: {  // ✅ Show Data Labels Inside the Chart
+                                  display: true,  
+                                  color: "#fff",  // White text inside the chart
+                                  anchor: "center",
+                                  align: "center",
+                                  font: {
+                                      weight: "bold",
+                                      size: 14
+                                  },
+                                  formatter: (value, ctx) => {
+                                      let total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                      let percentage = ((value / total) * 100).toFixed(1);
+                                      return `${percentage}%`; // Show percentage
+                                  }
+                              }
+                          }
+                      }
+                  });
+              },
+              error: function (xhr, status, error) {
+                  console.error("Error fetching chart data:", error);
+              }
+          });
+      }
+  });
+*/
+    if ($("#leaveReport").length) { 
+      const leaveReportCanvas = document.getElementById('leaveReport');
+      new Chart(leaveReportCanvas, {
+        type: 'bar',
+        data: {
+          labels: ["Jan","Feb", "Mar", "Apr", "May"],
+          datasets: [{
+              label: 'Last week',
+              data: [18, 25, 39, 11, 24],
+              backgroundColor: "#52CDFF",
+              borderColor: [
+                  '#52CDFF',
+              ],
+              borderWidth: 0,
+              fill: true, // 3: no fill
+              barPercentage: 0.5,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          elements: {
+            line: {
+                tension: 0.4,
+            }
+        },
+          scales: {
+            y: {
+              border: {
+                display: false
+              },
+              display: true,
+              grid: {
+                display: false,
+                drawBorder: false,
+                color:"rgba(255,255,255,.05)",
+                zeroLineColor: "rgba(255,255,255,.05)",
+              },
+              ticks: {
+                beginAtZero: true,
+                autoSkip: true,
+                maxTicksLimit: 5,
+                fontSize: 10,
+                color:"#6B778C",
+                font: {
+                  size: 10,
+                }
+              }
+            },
+            x: {
+              border: {
+                display: false
+              },
+              display: true,
+              grid: {
+                display: false,
+              },
+              ticks: {
+                beginAtZero: false,
+                autoSkip: true,
+                maxTicksLimit: 7,
+                fontSize: 10,
+                color:"#6B778C",
+                font: {
+                  size: 10,
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+                display: false,
+            }
+          }
+        }
+      });
+    }
+
+
+    if ($.cookie('staradmin2-pro-banner')!="true") {
+      document.querySelector('#proBanner').classList.add('d-flex');
+      document.querySelector('.navbar').classList.remove('fixed-top');
+    }
+    else {
+      document.querySelector('#proBanner').classList.add('d-none');
+      document.querySelector('.navbar').classList.add('fixed-top');
+    }
+    
+    if ($( ".navbar" ).hasClass( "fixed-top" )) {
+      document.querySelector('.page-body-wrapper').classList.remove('pt-0');
+      document.querySelector('.navbar').classList.remove('pt-5');
+    }
+    else {
+      document.querySelector('.page-body-wrapper').classList.add('pt-0');
+      document.querySelector('.navbar').classList.add('pt-5');
+      document.querySelector('.navbar').classList.add('mt-3');
+      
+    }
+    document.querySelector('#bannerClose').addEventListener('click',function() {
+      document.querySelector('#proBanner').classList.add('d-none');
+      document.querySelector('#proBanner').classList.remove('d-flex');
+      document.querySelector('.navbar').classList.remove('pt-5');
+      document.querySelector('.navbar').classList.add('fixed-top');
+      document.querySelector('.page-body-wrapper').classList.add('proBanner-padding-top');
+      document.querySelector('.navbar').classList.remove('mt-3');
+      var date = new Date();
+      date.setTime(date.getTime() + 24 * 60 * 60 * 1000); 
+      $.cookie('staradmin2-pro-banner', "true", { expires: date });
+    });
+    
+  });
+  // iconify.load('icons.svg').then(function() {
+  //   iconify(document.querySelector('.my-cool.icon'));
+  // });
+
+  
+})(jQuery);

@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NSCSL DASHBOARD </title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+    
+  </head>
+  <style>
+    .table-responsive {
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+    }
+
+    .table-header {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .custom-btn {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+    border: none;
+    }
+
+    .custom-btn:hover {
+        background-color: #218838 !important; /* Darker Green */
+        color: white !important;
+    }
+
+    #marketingOverview {
+        width: 100% !important;
+        height: 600px !important; /* ⬆️ Increased from 500px to 600px */
+    }
+
+    .chart-container {
+        height: 650px !important; /* Adjust container height */
+    }
+
+    .button-custom {
+    background-color: #0d6efd; /* Blue background */
+    color: white !important; /* White text */
+    border: 2px solid #0d6efd; /* Blue border */
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .button-custom:hover {
+      background-color: white; /* White background on hover */
+      color: #0d6efd !important; /* Blue text on hover */
+      border: 2px solid #0d6efd; /* Keep the blue border */
+  }
+
+
+  .table-container {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    display: block;
+    max-height: none; /* Remove max-height to prevent extra space */
+  }
+
+ 
+  .nav .nav-item {
+    padding: 10px 0; /* Adds vertical spacing */
+  }
+
+  .nav .nav-link {
+    padding: 12px 15px; /* Adjust link padding for better spacing */
+    border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+  }
+
+  /* container card */
+  .container {
+    padding: 0 20px 20px 20px;
+  }
+
+  .task-card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .task-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .icon-box {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: white;
+    font-size: 20px;
+    margin-right: 15px;
+  }
+
+  .task-content {
+    flex-grow: 1;
+  }
+
+  .task-label {
+    font-size: 14px;
+    color: #6b7280; /* Gray text */
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  .task-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1f2937; /* Dark gray text */
+    margin-bottom: 5px;
+  }
+
+  .task-subtext {
+    display: block;
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .total .icon-box {
+    background: #007bff; /* Blue */
+  }
+
+  .completed .icon-box {
+    background: #028a63; /* Green */
+  }
+
+  .pending .icon-box {
+    background: #f59e0b; /* Orange */
+  }
+
+  .overdue .icon-box {
+    background: #d32f2f; /* Red */
+  }
+
+  .container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .tab-content {
+    padding-top: 10px !important;
+  }
+  /* end container */
+
+  .custom-table {
+    width: 80%; /* Make it responsive but not full width */
+    margin: 20px auto; /* Center the table and add vertical spacing */
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.table-container{
+  border: 0;
+}
+
+.custom-table thead {
+    position: sticky;
+    top: 0;
+    background: #004085;
+    color: white;
+    z-index: 2;
+}
+
+.custom-table th, .custom-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+  .custom-table thead {
+      position: sticky;
+      top: 0;
+      background: #004085; /* Dark blue header */
+      color: white;
+      z-index: 2;
+  }
+
+  .custom-table th, .custom-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  /* lab supplies */
+  .lab-supplies-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  .lab-supplies-table th {
+    background-color: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+  }
+  .lab-supplies-table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .lab-low-stock {
+    color: #dc3545;
+    font-weight: 600;
+  }
+  .lab-status-indicator {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  .lab-status-normal {
+    background-color: #28a745;
+  }
+  .lab-status-warning {
+    background-color: #ffc107;
+  }
+  .lab-status-critical {
+    background-color: #dc3545;
+  }
+  .lab-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .lab-stock-legend {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    gap: 15px;
+  }
+  .lab-legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  .lab-search-container {
+    margin-bottom: 15px;
+  }
+  .lab-search-input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .lab-supplies-count {
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-left: 15px;
+    font-size: 14px;
+  }
+  .lab-critical-count {
+    color: #dc3545;
+    font-weight: 600;
+  }
+  .lab-unit-label {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-left: 4px;
+  }
+
+ /* Enhanced reagent styles */
+.reagent-supplies-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.reagent-supplies-table th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.reagent-supplies-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.reagent-low-stock {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.reagent-status-indicator {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.reagent-status-normal {
+  background-color: #28a745;
+}
+
+.reagent-status-warning {
+  background-color: #ffc107;
+}
+
+.reagent-status-critical {
+  background-color: #dc3545;
+}
+
+.reagent-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+}
+
+.reagent-stock-legend {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  gap: 15px;
+}
+
+.reagent-legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.reagent-search-container {
+  margin-bottom: 15px;
+}
+
+.reagent-search-input {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.reagent-supplies-count {
+  background-color: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin-left: 15px;
+  font-size: 14px;
+}
+
+.reagent-critical-count {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.reagent-unit-label {
+  font-size: 0.8em;
+  color: #6c757d;
+  margin-left: 4px;
+}
+  </style>
+  <body class="with-welcome-text">
+    <!--
+    <div class="container-scroller">
+      <div class="row p-0 m-0 proBanner" id="proBanner">
+        <div class="col-md-12 p-0 m-0">
+          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
+            <div class="ps-lg-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
+                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" class="btn me-2 buy-now-btn border-0">Buy Now</a>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <a href="https://www.bootstrapdash.com/product/star-admin-pro/"><i class="ti-home me-3 text-white"></i></a>
+              <button id="bannerClose" class="btn border-0 p-0">
+                <i class="ti-close text-white"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      -->
+      
+      <!-- partial:partials/_navbar.html -->
+      <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+          <div class="me-3">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+              <span class="icon-menu"></span>
+            </button>
+          </div>
+          <div>
+            <a class="navbar-brand brand-logo" href="index.html">
+              <img src="assets/images/nscsl.PNG" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="index.html">
+              <img src="assets/images/nscsl logo copy.png" alt="logo" />
+            </a>
+          </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-top">
+          <ul class="navbar-nav">
+            <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+              <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to LABORATORY Dashboard </h3>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+              <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="img-xs rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image"> </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                  <div class="dropdown-header text-center">
+                    <img class="img-md rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image">
+                    <p class="mb-1 mt-3 fw-semibold" id="user-name1">Loading...</p>  <!-- Name will be inserted here -->
+                    <p class="fw-light text-muted mb-0" id="user-email">Loading...</p>  <!-- Email will be inserted here -->
+                </div>
+                <a class="dropdown-item" id="logout">
+                  <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out
+                </a>              
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+
+     <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-admin" aria-expanded="false" aria-controls="nscsl-admin">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">ADMIN</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-admin">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Supply & Purchasing</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
+              <i class="mdi mdi-office-building menu-icon"></i>
+              <span class="menu-title"> PDO </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-pdo">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/index.html">Overview</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+                -->
+              </ul>
+            </div>
+          </li> 
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-lab" aria-expanded="false" aria-controls="nscsl-lab">
+              <i class="mdi mdi-flask-outline menu-icon"></i>
+              <span class="menu-title">LABORATORY</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-lab">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/labindex.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/demographics.html">Demo & Unsat</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
+                -->
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-followup" aria-expanded="false" aria-controls="nscsl-followup">
+              <i class="mdi mdi-stethoscope menu-icon"></i>
+              <span class="menu-title">FOLLOWUP</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-followup">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/followup.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
+
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="home-tab">
+                  <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                    <!--
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#buttons" role="tab" aria-selected="false">Buttons</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#reports" role="tab" aria-controls="reports" aria-selected="false">Reports</a>
+                        </li>
+                    </ul>
+                    -->
+                    <!--
+                    <div>
+                      <div class="btn-wrapper">
+                        <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                        <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                        <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                  
+                  <div class="tab-content tab-content-basic">
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                      <!-- Charts --> 
+                      <div class="row">
+                        <div class="container mt-4">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="card-title">Summary of Total Samples Processed This Month</h4>
+                            <button class="btn btn-primary button-custom" onclick="runNeometrics('neometrics')">Run Neometrics</button>
+                          </div>                          
+                          <div class="row">
+                            <div class="col-md-3">
+                              <div class="task-card total">
+                                <div class="icon-box"><i class="fas fa-tasks"></i></div>
+                                <div class="task-content">
+                                  <p class="task-label">Total Sample Received</p>
+                                  <h2 class="task-value sample-receieved-value">-</h2>
+                                  <span class="task-subtext">at the moment</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="task-card completed">
+                                <div class="icon-box"><i class="fas fa-check-circle"></i></div>
+                                <div class="task-content">
+                                  <p class="task-label">Total Sample Screened</p>
+                                  <h2 class="task-value sample-screened-value">-</h2>
+                                  <span class="task-subtext">at the moment</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="task-card pending">
+                                <div class="icon-box"><i class="fas fa-clock"></i></div>
+                                <div class="task-content">
+                                  <p class="task-label">Total Unfit and Unsat</p>
+                                  <h2 class="task-value sample-unfitunst-value">-</h2>
+                                  <span class="task-subtext">at the moment</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="task-card overdue">
+                                <div class="icon-box"><i class="fas fa-exclamation-circle"></i></div>
+                                <div class="task-content">
+                                  <p class="task-label">Overdue Tasks</p>
+                                  <h2 class="task-value">-</h2>
+                                  <span class="task-subtext">at the moment</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash1"> Comparison of Trend for Daily Received Samples <br> (January 2024 vs. January 2025) </h4>
+                                            </div>
+                                            <div>
+                                                <!-- Year Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" 
+                                                          type="button" id="yearDropdownBtnAA" data-bs-toggle="dropdown">2024</button>
+                                                  <div class="dropdown-menu" id="yearDropdownAAA">
+                                                      <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                      <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                      <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                      <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                      <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                      <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                      <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                      <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                      <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                      <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                      <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                      <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                  </div> 
+                                                </div>
+                                                <span>VS</span>
+                                                <div class="dropdown d-inline-block">
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" 
+                                                          type="button" id="yearDropdownBtnB" data-bs-toggle="dropdown">2025</button>
+                                                  <div class="dropdown-menu" id="yearDropdownBB">
+                                                      <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                      <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                      <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                      <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                      <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                      <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                      <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                      <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                      <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                      <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                      <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                      <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                      <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                  </div> 
+                                                </div>
+
+                                                <!-- Month Selection -->
+                                                <div class="dropdown d-inline-block mb-2">
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn22" data-bs-toggle="dropdown">January</button>
+                                                  <div class="dropdown-menu" id="monthDropdown22">
+                                                    <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                    <a class="dropdown-item" href="#" data-month="February">February</a>
+                                                    <a class="dropdown-item" href="#" data-month="March">March</a>
+                                                    <a class="dropdown-item" href="#" data-month="April">April</a>
+                                                    <a class="dropdown-item" href="#" data-month="May">May</a>
+                                                    <a class="dropdown-item" href="#" data-month="June">June</a>
+                                                    <a class="dropdown-item" href="#" data-month="July">July</a>
+                                                    <a class="dropdown-item" href="#" data-month="August">August</a>
+                                                    <a class="dropdown-item" href="#" data-month="September">September</a>
+                                                    <a class="dropdown-item" href="#" data-month="October">October</a>
+                                                    <a class="dropdown-item" href="#" data-month="November">November</a>
+                                                    <a class="dropdown-item" href="#" data-month="December">December</a>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 470px; width: 120%;">
+                                            <canvas id="labComparisonOfDailySamples"></canvas>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                                  
+                        </div>
+                        
+                        <div class="col-lg-4 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card" style="height: fit-content;">
+                              <div class="card card-rounded" >
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
+                                        <h5 id="card-title-dash5">Tracking System from Date Collection to Release of Result</h5>
+                                      </div>
+                                        <!-- Year A Selection -->
+                                        <div class="dropdown d-inline-block">
+                                          <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                  type="button" id="lab-year-dropdown" data-bs-toggle="dropdown">2024</button>
+                                          <div class="dropdown-menu" id="lab-year-dropdown">
+                                              <a class="dropdown-item" href="#" lab-data-year="2025">2025</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2024">2024</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2023">2023</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2022">2022</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2021">2021</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2020">2020</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2019">2019</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2018">2018</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2017">2017</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2016">2016</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2015">2015</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2014">2014</a>
+                                              <a class="dropdown-item" href="#" lab-data-year="2013">2013</a>
+                                          </div> 
+                                        </div>
+                                        <!-- Month Selection -->
+                                        <div class="dropdown d-inline-block mb-2">
+                                          <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="lab-month-dropdown" data-bs-toggle="dropdown">January</button>
+                                          <div class="dropdown-menu" id="lab-month-dropdown">
+                                            <a class="dropdown-item" href="#" lab-data-month="January">January</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="February">February</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="March">March</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="April">April</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="May">May</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="June">June</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="July">July</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="August">August</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="September">September</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="October">October</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="November">November</a>
+                                            <a class="dropdown-item" href="#" lab-data-month="December">December</a>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-container">
+                                      <table class="custom-table">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="3">Month</th>
+                                                <th colspan="3">DTCOLL - DTRECV</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="1">AVE</th>
+                                                <th colspan="1">MED</th>
+                                                <th colspan="1">MOD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="month">Jan</td>
+                                                <td id="ave-data">-</td>
+                                                <td id="med-data">-</td>
+                                                <td id="mod-data">-</td>
+                                            </tr>
+                                        </tbody>
+                                      </table>
+  
+                                      <table class="custom-table">
+                                        <thead>
+                                          <tr>
+                                              <th rowspan="3">Month</th>
+                                              <th colspan="3">DTRECV - DTRELEASE</th>
+                                          </tr>
+                                          <tr>
+                                              <th colspan="1">AVE</th>
+                                              <th colspan="1">MED</th>
+                                              <th colspan="1">MOD</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="month">Jan</td>
+                                                <td id="ave-data1">-</td>
+                                                <td id="med-data1">-</td>
+                                                <td id="mod-data1">-</td>
+                                            </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>          
+                          </div>
+                          <div class="col-md-6 col-lg-12 grid-margin stretch-card" style="height: fit-content;">
+                            <div class="card card-rounded">
+                              <div class="card-body">
+                                <h6 class="card-title">Additional Info</h6>
+                                <p class="card-text">This is a small container added below the tracking system.</p>
+                                <!-- You can add buttons, charts, tables, or anything else here -->
+                              </div>
+                            </div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash2">
+                                                    Year to Date Comparison of Total Received Samples(2024 vs 2025)
+                                                </h4>
+                                            </div>
+                                            <div>
+                                                <!-- Year A Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                            type="button" id="yearAButton" data-bs-toggle="dropdown">2024</button>
+                                                    <div class="dropdown-menu" id="yearADropdown">
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div> 
+                                                </div>
+                                                <span>VS</span>
+                                                <!-- Year B Selection -->
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                            type="button" id="yearBButton" data-bs-toggle="dropdown">2025</button>
+                                                    <div class="dropdown-menu" id="yearBDropdown">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div> 
+                                                </div>
+                        
+                                                <!-- Sample Type Selection -->
+                                                <div class="dropdown d-inline-block mb-2">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                            type="button" id="sampleTypeButton" data-bs-toggle="dropdown">Received</button>
+                                                    <div class="dropdown-menu" id="sampleTypeDropdown">
+                                                        <a class="dropdown-item" href="#" data-type="Received">Received</a>
+                                                        <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 98%;">
+                                            <canvas id="ytdSampleComparison"></canvas>
+                                        </div>
+
+                                          <!-- Table Section -->
+                                          <div class="table-responsive mt-4">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Year</th>
+                                                        <th>January</th>
+                                                        <th>February</th>
+                                                        <th>March</th>
+                                                        <th>April</th>
+                                                        <th>May</th>
+                                                        <th>June</th>
+                                                        <th>July</th>
+                                                        <th>August</th>
+                                                        <th>September</th>
+                                                        <th>October</th>
+                                                        <th>November</th>
+                                                        <th>December</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="comparisonTableBody">
+                                                    <tr id="year2024Row">
+                                                        <td id="year1row">2024</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr id="year2025Row">
+                                                        <td id="year2row">2025</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr id="percentDiffRow">
+                                                        <td>% Diff</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                          </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>  
+                        
+                            <div class="row flex-grow">
+                              <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                                  <div class="card card-rounded">
+                                      <div class="card-body card-rounded">
+                                          <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                              <h4 class="card-title card-title-dash3">
+                                                Cumulative Monthly Census of Samples Received
+                                              </h4>
+                                            </div>
+                                            <!-- Sample Type Selection -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                      type="button" id="cumulativeTypeButton" data-bs-toggle="dropdown">Received</button>
+                                              <div class="dropdown-menu" id="cumulativeTypeDropdown">
+                                                  <a class="dropdown-item" href="#" data-type="Received">Received</a>
+                                                  <a class="dropdown-item" href="#" data-type="Screened">Screened</a>
+                                              </div>
+                                              <button class="btn btn-light btn-lg mb-0" id="showTableButton">Show Table</button>
+                                            </div>
+                                          </div>
+
+                                          <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                            <canvas id="cumulativeSamples"></canvas>
+                                          </div>
+                                        
+                                        <!-- Table Container (Initially Hidden) -->
+                                        <div id="cumulativeTableContainer" class="mt-4" style="display: none;">
+                                          <table class="table table-bordered1">
+                                              <thead>
+                                                  <tr id="tableHeader"></tr>
+                                              </thead>
+                                              <tbody id="tableBody"></tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="row flex-grow">
+                            <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <div>
+                                            <h4 class="card-title card-title-dash4">
+                                              Cumulative Annual Census of Samples Received (January)
+                                            </h4>
+                                          </div>
+
+                                          <!-- Sample Type Selection -->
+                                          <div class="dropdown d-inline-block mb-2">
+                                            <!-- Month Selection -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn2" data-bs-toggle="dropdown">January</button>
+                                              <div class="dropdown-menu" id="monthDropdown2">
+                                                <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
+                                                <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
+                                                <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
+                                                <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
+                                                <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
+                                                <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
+                                                <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
+                                                <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
+                                                <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
+                                                <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
+                                                <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
+                                          <canvas id="cumulativeAnnualSamples"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row flex-grow">
+                          <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                  <div class="card-body card-rounded">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                          <h4 class="card-title card-title-dash5">
+                                            Year to Date Comparison of Unsat Rate (Year 1 VS Year 2)
+                                          </h4>
+                                        </div>
+
+                                        <!-- Sample Type Selection -->
+                                        <div class="dropdown d-inline-block mb-2">
+                                          <div>
+                                            <!-- Year A Selection -->
+                                            <div class="dropdown d-inline-block">
+                                                <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                        type="button" id="unsat-year1-dropdown" data-bs-toggle="dropdown">2024</button>
+                                                <div class="dropdown-menu" id="unsat-year1-dropdown">
+                                                    <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                    <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                    <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                    <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                    <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                    <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                    <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                    <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                    <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                    <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                    <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                    <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                </div> 
+                                            </div>
+                                            <span>VS</span>
+                                            <!-- Year B Selection -->
+                                            <div class="dropdown d-inline-block">
+                                                <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                        type="button" id="unsat-year2-dropdown" data-bs-toggle="dropdown">2025</button>
+                                                <div class="dropdown-menu" id="unsat-year2-dropdown">
+                                                    <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                    <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                    <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                    <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                    <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                    <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                    <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                    <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                    <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                    <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                    <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                    <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                    <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                </div> 
+                                            </div>
+                                        </div>
+                                        </div>
+                                      </div>
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                        
+
+                        <div class="col-lg-4 d-flex flex-column">
+                          <!-- Lab Supplies Section -->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                          <h4>Laboratory Supplies</h4>
+                                          <div class="lab-supplies-count">
+                                            Total: <span id="lab-total-count">0</span>
+                                            Critical: <span id="lab-critical-count" class="lab-critical-count">0</span>
+                                          </div>
+                                        </div>
+                                        <div class="lab-search-container">
+                                          <input type="text" id="lab-search-supplies" class="lab-search-input" placeholder="Search supplies...">
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="lab-stock-legend">
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-normal"></span> Normal
+                                        </div>
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-warning"></span> Low
+                                        </div>
+                                        <div class="lab-legend-item">
+                                          <span class="lab-status-indicator lab-status-critical"></span> Critical
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="lab-table-container">
+                                        <table class="lab-supplies-table">
+                                          <thead>
+                                            <tr>
+                                              <th>Status</th>
+                                              <th>Item Code</th>
+                                              <th>Description</th>
+                                              <th>Stock</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="lab-supplies-data">
+                                            <!-- Data will be loaded here -->
+                                            <tr>
+                                              <td colspan="4" style="text-align: center;">Loading laboratory supplies...</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <!--Reagents Section-->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4>Reagent Supplies</h4>
+                                        <div class="reagent-supplies-count">
+                                          Total: <span id="reagent-total-count">0</span>
+                                          Critical: <span id="reagent-critical-count">0</span> <!-- Fixed typo here -->
+                                        </div>
+                                        <div class="reagent-search-container">
+                                          <input type="text" id="reagent-search-supplies" class="reagent-search-input" placeholder="Search reagents...">
+                                        </div>
+                                      </div>
+                        
+                                      <div class="reagent-stock-legend">
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-normal"></span> Normal
+                                        </div>
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-warning"></span> Low
+                                        </div>
+                                        <div class="reagent-legend-item">
+                                          <span class="reagent-status-indicator reagent-status-critical"></span> Critical
+                                        </div>
+                                      </div>
+                        
+                                      <div class="reagent-table-container">
+                                        <table class="reagent-supplies-table">
+                                          <thead>
+                                            <tr>
+                                              <th>Status</th>
+                                              <th>Item Code</th>
+                                              <th>Description</th>
+                                              <th>Stock</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody id="reagent-supplies-data">
+                                            <tr>
+                                              <td colspan="4" style="text-align: center;">Loading reagent supplies...</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                       
+                          <!-- Reagent Section -->
+                          <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4>Reagent Supplies</h4>
+                                        <div class="d-flex align-items-center">
+                                        </div>
+                                      </div>                                      
+                                      <!-- Scrollable Container -->
+                                      <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
+                                        <!-- Data will be inserted dynamically here -->
+                                      </div>
+                                      <!-- End Scrollable Container -->
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>   
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+
+          <!-- partial:partials/_footer.html 
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
+              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
+            </div>
+          </footer>
+          -->
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+        <!-- Load jQuery FIRST -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Load jQuery UI (Required for .datepicker) -->
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+        <!-- Vendor JS -->
+        <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+        <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+
+        <!-- Chart.js (Ensure it's loaded only ONCE) -->
+        <script src="assets/vendors/chart.js/chart.umd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+        <!-- Progress Bar -->
+        <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+
+        <!-- Core Template JS -->
+        <script src="assets/js/off-canvas.js"></script>
+        <script src="assets/js/template.js"></script>
+        <script src="assets/js/settings.js"></script>
+        <script src="assets/js/hoverable-collapse.js"></script>
+        <script src="assets/js/todolist.js"></script>
+
+        <!-- jQuery Cookie (After jQuery loads) -->
+        <script src="assets/js/jquery.cookie.js"></script>
+
+        <script src="assets/js/labdashboard.js"></script>
+        <script src="/js/labComparisonSamples.js"></script>
+        <script src="/js/ytdSampleComparison.js"></script>
+        <script src="/js/cumulativeCencusSamples.js"></script>
+        <script src="/js/cumulativeAnnual.js"></script>
+        <script src="/js/cardSummary.js"></script>
+        <script src="/js/labTracking.js"></script>
+        <script src="/js/neometrics.js"></script>
+        <script src="/js/labSupplies.js"></script>
+        <script src="/js/reagentSupplies.js"></script>
+        <script src="/js/auth.js"></script>
+
+        <!-- Custom Scripts (Ensure DOM is ready before running) -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                console.log("✅ DOM fully loaded, running scripts...");
+
+                // ✅ Load event.js only when DOM is ready
+                const script1 = document.createElement("script");
+                script1.src = "assets/js/event.js";
+                document.body.appendChild(script1);
+
+                // ✅ Load labdashboard.js only when DOM is ready
+                const script2 = document.createElement("script");
+                script2.src = "assets/js/labdashboard.js";
+                document.body.appendChild(script2);
+            });
+        </script>
+
+
+    <!--SCRIPT FOR LOGOUT-->
+    <script>
+      document.getElementById("logout").addEventListener("click", function () {
+          localStorage.removeItem("username"); // Clear stored user data
+          window.location.href = "login.html"; // Redirect to login page
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPLAY USERNAME BASE ON THE USER-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Get stored username from localStorage
+          const username = localStorage.getItem("username");
+  
+          if (username) {
+              document.getElementById("user-name").textContent = username;
+          }
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const userName = localStorage.getItem("username"); // Get the stored name
+
+    if (userName) {
+          document.getElementById("user-name").textContent = userName; // Set Name in Header
+          document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
+    } else {
+        document.getElementById("user-name").textContent = "Guest";
+        document.getElementById("dropdown-name").textContent = "Guest";
+    }
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPALYING NAME ALSO-->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("username") || "Guest"; 
+    const userEmail = localStorage.getItem("email") || "No Email"; 
+
+      // Set the username and email in the dropdown
+    document.getElementById("user-name1").textContent = userName;
+    document.getElementById("user-email").textContent = userEmail;
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DATE PICKER-->
+    <script>
+    $(document).ready(function () {
+        $('#dateTimeFrom').datepicker({
+            format: 'yyyy-mm-dd HH:ii',
+            autoclose: true,
+            todayHighlight: true
+        });
+        $('#dateTimeTo').datepicker({
+            format: 'yyyy-mm-dd HH:ii',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    
+    <!--SCRIPT FOR DATE FILTERING-->
+    <!--END SCRIPT-->
+    
+    <!-- End custom js for this page-->
+
+    
+  </body>
+</html>

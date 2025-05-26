@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NSCSL DASHBOARD </title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+    
+  </head>
+  <style>
+    .table-responsive {
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+    }
+
+    .table-header {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .custom-btn {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+    border: none;
+    }
+
+    .custom-btn:hover {
+        background-color: #218838 !important; /* Darker Green */
+        color: white !important;
+    }
+
+    #marketingOverview {
+        width: 100% !important;
+        height: 600px !important; /* ⬆️ Increased from 500px to 600px */
+    }
+
+    .chart-container {
+        height: 650px !important; /* Adjust container height */
+    }
+
+    .button-custom {
+    background-color: #0d6efd; /* Blue background */
+    color: white !important; /* White text */
+    border: 2px solid #0d6efd; /* Blue border */
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .button-custom:hover {
+      background-color: white; /* White background on hover */
+      color: #0d6efd !important; /* Blue text on hover */
+      border: 2px solid #0d6efd; /* Keep the blue border */
+  }
+
+
+  .table-container {
+    overflow-x: auto;  /* Enable horizontal scrolling */
+    overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    display: block;
+    max-height: none; /* Remove max-height to prevent extra space */
+  }
+
+  .custom-table {
+      min-width: 10px; /* Ensure table doesn't shrink */
+      border-collapse: collapse;
+      text-align: center;
+  }
+
+  .custom-table thead {
+      position: sticky;
+      top: 0;
+      background: #004085; /* Dark blue header */
+      color: white;
+      z-index: 2;
+  }
+
+  .custom-table th, .custom-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+
+  .nav .nav-item {
+  padding: 10px 0; /* Adds vertical spacing */
+}
+
+.nav .nav-link {
+  padding: 12px 15px; /* Adjust link padding for better spacing */
+  border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+}
+
+  /* Notes App Container */
+  .notes-app {
+    width: 100%;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  
+  /* App Header */
+  .app-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 20px;
+  }
+  
+  .app-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+  
+  /* Tab Navigation */
+  .tab-navigation {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  
+  .scroll-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .back-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: #566B85;
+    transition: all 0.2s ease;
+  }
+  
+  .back-button:hover {
+    background: #cbd5e0;
+  }
+  
+  .tabs-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    gap: 8px;
+    flex-grow: 1;
+    padding: 4px 0;
+  }
+  
+  .tabs-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  
+  .tab {
+    padding: 8px 14px;
+    background: #e2e8f0;
+    color: #1a202c;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .tab.active-tab {
+    background: #3182ce;
+    color: white;
+  }
+  
+  .tab .close-btn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 12px;
+    background: #e53e3e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+  }
+  
+  .new-note-button {
+    padding: 8px 14px;
+    background: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  
+  .new-note-button:hover {
+    background: #4a5568;
+  }
+  
+    /* Note Area */
+    .note-area {
+      margin-bottom: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .note-textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: 16px;
+      border: none;
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #fff9c4;
+      resize: vertical;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    /* Note Controls */
+    .note-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .color-selector {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .color-option {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      border: 2px solid transparent;
+    }
+    
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+    
+    .color-option.selected {
+      border-color: #4a5568;
+    }
+    
+    .last-saved {
+      font-size: 12px;
+      color: #718096;
+    }
+    
+    .note-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+    
+    .clear-button {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .clear-button:hover {
+      background: #cbd5e0;
+    }
+    
+    .save-button {
+      background: #2d3748;
+      color: white;
+    }
+    
+    .save-button:hover {
+      background: #4a5568;
+    }
+  </style>
+
+  <body class="with-welcome-text">
+    <!--
+    <div class="container-scroller">
+      <div class="row p-0 m-0 proBanner" id="proBanner">
+        <div class="col-md-12 p-0 m-0">
+          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
+            <div class="ps-lg-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
+                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" class="btn me-2 buy-now-btn border-0">Buy Now</a>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <a href="https://www.bootstrapdash.com/product/star-admin-pro/"><i class="ti-home me-3 text-white"></i></a>
+              <button id="bannerClose" class="btn border-0 p-0">
+                <i class="ti-close text-white"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      -->
+      
+      <!-- partial:partials/_navbar.html -->
+      <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+          <div class="me-3">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+              <span class="icon-menu"></span>
+            </button>
+          </div>
+          <div>
+            <a class="navbar-brand brand-logo" href="/src/index.html">
+              <img src="assets/images/nscsl.PNG" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="/src/index.html">
+              <img src="assets/images/nscsl logo copy.png" alt="logo" />
+            </a>
+          </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-top">
+          <ul class="navbar-nav">
+            <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+              <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to ADMIN Dashboard </h3>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+              <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="img-xs rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image"> </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                  <div class="dropdown-header text-center">
+                    <img class="img-md rounded-circle" src="assets/images/faces/face8.jpg" alt="Profile image">
+                    <p class="mb-1 mt-3 fw-semibold" id="user-name1">Loading...</p>  <!-- Name will be inserted here -->
+                    <p class="fw-light text-muted mb-0" id="user-email">Loading...</p>  <!-- Email will be inserted here -->
+                </div>
+                <!--
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a>
+                -->
+                <a class="dropdown-item" id="logout">
+                  <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out
+                </a>              
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+       <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-admin" aria-expanded="false" aria-controls="nscsl-admin">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">ADMIN</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-admin">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/admin.html">Supply & Purchasing</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
+              <i class="mdi mdi-office-building menu-icon"></i>
+              <span class="menu-title"> PDO </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-pdo">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/index.html">Overview</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+                -->
+              </ul>
+            </div>
+          </li> 
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-lab" aria-expanded="false" aria-controls="nscsl-lab">
+              <i class="mdi mdi-flask-outline menu-icon"></i>
+              <span class="menu-title">LABORATORY</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-lab">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/labindex.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/src/demographics.html">Demo & Unsat</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
+                -->
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-followup" aria-expanded="false" aria-controls="nscsl-followup">
+              <i class="mdi mdi-stethoscope menu-icon"></i>
+              <span class="menu-title">FOLLOWUP</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-followup">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/src/followup.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
+
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="home-tab">
+                  <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                    <!--
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#buttons" role="tab" aria-selected="false">Buttons</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#reports" role="tab" aria-controls="reports" aria-selected="false">Reports</a>
+                        </li>
+                    </ul>
+                    -->
+                    <!--
+                    <div>
+                      <div class="btn-wrapper">
+                        <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                        <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                        <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                      </div>
+                    </div>
+                    -->
+                  </div>
+                  
+                  <div class="tab-content tab-content-basic">
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                      <div class="row">
+
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <!-- Header Section -->
+                                        <div class="d-sm-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h4 class="card-title card-title-dash"> Total Kits Sold </h4>
+                                            </div>
+                                            <button class="btn btn-light btn-lg mb-0" id="showTableButton">Show Table</button>
+                                        </div>
+                                        <div class="chartjs-bar-wrapper">
+                                          <canvas id="totalKitsSold"></canvas>
+                                        </div>
+                                        <!-- Table Container (Initially Hidden) -->
+                                      <div id="kitsSOldTableContainer" class="mt-4" style="display: none;">
+                                        <table class="table table-border">
+                                            <thead>
+                                                <tr id="tableHeader"></tr>
+                                            </thead>
+                                            <tbody id="tableBody"></tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>                                   
+                        </div>
+
+                        <div class="col-lg-4 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-md-6 col-lg-12 grid-margin stretch-card">
+                              <div class="card bg-primary card-rounded">
+                                <div class="card-body pb-0">
+                                  <h4 class="card-title card-title-dash text-white mb-4">Status Summary</h4>
+                                 
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="card-title card-title-dash">Todo list</h4>
+                                        <div class="add-items d-flex mb-0">
+                                          <button class="add btn btn-icons btn-rounded btn-primary text-white" data-bs-toggle="modal" data-bs-target="#todoModal">
+                                            <i class="mdi mdi-plus"></i>
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="list-wrapper">
+                                        <div class="todo-scroll" style="max-height: 300px; overflow-y: auto;">
+                                          <ul class="todo-list todo-list-rounded" id="todoList">
+                                            <!-- Newly added tasks will appear here -->
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div class="row">
+                        <div class="col-lg-8 d-flex flex-column">
+                          <div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <!-- Header Section -->
+                                  <div class="d-sm-flex justify-content-between align-items-start">
+                                    <div>
+                                      <h4 class="card-title card-title-dash"> Cumulative Monthly Kits Sold </h4>
+                                    </div>
+                                    <button class="btn btn-light btn-lg mb-0" id="kitsSoldShowTableButton">Show Table</button>
+                                  </div>
+                          
+                                  <div class="chartjs-bar-wrapper mt-3" id="kitsSoldChartWrapper">
+                                    <canvas id="kitsSoldChart"></canvas>
+                                  </div>
+                          
+                                  <!-- Table Container (Initially Hidden) -->
+                                  <div id="kitsSoldTableContainer" class="mt-4" style="display: none;">
+                                    <table class="table table-border">
+                                      <thead>
+                                        <tr id="kitsSoldTableHeader"></tr>
+                                      </thead>
+                                      <tbody id="kitsSoldTableBody"></tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row flex-grow">
+                            <div class="col-md-12 col-lg-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="card-title card-title-dash">Content 6</h4>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                          
+                        <!-- Add/Edit Facility Visit Modal -->
+                        <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="visitModalLabel">Add Facility Visit</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form id="visitForm">
+                                  <input type="hidden" id="visitId">
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Code</label>
+                                    <input type="text" class="form-control" id="facilityCode" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Facility Name</label>
+                                    <input type="text" class="form-control" id="facilityName" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Date and Time Visited</label>
+                                    <input type="datetime-local" class="form-control" id="dateVisited" required>
+                                  </div>
+                                  
+                                  <div class="mb-3">
+                                    <label class="form-label">Province</label>
+                                    <select class="form-control" id="province" required>
+                                      <option value="">-- Select Province --</option>
+                                      <option value="Cavite">Cavite</option>
+                                      <option value="Laguna">Laguna</option>
+                                      <option value="Batangas">Batangas</option>
+                                      <option value="Rizal">Rizal</option>
+                                      <option value="Quezon">Quezon</option>
+                                    </select>
+                                  </div>
+
+                                  <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-control" id="status" required>
+                                      <option value="">-- Select Status --</option>
+                                      <option value="1">Active</option>
+                                      <option value="0">Inactive</option>
+                                      <option value="2">Closed</option> <!-- Added Closed Status -->
+                                    </select>
+                                  </div>
+
+                                  <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                          <div class="row flex-grow">
+                              <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body card-rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="card-title card-title-dash">Content 6</h4>
+                                        </div>                      
+                                    </div>
+                                </div>
+                              </div>
+                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h4 class="card-title card-title-dash fw-bold">Content 7</h4>
+                                    </div>
+                                </div>
+                            </div>        
+                            </div>
+                          </div>
+                        </div>
+                        <!-- View All Events Modal -->
+                        <div class="modal fade" id="viewAllEventsModal" tabindex="-1" aria-labelledby="viewAllEventsModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="viewAllEventsModalLabel">All Events</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <div id="allEventsList">
+                                          <!-- All events will be dynamically displayed here -->
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                          <!-- Bootstrap Modal for Adding To-Do -->
+                          <div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="todoModalLabel">Add Todo Item</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <input type="text" id="todoInput" class="form-control" placeholder="Enter task">
+                                  <input type="date" id="todoDate" class="form-control mt-2">
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" id="saveTodo">Save</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- To-Do List Section -->
+                          <div class="col-lg-4 d-flex flex-column">
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <!-- Sticky Notes Component -->
+                                <div class="notes-app">
+                                  <div class="app-header">
+                                    <h1 class="app-title">Notes</h1>
+                                  </div>
+                                  
+                                  <div class="tab-navigation">
+                                    <div class="scroll-container">
+                                      <button class="back-button" id="scrollLeft">←</button>
+                                      <div class="tabs-wrapper" id="noteSection_tabs"></div>
+                                      <button class="back-button" id="scrollRight">→</button>
+                                      <button class="new-note-button" id="noteSection_addBtn">New note</button>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="note-area" id="noteContainer"></div>
+                                  
+                                  <div class="note-controls">
+                                    <div class="color-selector" id="colorSelector"></div>
+                                    <div class="last-saved" id="lastSaved"></div>
+                                    <div class="note-actions">
+                                      <button class="action-button clear-button" id="clearNote">Clear</button>
+                                      <button class="action-button save-button" id="saveNote">Save</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <h4 class="card-title card-title-dash">Content 4</h4>
+                                        </div>
+                                        <div>
+                                          <canvas class="my-auto" id=""></canvas>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                  <div>
+                                                    <h4 class="card-title card-title-dash2">Content 5 </h4>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row flex-grow">
+                              <div class="col-12 grid-margin stretch-card">
+                                <div class="card card-rounded">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <h4 class="card-title card-title-dash">
+                                            Content 8
+                                          </h4>
+                                        </div>                                                                          
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/template.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <script src="assets/js/event.js"></script>
+    <script src="/js/auth.js"></script>
+    <!-- endinject -->
+
+    <!--script for pdo visit-->
+
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    Latest Chart.js Data Labels Plugin
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    -->
+    <!--GRAPH JS-->
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+        <!-- Latest Chart.js v4 -->
+  
+    <!--end inject-->
+    <script src="/js/totalKitsSold.js"></script>
+    <script src="/js/cumulativeKitsSold.js"></script>
+    <script src="/src/assets/js/sticky-notes.js"></script>
+
+    <!-- Custom js for this page-->
+    <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
+
+    <!--SCRIPT FOR LOGOUT-->
+    <script>
+      document.getElementById("logout").addEventListener("click", function () {
+          localStorage.removeItem("username"); // Clear stored user data
+          window.location.href = "login.html"; // Redirect to login page
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPLAY USERNAME BASE ON THE USER-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Get stored username from localStorage
+          const username = localStorage.getItem("username");
+  
+          if (username) {
+              document.getElementById("user-name").textContent = username;
+          }
+      });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const userName = localStorage.getItem("username"); // Get the stored name
+
+      if (userName) {
+          document.getElementById("user-name").textContent = userName; // Set Name in Header
+          document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
+      } else {
+          document.getElementById("user-name").textContent = "Guest";
+          document.getElementById("dropdown-name").textContent = "Guest";
+      }
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPALYING NAME ALSO-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const userName = localStorage.getItem("username") || "Guest"; 
+      const userEmail = localStorage.getItem("email") || "No Email"; 
+
+      // Set the username and email in the dropdown
+      document.getElementById("user-name1").textContent = userName;
+      document.getElementById("user-email").textContent = userEmail;
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DATE PICKER-->
+    <script>
+      $(document).ready(function () {
+          $('#dateTimeFrom').datepicker({
+              format: 'yyyy-mm-dd HH:ii',
+              autoclose: true,
+              todayHighlight: true
+          });
+          $('#dateTimeTo').datepicker({
+              format: 'yyyy-mm-dd HH:ii',
+              autoclose: true,
+              todayHighlight: true
+          });
+      });
+    </script>
+    <!--END SCRIPT-->
+   
+  </body>
+</html>
