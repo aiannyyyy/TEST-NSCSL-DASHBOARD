@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | NSCSL</title>
+    <link rel="stylesheet" href="/public/assets/css/login.css">
+    <link rel="shortcut icon" href="/public/assets/images/ncslogo.ico" />
+    <script src="/public/js/login.js" defer></script>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password" required>
+            <button class="toggle-password" onclick="togglePassword()">
+                <img src="https://cdn-icons-png.flaticon.com/512/709/709612.png" id="eye-icon">
+            </button>
+        </div>
+        <button id="loginButton">Login</button>
+    </div>
+</body>
+</html>
