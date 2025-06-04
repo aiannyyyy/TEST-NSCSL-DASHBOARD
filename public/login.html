@@ -9,6 +9,11 @@
     <script src="/public/js/login.js" defer></script>
 </head>
 <body>
+    <!--
+    <div class="logo-container">
+        <img src="/public/assets/images/LOGO NEWWWWWWW.jpg" alt="" class="side-logo">
+    </div>
+
     <div class="login-container">
         <h2>Login</h2>
         <div class="input-group">
@@ -21,6 +26,52 @@
             </button>
         </div>
         <button id="loginButton">Login</button>
+    </div>
+
+-->
+      <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="logo-container">
+            <img src="/public/assets/images/LOGO NEWWWWWWW.jpg" alt="NSCSL Logo" class="side-logo">
+        </div>
+
+        <div class="login-container">
+            <h2>Welcome Back</h2>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <div class="input-wrapper" id="usernameWrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" required>
+                        <label class="floating-label">Username</label>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-wrapper" id="passwordWrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" required>
+                        <label class="floating-label">Password</label>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-button" id="loginButton">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="forgot-password">
+                <a href="#" onclick="forgotPassword()">Forgot your password?</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

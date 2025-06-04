@@ -1,102 +1,136 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const loginButton = document.getElementById("loginButton");
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
+            const loginButton = document.getElementById("loginButton");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
 
-    // ✅ Set focus to username field on page load
-    usernameInput.focus();
+            // ✅ Set focus to username field on page load
+            usernameInput.focus();
 
-    // ✅ Allow Enter key to trigger login
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            loginButton.click(); // Simulate button click
-        }
-    });
-
-    loginButton.addEventListener("click", async function (event) {
-        event.preventDefault(); // Prevent form refresh
-
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value.trim();
-
-        if (!username || !password) {
-            alert("Please fill in both fields.");
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:3000/api/auth/login", { 
-                method: "POST", 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify({ username, password }) 
-            });
-            
-            const result = await response.json();
-
-            /*
-
-            if (response.ok && result.success) {
-                localStorage.setItem("username", result.user.name); 
-                localStorage.setItem("dept", result.user.dept); // Save dept in localStorage if needed
+            // Handle floating labels
+            function handleFloatingLabel(inputId, wrapperId) {
+                const input = document.getElementById(inputId);
+                const wrapper = document.getElementById(wrapperId);
                 
+                input.addEventListener('input', function() {
+                    if (this.value.length > 0) {
+                        wrapper.classList.add('has-value');
+                    } else {
+                        wrapper.classList.remove('has-value');
+                    }
+                });
+                
+                input.addEventListener('focus', function() {
+                    wrapper.classList.add('has-value');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (this.value.length === 0) {
+                        wrapper.classList.remove('has-value');
+                    }
+                });
+            }
 
-                // Redirect based on department
-                switch (result.user.dept) {
-                    case "Admin":
-                        window.location.href = "/src/admin.html";
-                        break;
-                    case "Laboratory":
-                        window.location.href = "/src/labindex.html";
-                        break;
-                    case "Program":
-                        window.location.href = "/src/index.html";
-                        break;
-                    case "Follow Up":
-                        window.location.href = "/src/followup.html";
-                        break;
-                    default:
-                        window.location.href = "/src/admin.html"; // fallback
-                        break;
+            // Initialize floating labels
+            handleFloatingLabel('username', 'usernameWrapper');
+            handleFloatingLabel('password', 'passwordWrapper');
+
+            // ✅ Allow Enter key to trigger login
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    loginButton.click(); // Simulate button click
                 }
+            });
+
+            loginButton.addEventListener("click", async function (event) {
+                event.preventDefault(); // Prevent form refresh
+
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username || !password) {
+                    alert("Please fill in both fields.");
+                    return;
+                }
+
+                // Add loading state
+                loginButton.classList.add('loading');
+                loginButton.disabled = true;
+
+                try {
+                    const response = await fetch("http://localhost:3000/api/auth/login", { 
+                        method: "POST", 
+                        headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify({ username, password }) 
+                    });
+                    
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        const { name, dept } = result.user;
+                        
+                        // Store user data in memory instead of localStorage for Claude.ai compatibility
+                        // Note: In your actual implementation, you can use localStorage
+                        window.userData = { name, dept };
+                        
+                        const redirectMap = {
+                            "Admin": "/public/admin.html",
+                            "Laboratory": "/public/labindex.html",
+                            "Program": "/public/index.html",
+                            "Follow Up": "/public/followup.html"
+                        };
+
+                        // Remove loading state before redirect
+                        loginButton.classList.remove('loading');
+                        loginButton.disabled = false;
+
+                        window.location.href = redirectMap[dept] || "/public/admin.html";
+                    } else {
+                        // Remove loading state on error
+                        loginButton.classList.remove('loading');
+                        loginButton.disabled = false;
+                        alert(result.message);
+                    }
+
+                } catch (error) {
+                    console.error("Login error:", error);
+                    // Remove loading state on error
+                    loginButton.classList.remove('loading');
+                    loginButton.disabled = false;
+                    alert("Something went wrong. Please try again.");
+                }
+            });
+
+            // Add some interactive effects
+            document.addEventListener('mousemove', function(e) {
+                const shapes = document.querySelectorAll('.shape');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                shapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const xOffset = (x - 0.5) * speed;
+                    const yOffset = (y - 0.5) * speed;
+                    
+                    shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+                });
+            });
+        });
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            const eyeIcon = document.getElementById("eye-icon");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text"; // Show password
+                eyeIcon.className = "fas fa-eye-slash"; // Change icon (open eye)
             } else {
-                alert(result.message);
+                passwordInput.type = "password"; // Hide password
+                eyeIcon.className = "fas fa-eye"; // Change icon (closed eye)
             }
-            
-            */
-           if (response.ok && result.success) {
-                const { name, dept } = result.user;
-                localStorage.setItem("username", name);
-                localStorage.setItem("dept", dept);
-
-                const redirectMap = {
-                    "Admin": "/public/admin.html",
-                    "Laboratory": "/public/labindex.html",
-                    "Program": "/public/index.html",
-                    "Follow Up": "/public/followup.html"
-                };
-
-                window.location.href = redirectMap[dept] || "/public/admin.html";
-            } else {
-                alert(result.message);
-            }
-
-        } catch (error) {
-            console.error("Login error:", error);
-            alert("Something went wrong. Please try again.");
         }
-    });
-});
 
-function togglePassword() {
-    const passwordInput = document.getElementById("password");
-    const eyeIcon = document.getElementById("eye-icon");
-
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text"; // Show password
-        eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/2767/2767146.png"; // Change icon (open eye)
-    } else {
-        passwordInput.type = "password"; // Hide password
-        eyeIcon.src = "https://cdn-icons-png.flaticon.com/512/709/709612.png"; // Change icon (closed eye)
-    }
-}
-
+        // Forgot password functionality
+        function forgotPassword() {
+            alert('Please contact your administrator');
+        }
