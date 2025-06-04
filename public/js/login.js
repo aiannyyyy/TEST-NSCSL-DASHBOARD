@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
             const loginButton = document.getElementById("loginButton");
             const usernameInput = document.getElementById("username");
             const passwordInput = document.getElementById("password");
@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (response.ok && result.success) {
                         const { name, dept } = result.user;
                         
-                        // Store user data in memory instead of localStorage for Claude.ai compatibility
-                        // Note: In your actual implementation, you can use localStorage
-                        window.userData = { name, dept };
+                        // Store user data in localStorage for your implementation
+                        localStorage.setItem("username", name);
+                        localStorage.setItem("dept", dept);
                         
                         const redirectMap = {
                             "Admin": "/public/admin.html",
