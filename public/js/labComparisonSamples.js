@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
     async function fetchData() {
         try {
             const urls = [
-                `http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearA}&month=${selectedMonth}`,
-                `http://localhost:3000/api/lab-comparison-samples-per-day?year=${selectedYearB}&month=${selectedMonth}`
+                `http://localhost:3001/api/lab-comparison-samples-per-day?year=${selectedYearA}&month=${selectedMonth}`,
+                `http://localhost:3001/api/lab-comparison-samples-per-day?year=${selectedYearB}&month=${selectedMonth}`
             ];
 
             const [responseA, responseB] = await Promise.all(urls.map(url => fetch(url)));

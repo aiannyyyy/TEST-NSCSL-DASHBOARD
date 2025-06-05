@@ -3,7 +3,7 @@ $(document).ready(function () {
 });
 
 function fetchTopUnsatisfactoryContributors(fromDate, toDate) {
-    let requestUrl = `http://localhost:3000/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
+    let requestUrl = `http://localhost:3001/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
     console.log("🔹 Fetching data from:", requestUrl);
 
     $.get(requestUrl, function (data) {

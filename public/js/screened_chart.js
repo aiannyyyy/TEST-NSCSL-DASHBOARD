@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let fromDate = `${selectedYear1}-01-01`;
         let toDate = `${selectedYear2}-12-31`;
 
-        let apiUrl = `http://localhost:3000/api/inc-dec/monthly-labno-count?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&province=${encodeURIComponent(selectedProvince)}`;
+        let apiUrl = `http://localhost:3001/api/inc-dec/monthly-labno-count?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}&province=${encodeURIComponent(selectedProvince)}`;
 
         console.log("🚀 Fetching data from:", apiUrl);
 

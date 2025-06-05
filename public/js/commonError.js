@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             const monthNumber = monthMap[selectMonth];
             
-            const response = await fetch(`http://localhost:3000/api/common-error?year=${selectYear}&month=${monthNumber}`);
+            const response = await fetch(`http://localhost:3001/api/common-error?year=${selectYear}&month=${monthNumber}`);
             const data = await response.json();
             const chartData = processDataForChart(data.data);
             

@@ -7,7 +7,7 @@ let doughnutChart; // Global variable to store the chart instance
 // Fetch facility visits
 // Fetch facility visits and update chart
 function fetchVisits() {
-    $.get("http://localhost:3000/api/facility-visits", function (data) {
+    $.get("http://localhost:3001/api/facility-visits", function (data) {
         let container = $(".scrollable-container");
         $("#visitTable").html("");
 
@@ -125,7 +125,7 @@ $("#facilityCode").off("keypress").on("keypress", function (e) {
         const facilityCode = $(this).val().trim();
 
         if (facilityCode) {
-            fetch(`http://localhost:3000/api/list-facilities?facilitycode=${encodeURIComponent(facilityCode)}`)
+            fetch(`http://localhost:3001/api/list-facilities?facilitycode=${encodeURIComponent(facilityCode)}`)
                 .then(res => res.json())
                 .then(data => {
                     console.log("API Response Data:", data); // Keep for debugging
@@ -197,7 +197,7 @@ function saveFacilityVisit() {
         mark: null
     };
 
-    let url = id ? `http://localhost:3000/api/facility-visits/${id}` : "http://localhost:3000/api/facility-visits";
+    let url = id ? `http://localhost:3001/api/facility-visits/${id}` : "http://localhost:3001/api/facility-visits";
     let method = id ? "PUT" : "POST";
 
     $.ajax({
@@ -221,7 +221,7 @@ function deleteVisit(id) {
     if (!confirm("Are you sure you want to delete this facility visit?")) return;
 
     $.ajax({
-        url: `http://localhost:3000/api/facility-visits/${id}`,
+        url: `http://localhost:3001/api/facility-visits/${id}`,
         type: "DELETE",
         success: function (response) {
             alert(response.message);
@@ -240,7 +240,7 @@ function toggleStatus(id, currentStatus) {
                   : "1"; // Cycle: Active → Inactive → Closed → Active
 
     $.ajax({
-        url: `http://localhost:3000/api/facility-visits/${id}/status`,
+        url: `http://localhost:3001/api/facility-visits/${id}/status`,
         type: "PATCH",
         contentType: "application/json",
         data: JSON.stringify({ status: newStatus }),
@@ -334,7 +334,7 @@ async function exportToExcel() {
 // Get all facility visits for export
 function getAllFacilityVisits() {
     return new Promise((resolve, reject) => {
-        $.get("http://localhost:3000/api/facility-visits", function(data) {
+        $.get("http://localhost:3001/api/facility-visits", function(data) {
             resolve(data);
         }).fail(function(error) {
             reject(error);

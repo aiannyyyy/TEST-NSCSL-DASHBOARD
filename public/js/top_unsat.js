@@ -1,18 +1,8 @@
 
+
+
+
 /*
-$(document).ready(function () {
-    // Default view: By Numbers
-    fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59", "numbers");
-
-    // Event listeners for radio buttons
-    $("input[name='btnradio']").change(function () {
-        let selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
-        fetchTopUnsatisfactoryContributors("2025-01-01 00:00", "2025-01-31 23:59", selectedType);
-    });
-});
-
-*/
-
 $(document).ready(function () {
     const { from, to } = getDefaultDateRange();
     fetchTopUnsatisfactoryContributors(from, to, "numbers");
@@ -22,13 +12,50 @@ $(document).ready(function () {
         fetchTopUnsatisfactoryContributors(from, to, selectedType);
     });
 });
+*/
+
+
+$(document).ready(function () {
+    // Get today's date
+    const today = new Date();
+
+    // Get the first day of the current month at 00:00
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0);
+
+    // Get the last day of the current month at 23:59:59
+    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59);
+
+    // Format dates as 'YYYY-MM-DD HH:mm' for your API
+    function formatDate(date) {
+        const pad = (n) => (n < 10 ? '0' + n : n);
+        return (
+            date.getFullYear() + "-" +
+            pad(date.getMonth() + 1) + "-" +
+            pad(date.getDate()) + " " +
+            pad(date.getHours()) + ":" +
+            pad(date.getMinutes())
+        );
+    }
+
+    const fromDate = formatDate(firstDay);
+    const toDate = formatDate(lastDay);
+
+    // Default view: By Numbers
+    fetchTopUnsatisfactoryContributors(fromDate, toDate, "numbers");
+
+    // Event listeners for radio buttons
+    $("input[name='btnradio']").change(function () {
+        let selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
+        fetchTopUnsatisfactoryContributors(fromDate, toDate, selectedType);
+    });
+});
 
 
 function fetchTopUnsatisfactoryContributors(fromDate, toDate, type) {
     let requestUrl =
         type === "numbers"
-            ? `http://localhost:3000/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`
-            : `http://localhost:3000/api/unsat/rate-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
+            ? `http://localhost:3001/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`
+            : `http://localhost:3001/api/unsat/rate-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
 
     console.log("🔹 Fetching data from:", requestUrl);
 
@@ -53,7 +80,7 @@ function fetchTopUnsatisfactoryContributors(fromDate, toDate, type) {
             container.append(`
                 <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
                     <div class="d-flex">
-                        <img class="img-sm rounded-10" src="/routes/hospital.png" alt="Hospital">
+                        <img class="img-sm rounded-10" src="assets/images/hospital.png" alt="Hospital">
                         <div class="wrapper ms-3">
                             <p class="ms-1 mb-1 fw-bold">${facilityName}</p>
                             <small class="text-muted mb-0">${province}</small>

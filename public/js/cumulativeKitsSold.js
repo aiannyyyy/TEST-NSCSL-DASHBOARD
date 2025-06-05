@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const chartWrapper = document.getElementById("kitsSoldChartWrapper");
   const tableContainer = document.getElementById("kitsSoldTableContainer");
 
-  fetch("http://localhost:3000/api/cumulative-kits-sold")
+  fetch("http://localhost:3001/api/cumulative-kits-sold")
     .then(response => response.json())
     .then(data => {
       const monthlyDataByYear = {};

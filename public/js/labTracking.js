@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Convert month name to month number
             const monthNumber = monthMap[month];
 
-            const response = await fetch(`http://localhost:3000/api/lab-tracking?year=${year}&month=${monthNumber}`);
+            const response = await fetch(`http://localhost:3001/api/lab-tracking?year=${year}&month=${monthNumber}`);
             const data = await response.json();
 
             if (data) {

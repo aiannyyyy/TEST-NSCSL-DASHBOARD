@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to run EXE
 function runExe(exeName) {
-    fetch(`http://localhost:3000/api/run-exe/${exeName}`)  // ✅ Correct API Route
+    fetch(`http://localhost:3001/api/run-exe/${exeName}`)  // ✅ Correct API Route
         .then(response => response.text())
         .then(data => alert(data))
         .catch(error => console.error("Error:", error));

@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to load notebook entries for a specific patient by fname and lname
     async function loadNotebookEntries(fname, lname) {
         try {
-            const response = await fetch(`http://localhost:3000/api/notebook-query?fname=${encodeURIComponent(fname)}&lname=${encodeURIComponent(lname)}`);
+            const response = await fetch(`http://localhost:3001/api/notebook-query?fname=${encodeURIComponent(fname)}&lname=${encodeURIComponent(lname)}`);
             if (response.ok) {
                 const entries = await response.json();
                 renderNotebookEntries(entries);
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/api/notebook-query', {
+            const response = await fetch('http://localhost:3001/api/notebook-query', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -246,7 +246,7 @@ async function deleteNotebookEntry(noteID) {
     if (!confirm('Are you sure you want to delete this notebook entry?')) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/notebook/${noteID}`, {
+        const response = await fetch(`http://localhost:3001/api/notebook/${noteID}`, {
             method: 'DELETE'
         });
 

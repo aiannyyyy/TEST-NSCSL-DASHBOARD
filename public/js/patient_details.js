@@ -15,7 +15,7 @@ async function fetchPatientDetails(labno, labid) {
   `;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/patient-details?labno=${labno}&labid=${labid}`);
+    const response = await fetch(`http://localhost:3001/api/patient-details?labno=${labno}&labid=${labid}`);
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || "Failed to fetch patient details");
@@ -141,7 +141,7 @@ async function fetchNotebookDetails(fname, lname) {
   try {
     const encodedFname = encodeURIComponent(fname || '');
     const encodedLname = encodeURIComponent(lname || '');
-    const url = `http://localhost:3000/api/notebook-details?fname=${encodedFname}&lname=${encodedLname}`;
+    const url = `http://localhost:3001/api/notebook-details?fname=${encodedFname}&lname=${encodedLname}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -261,7 +261,7 @@ async function fetchAddedNotebookDetails(fname, lname) {
   try {
     const encodedFname = encodeURIComponent(fname || '');
     const encodedLname = encodeURIComponent(lname || '');
-    const url = `http://localhost:3000/api/notebook-query?fname=${encodedFname}&lname=${encodedLname}`;
+    const url = `http://localhost:3001/api/notebook-query?fname=${encodedFname}&lname=${encodedLname}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -375,7 +375,7 @@ async function testNotebookAPI(fname = "TEST", lname = "USER") {
   console.log("🧪 Testing notebook API...");
   
   try {
-    const url = `http://localhost:3000/api/notebook-details?fname=${fname}&lname=${lname}`;
+    const url = `http://localhost:3001/api/notebook-details?fname=${fname}&lname=${lname}`;
     console.log("Testing URL:", url);
     
     const response = await fetch(url);
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Function to refresh the patient notebooks table (call this after adding new notebooks)
 function refreshPatientNotebooksTable() {
   // Fetch all notebook entries from server (without filters to get all patients)
-  fetch('http://localhost:3000/api/notebook-query')
+  fetch('http://localhost:3001/api/notebook-query')
     .then(response => response.json())
     .then(notebooks => {
       populatePatientNotebooksTable(notebooks);
@@ -630,7 +630,7 @@ function refreshPatientNotebooksTable() {
 // Function to load notebook entries on page load
 function loadInitialNotebooksData() {
   // Load all notebook entries when page loads
-  fetch('http://localhost:3000/api/notebook-query')
+  fetch('http://localhost:3001/api/notebook-query')
     .then(response => response.json())
     .then(notebooks => {
       populatePatientNotebooksTable(notebooks);

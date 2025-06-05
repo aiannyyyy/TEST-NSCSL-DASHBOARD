@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fetch & Render Chart or Table based on visibility
     async function fetchAndRender(type) {
         try {
-            const response = await fetch(`http://localhost:3000/api/cumulative-census-samples?type=${type}`);
+            const response = await fetch(`http://localhost:3001/api/cumulative-census-samples?type=${type}`);
             const data = await response.json();
 
             console.log("🚀 API Response:", data);

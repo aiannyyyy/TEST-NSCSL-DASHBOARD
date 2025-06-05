@@ -1,7 +1,7 @@
 // Frontend JavaScript to fetch and display notebook details
 class NotebookDetailsManager {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:3000/api/'; // Adjust this to match your API base URL
+        this.apiBaseUrl = 'http://localhost:3001/api/'; // Adjust this to match your API base URL
     }
 
     // Utility function to format date and time

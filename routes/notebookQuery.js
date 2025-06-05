@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 
     console.log("GET /api/notebook - Fetching notebook entries", { lname, fname });
 
-    let sql = "SELECT * FROM pdo_notebook";
+    let sql = "SELECT * FROM test_pdo_notebook";
     const params = [];
 
     if (lname && fname) {
@@ -44,7 +44,7 @@ router.get("/lab/:labno", (req, res) => {
     const { labno } = req.params;
     console.log(`GET /api/notebook/lab/${labno} - Fetching entries for lab number`);
     
-    db.query("SELECT * FROM pdo_notebook WHERE labno = ? ORDER BY createDate DESC", [labno], (err, results) => {
+    db.query("SELECT * FROM test_pdo_notebook WHERE labno = ? ORDER BY createDate DESC", [labno], (err, results) => {
         if (err) {
             console.error("Database query error:", err);
             return res.status(500).json({ 
@@ -105,7 +105,7 @@ router.post("/", (req, res) => {
 
     console.log("Processed notebook data:", notebookData);
 
-    const sql = `INSERT INTO pdo_notebook 
+    const sql = `INSERT INTO test_pdo_notebook 
                  (labno, labid, fname, lname, code, facility_name, notes, createDate, techCreate, modDate, techMod) 
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
@@ -169,7 +169,7 @@ router.put("/:noteID", (req, res) => {
         return res.status(400).json({ error: "Notes field is required" });
     }
 
-    const sql = `UPDATE pdo_notebook 
+    const sql = `UPDATE test_pdo_notebook 
                  SET labno=?, labid=?, fname=?, lname=?, code=?, facility_name=?, notes=?, 
                      createDate=?, techCreate=?, modDate=?, techMod=? 
                  WHERE noteID=?`;
@@ -212,7 +212,7 @@ router.delete("/:noteID", (req, res) => {
     const { noteID } = req.params;
     console.log(`DELETE /api/notebook/${noteID} - Deleting notebook entry`);
     
-    const sql = "DELETE FROM pdo_notebook WHERE noteID=?";
+    const sql = "DELETE FROM test_pdo_notebook WHERE noteID=?";
 
     db.query(sql, [noteID], (err, result) => {
         if (err) {

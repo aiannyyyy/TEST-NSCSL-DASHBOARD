@@ -2,7 +2,7 @@
 Chart.register(ChartDataLabels);
 
 function fetchFacilityStatus() {
-    $.get("http://localhost:3000/api/facility-visits/facility-status-count", function (data) {
+    $.get("http://localhost:3001/api/facility-visits/facility-status-count", function (data) {
         let ctx = document.getElementById("doughnutChart").getContext("2d");
 
         if (window.doughnutChartInstance) {

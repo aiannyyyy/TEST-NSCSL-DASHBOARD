@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedMonthNumber = monthMap[selectedMonth];
         const apiType = typeMap[selectedType] || selectedType.toLowerCase();
 
-        let apiUrl = `http://localhost:3000/api/speed-monitoring/?year=${selectedYear}&month=${selectedMonthNumber}&type=${apiType}`;
+        let apiUrl = `http://localhost:3001/api/speed-monitoring/?year=${selectedYear}&month=${selectedMonthNumber}&type=${apiType}`;
 
         console.log("Fetching from:", apiUrl);
 

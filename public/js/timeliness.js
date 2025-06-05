@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clearTableData();
             
             // Construct API URL with selected parameters
-            const url = `http://localhost:3000/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+            const url = `http://localhost:3001/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
             
             console.log("Fetching data from:", url);
             

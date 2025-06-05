@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ✅ Fetch Data and Update Chart & Table
 function fetchData() {
-    fetch(`http://localhost:3000/api/ytd-sample-comparison?year1=${yearA}&year2=${yearB}&type=${sampleType}`)
+    fetch(`http://localhost:3001/api/ytd-sample-comparison?year1=${yearA}&year2=${yearB}&type=${sampleType}`)
         .then(response => response.json())
         .then(data => {
             console.log("API Data:", data);

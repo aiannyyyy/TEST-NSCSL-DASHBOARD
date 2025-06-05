@@ -1,6 +1,6 @@
 async function fetchSummaryData() {
     try {
-        const response = await fetch("http://localhost:3000/api/total-samples");
+        const response = await fetch("http://localhost:3001/api/total-samples");
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -19,4 +19,4 @@ async function fetchSummaryData() {
 
 // ✅ Fetch on page load and every 5 minutes
 fetchSummaryData();
-setInterval(fetchSummaryData, 300000);
+setInterval(fetchSummaryData, 300100);

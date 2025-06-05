@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
     function fetchChartData2() {
-        let apiUrl = `http://localhost:3000/api/inc-dec/monthly-labno-count?from=${selectedYearA}-01-01&to=${selectedYearB}-12-31&province=${encodeURIComponent(selectedProvince2)}`;
+        let apiUrl = `http://localhost:3001/api/inc-dec/monthly-labno-count?from=${selectedYearA}-01-01&to=${selectedYearB}-12-31&province=${encodeURIComponent(selectedProvince2)}`;
         console.log("🚀 Fetching data from:", apiUrl);
 
         fetch(apiUrl)

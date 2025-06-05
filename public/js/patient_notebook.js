@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div>Searching...</div></td></tr>`;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/patient-info?${queryParams.toString()}`);
+      const response = await fetch(`http://localhost:3001/api/patient-info?${queryParams.toString()}`);
 
       if (!response.ok) {
         const errorData = await response.json();

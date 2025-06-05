@@ -37,7 +37,7 @@ function updateDropdownText() {
 
 async function fetchAndRenderChart() {
     try {
-        const res = await fetch(`http://localhost:3000/api/unsat-rate?year1=${selectedYear1}&year2=${selectedYear2}`);
+        const res = await fetch(`http://localhost:3001/api/unsat-rate?year1=${selectedYear1}&year2=${selectedYear2}`);
         const data = await res.json();
 
         const monthsSet = new Set();

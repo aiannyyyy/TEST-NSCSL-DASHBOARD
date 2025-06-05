@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chartWrapper = document.querySelector(".chartjs-bar-wrapper");
     const showTableButton = document.getElementById("showTableButton");
 
-    fetch("http://localhost:3000/api/kits-sold")
+    fetch("http://localhost:3001/api/kits-sold")
         .then(res => res.json())
         .then(rawData => {
             const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];

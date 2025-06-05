@@ -12,7 +12,7 @@ $(document).ready(function () {
 
         // ✅ Fetch facility status via AJAX
         $.ajax({
-            url: "http://localhost:3000/api/facility-visits/facility-status-count",
+            url: "http://localhost:3001/api/facility-visits/facility-status-count",
             method: "GET",
             success: function (data) {
                 // ✅ Destroy any previous instance

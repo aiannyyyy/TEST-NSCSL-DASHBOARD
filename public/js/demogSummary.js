@@ -12,7 +12,7 @@ async function fetchSummaryData() {
         const endISO = endOfMonth.toISOString();
 
         // Construct the API URL with formatted start and end dates
-        const response = await fetch(`http://localhost:3000/api/demog-summary-count?start=${startISO}&end=${endISO}`);
+        const response = await fetch(`http://localhost:3001/api/demog-summary-count?start=${startISO}&end=${endISO}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -56,4 +56,4 @@ function toggleMode() {
 
 // Fetch initially and every 5 minutes
 fetchSummaryData();
-setInterval(fetchSummaryData, 300000); // 5 minutes
+setInterval(fetchSummaryData, 300100); // 5 minutes

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to fetch laboratory supplies data
     function fetchLabSupplies() {
-      fetch('http://localhost:3000/api/lab-supplies')
+      fetch('http://localhost:3001/api/lab-supplies')
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');

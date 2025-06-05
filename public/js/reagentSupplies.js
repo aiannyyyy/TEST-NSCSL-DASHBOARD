@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchReagentSupplies() {
         // Try to fetch from the API, but use mock data if it fails
-        fetch('http://localhost:3000/api/lab-reagents')
+        fetch('http://localhost:3001/api/lab-reagents')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

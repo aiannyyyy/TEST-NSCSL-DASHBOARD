@@ -4,7 +4,7 @@ const db = require("../config/mysqlConnection"); // ✅ Correct
 
 // 🔹 Get all facility visits
 router.get("/", (req, res) => {
-    db.query("SELECT * FROM pdo_visit", (err, results) => {
+    db.query("SELECT * FROM test_pdo_visit", (err, results) => {
         if (err) {
             console.error("Database query error:", err);
             return res.status(500).json({ error: "Database query failed" });
@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 // 🔹 Add a new facility visit
 router.post("/", (req, res) => {
     const { facility_code, facility_name, date_visited, province, status, remarks, mark } = req.body;
-    const sql = "INSERT INTO pdo_visit (facility_code, facility_name, date_visited, province, status, remarks, mark) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO test_pdo_visit (facility_code, facility_name, date_visited, province, status, remarks, mark) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     db.query(sql, [facility_code, facility_name, date_visited, province, status, remarks, mark], (err, result) => {
         if (err) {
@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
     const { id } = req.params;
     const { facility_code, facility_name, date_visited, province, status, remarks, mark } = req.body;
-    const sql = "UPDATE pdo_visit SET facility_code=?, facility_name=?, date_visited=?, province=?, status=?, remarks=?, mark=? WHERE id=?";
+    const sql = "UPDATE test_pdo_visit SET facility_code=?, facility_name=?, date_visited=?, province=?, status=?, remarks=?, mark=? WHERE id=?";
 
     db.query(sql, [facility_code, facility_name, date_visited, province, status, remarks, mark, id], (err, result) => {
         if (err) {
@@ -45,7 +45,7 @@ router.put("/:id", (req, res) => {
 // 🔹 Delete a facility visit
 router.delete("/:id", (req, res) => {
     const { id } = req.params;
-    const sql = "DELETE FROM pdo_visit WHERE id=?";
+    const sql = "DELETE FROM test_pdo_visit WHERE id=?";
 
     db.query(sql, [id], (err, result) => {
         if (err) {
@@ -60,7 +60,7 @@ router.delete("/:id", (req, res) => {
 router.patch("/:id/status", (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-    const sql = "UPDATE pdo_visit SET status=? WHERE id=?";
+    const sql = "UPDATE test_pdo_visit SET status=? WHERE id=?";
 
     db.query(sql, [status, id], (err, result) => {
         if (err) {
