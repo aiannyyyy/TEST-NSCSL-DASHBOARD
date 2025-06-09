@@ -15,8 +15,6 @@
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
     <!-- End plugin css for this page -->
 
@@ -320,6 +318,13 @@ table.table-sm td:first-child {
 
     .refresh-btn:hover {
       background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* on failities list */
+    #facilitiesModal table td, 
+    #facilitiesModal table th {
+      font-size: 14px;
+      padding: 6px 8px;
     }
   </style>
   <body class="with-welcome-text">
@@ -1703,14 +1708,7 @@ table.table-sm td:first-child {
                                 </div>
                               </div>
                             </div>
-                            <!-- ✅ Facilities Modal -->
-                            <div class="modal fade" id="facilitiesModal" tabindex="-1" aria-labelledby="facilitiesModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                                    <div class="modal-content" id="facilitiesModalContent">
-                                        <!-- Modal content will be dynamically loaded here -->
-                                    </div>
-                                </div>
-                            </div>
+                            
 
                             <!-- Your existing chart HTML remains the same -->
                             <div class="row flex-grow">
@@ -1720,19 +1718,84 @@ table.table-sm td:first-child {
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                                        <h4 class="card-title card-title-dash">Facilities Visits By this Month</h4>
+                                                        <h4 class="card-title card-title-dash7">Facilities Visits By this Month of <span> June </span></h4>
                                                     </div>
+
+                                                    
                                                     <div>
                                                         <canvas class="my-auto" id="doughnutChart" style="height: 500px; width: 400px"></canvas>
                                                     </div>
                                                     <div id="doughnutChart-legend" class="mt-5 text-center"></div>
                                                 </div>
-                                            </div>
+                                           
+                                                 <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="facilityDropdownBtnA" data-bs-toggle="dropdown">2024</button>
+                                                    <div class="dropdown-menu" id="facilityDropdownA">
+                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                                    </div>
+
+                                                  <div class="dropdown d-inline-block mb-2">
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="facilitymonthDropdownBtn2" data-bs-toggle="dropdown">January</button>
+                                                    <div class="dropdown-menu" id="facilitymonthDropdown2">
+                                                      <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                      <a class="dropdown-item" href="#" data-month="February">February</a>
+                                                      <a class="dropdown-item" href="#" data-month="March">March</a>
+                                                      <a class="dropdown-item" href="#" data-month="April">April</a>
+                                                      <a class="dropdown-item" href="#" data-month="May">May</a>
+                                                      <a class="dropdown-item" href="#" data-month="June">June</a>
+                                                      <a class="dropdown-item" href="#" data-month="July">July</a>
+                                                      <a class="dropdown-item" href="#" data-month="August">August</a>
+                                                      <a class="dropdown-item" href="#" data-month="September">September</a>
+                                                      <a class="dropdown-item" href="#" data-month="October">October</a>
+                                                      <a class="dropdown-item" href="#" data-month="November">November</a>
+                                                      <a class="dropdown-item" href="#" data-month="December">December</a>
+                                                    </div>
+                                                  </div>
+                                                </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- ✅ Facilities Modal -->
+                            <div class="modal fade" id="facilitiesModal" tabindex="-1" aria-labelledby="facilitiesModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="facilitiesModalLabel">Facility List</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <table class="table table-bordered">
+                                      <thead>
+                                        <tr>
+                                          <th>Facility Code</th>
+                                          <th>Facility Name</th>
+                                          <th>Date Visited</th>
+                                          <th>Province</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="facilityTableBody">
+                                        <!-- dynamically filled -->
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
 
+                
                             <div class="row flex-grow">
                               <div class="col-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
@@ -2035,8 +2098,11 @@ table.table-sm td:first-child {
     <!--GRAPH JS-->
 
     <script src="js/top_unsat.js"></script>
+    <!--
     <script src="js/facility_chart.js"></script>
+    -->
     <script src="js/screened_chart.js"></script>
+    <script src="js/facilitiesVisitMonth.js"></script>
     <script src="js/screened_province.js"></script>
     <script src="js/pdo_visit.js"></script>
     <script src="js/julianDate.js"></script>

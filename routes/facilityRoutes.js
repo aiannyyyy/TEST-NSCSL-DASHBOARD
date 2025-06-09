@@ -71,6 +71,7 @@ router.patch("/:id/status", (req, res) => {
     });
 });
 
+/*
 // 🔹 Get facility visit status counts (Fixed Route Path)
 router.get("/facility-status-count", (req, res) => {
     const sql = `
@@ -78,7 +79,7 @@ router.get("/facility-status-count", (req, res) => {
             SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS active,
             SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS inactive,
             SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS closed
-        FROM pdo_visit
+        FROM test_pdo_visit
     `;
 
     db.query(sql, (err, results) => {
@@ -89,7 +90,40 @@ router.get("/facility-status-count", (req, res) => {
         res.json(results[0]); // Return the count object
     });
 });
+*/
+router.get("/facility-status-count", (req, res) => {
+  const { date_from, date_to } = req.query;
 
+  let sql = `
+    SELECT
+      SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS active,
+      SUM(CASE WHEN status = '0' THEN 1 ELSE 0 END) AS inactive,
+      SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS closed
+    FROM test_pdo_visit
+    WHERE date_visited BETWEEN ? AND ?
+  `;
+
+  // Use default month range if date_from or date_to missing (optional)
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const defaultFrom = new Date(year, month, 1).toISOString().split("T")[0];
+  const defaultTo = new Date(year, month + 1, 0).toISOString().split("T")[0];
+
+  const fromDate = date_from || defaultFrom;
+  const toDate = date_to || defaultTo;
+
+  db.query(sql, [fromDate, toDate], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json(results[0]); // return {active, inactive, closed}
+  });
+});
+
+/*
 // 🔹 Get facilities by status (e.g. active, inactive, closed)
 router.get("/facilities-by-status/:status", (req, res) => {
     const { status } = req.params;
@@ -112,6 +146,79 @@ router.get("/facilities-by-status/:status", (req, res) => {
     });
 });
 
+*/
+// 🔹 Get facilities by status and date range (e.g. active, inactive, closed)
+router.get("/facilities-by-status/:status", (req, res) => {
+    const { status } = req.params;
+    const { startDate, endDate } = req.query;
 
+    // Base SQL with status filter
+    let sql = `
+        SELECT 
+            facility_code,
+            facility_name,
+            date_visited,
+            province
+        FROM test_pdo_visit
+        WHERE status = ?
+    `;
+
+    // Parameters array for the query placeholders
+    const params = [status];
+
+    // Add date range filtering if both dates are provided
+    if (startDate && endDate) {
+        sql += " AND date_visited BETWEEN ? AND ?";
+        params.push(startDate, endDate);
+    } else if (startDate) {
+        // If only startDate is provided, filter date_visited >= startDate
+        sql += " AND date_visited >= ?";
+        params.push(startDate);
+    } else if (endDate) {
+        // If only endDate is provided, filter date_visited <= endDate
+        sql += " AND date_visited <= ?";
+        params.push(endDate);
+    }
+
+    db.query(sql, params, (err, results) => {
+        if (err) {
+            console.error("Error fetching facilities by status and date:", err);
+            return res.status(500).json({ error: "Failed to retrieve facilities" });
+        }
+        res.json(results);
+    });
+});
+
+
+/*
+router.get("/filter", (req, res) => {
+    let { date_from, date_to } = req.query;
+
+    // If no date range provided, default to current month's range
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth(); // 0-indexed
+    const firstDay = new Date(year, month, 1).toISOString().split("T")[0];
+    const lastDay = new Date(year, month + 1, 0).toISOString().split("T")[0];
+
+    date_from = date_from || firstDay;
+    date_to = date_to || lastDay;
+
+    const sql = `
+        SELECT * FROM test_pdo_visit
+        WHERE date_visited BETWEEN ? AND ?
+    `;
+
+    db.query(sql, [date_from, date_to], (err, results) => {
+        if (err) {
+            console.error("Database query error:", err);
+            return res.status(500).json({ error: "Database query failed" });
+        }
+
+        res.json(results);
+    });
+});
+
+*/
 
 module.exports = router;
