@@ -263,4 +263,88 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => {
         fetchChartData2();
     }, 500);
+
+    document.getElementById("downloadCumulativeChart").addEventListener("click", function () {
+        const chart = Chart.getChart("marketingOverview2"); // Replace "myChart" with your chart ID
+        const originalCanvas = chart.canvas;
+        
+        // Create high-resolution canvas
+        const highResCanvas = document.createElement('canvas');
+        const ctx = highResCanvas.getContext('2d');
+        
+        // Set high resolution (3x for better quality)
+        const scaleFactor = 3;
+        const width = originalCanvas.width;
+        const height = originalCanvas.height;
+        
+        // Set canvas size with scale factor
+        highResCanvas.width = width * scaleFactor;
+        highResCanvas.height = height * scaleFactor;
+        
+        // Scale the context to match
+        ctx.scale(scaleFactor, scaleFactor);
+        
+        // Set high quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Add white background first
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw the chart on top of white background
+        ctx.drawImage(originalCanvas, 0, 0, width, height);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = 'chart_white_background.png';
+        link.href = highResCanvas.toDataURL('image/png', 1.0);
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    document.getElementById("downloadMonthlyTotalScreened").addEventListener("click", function () {
+        const chart = Chart.getChart("marketingOverview"); // Replace "myChart" with your chart ID
+        const originalCanvas = chart.canvas;
+        
+        // Create high-resolution canvas
+        const highResCanvas = document.createElement('canvas');
+        const ctx = highResCanvas.getContext('2d');
+        
+        // Set high resolution (3x for better quality)
+        const scaleFactor = 3;
+        const width = originalCanvas.width;
+        const height = originalCanvas.height;
+        
+        // Set canvas size with scale factor
+        highResCanvas.width = width * scaleFactor;
+        highResCanvas.height = height * scaleFactor;
+        
+        // Scale the context to match
+        ctx.scale(scaleFactor, scaleFactor);
+        
+        // Set high quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Add white background first
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw the chart on top of white background
+        ctx.drawImage(originalCanvas, 0, 0, width, height);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = 'chart_white_background.png';
+        link.href = highResCanvas.toDataURL('image/png', 1.0);
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
 });

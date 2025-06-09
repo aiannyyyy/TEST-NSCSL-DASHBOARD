@@ -90,4 +90,28 @@ router.get("/facility-status-count", (req, res) => {
     });
 });
 
+// 🔹 Get facilities by status (e.g. active, inactive, closed)
+router.get("/facilities-by-status/:status", (req, res) => {
+    const { status } = req.params;
+    const sql = `
+        SELECT 
+            facility_code,
+            facility_name,
+            date_visited,
+            province
+        FROM test_pdo_visit
+        WHERE status = ?
+    `;
+
+    db.query(sql, [status], (err, results) => {
+        if (err) {
+            console.error("Error fetching facilities by status:", err);
+            return res.status(500).json({ error: "Failed to retrieve facilities" });
+        }
+        res.json(results);
+    });
+});
+
+
+
 module.exports = router;

@@ -1,4 +1,5 @@
 // ✅ Ensure ChartDataLabels is registered before creating the chart
+
 Chart.register(ChartDataLabels);
 
 function fetchFacilityStatus() {
@@ -34,3 +35,6 @@ function fetchFacilityStatus() {
         console.error("Error fetching facility status data!", err);
     });
 }
+
+
+*/

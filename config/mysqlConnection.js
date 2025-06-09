@@ -1,4 +1,3 @@
-/*
 
 const mysql = require("mysql2");
 require("dotenv").config();
@@ -21,8 +20,7 @@ mysqlDb.connect((err) => {
 
 module.exports = mysqlDb;
 
-*/
-
+/*
 const mysql = require("mysql2");
 require("dotenv").config();
 
@@ -172,3 +170,5 @@ module.exports = {
   // Manual reconnect function
   reconnect: createPersistentConnection
 };
+
+*/

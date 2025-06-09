@@ -1,97 +1,92 @@
-
-
-
-
-/*
 $(document).ready(function () {
     const { from, to } = getDefaultDateRange();
+
+    updateMonthDisplay(from); // Set the month/year text
     fetchTopUnsatisfactoryContributors(from, to, "numbers");
 
     $("input[name='btnradio']").change(function () {
-        let selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
+        const selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
         fetchTopUnsatisfactoryContributors(from, to, selectedType);
     });
 });
-*/
 
+// Set default date range: January 1 to January 31 of current year
+function getDefaultDateRange() {
+    const currentYear = new Date().getFullYear();
 
-$(document).ready(function () {
-    // Get today's date
-    const today = new Date();
+    const from = new Date(`${currentYear}-01-01`);
+    const to = new Date(`${currentYear}-01-31`);
 
-    // Get the first day of the current month at 00:00
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0);
-
-    // Get the last day of the current month at 23:59:59
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59);
-
-    // Format dates as 'YYYY-MM-DD HH:mm' for your API
-    function formatDate(date) {
-        const pad = (n) => (n < 10 ? '0' + n : n);
-        return (
-            date.getFullYear() + "-" +
-            pad(date.getMonth() + 1) + "-" +
-            pad(date.getDate()) + " " +
-            pad(date.getHours()) + ":" +
-            pad(date.getMinutes())
-        );
+    function formatDate(d) {
+        return d.toISOString().split('T')[0];
     }
 
-    const fromDate = formatDate(firstDay);
-    const toDate = formatDate(lastDay);
+    return { from: formatDate(from), to: formatDate(to) };
+}
 
-    // Default view: By Numbers
-    fetchTopUnsatisfactoryContributors(fromDate, toDate, "numbers");
+// Dynamically update the text that shows the selected month
+function updateMonthDisplay(fromDateStr) {
+    const date = new Date(fromDateStr);
+    const options = { month: 'long', year: 'numeric' };
+    const formattedMonth = date.toLocaleDateString('en-US', options);
 
-    // Event listeners for radio buttons
-    $("input[name='btnradio']").change(function () {
-        let selectedType = $(this).attr("id") === "btnradio1" ? "numbers" : "percentages";
-        fetchTopUnsatisfactoryContributors(fromDate, toDate, selectedType);
-    });
-});
+    $(".selected-month-year").text(`For the month of ${formattedMonth}`);
+}
 
+// Escape HTML to prevent injection
+function escapeHtml(text) {
+    return $('<div>').text(text).html();
+}
 
+// Format the value depending on selected radio type
+function formatValue(visit, type) {
+    if (type === "numbers") {
+        return visit.UNSATISFACTORY_COUNT || visit.unsatisfactory_count || 0;
+    } else {
+        const rate = visit.UNSAT_RATE || visit.unsat_rate || 0;
+        return parseFloat(rate).toFixed(2) + "%";
+    }
+}
+
+// Fetch top contributors for the selected type (numbers or percentages)
 function fetchTopUnsatisfactoryContributors(fromDate, toDate, type) {
-    let requestUrl =
+    const requestUrl =
         type === "numbers"
             ? `http://localhost:3001/api/unsat/top-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`
             : `http://localhost:3001/api/unsat/rate-unsatisfactory?from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
 
-    console.log("🔹 Fetching data from:", requestUrl);
+    const container = $(".scrollable-container");
+    container.html(`<p class="text-center text-muted">Loading...</p>`);
 
-    $.get(requestUrl, function (data) {
-        let container = $(".scrollable-container");
-        container.html(""); // Clear previous content
+    $.get(requestUrl)
+        .done(function (data) {
+            container.html("");
 
-        if (!data || data.length === 0) {
-            container.append(`<p class="text-muted text-center">No data available</p>`);
-            return;
-        }
+            if (!data || data.length === 0) {
+                container.append(`<p class="text-muted text-center">No data available</p>`);
+                return;
+            }
 
-        // Dynamically render either 'by numbers' or 'by percentages'
-        data.slice(0, 20).forEach((visit) => {
-            let facilityName = visit.FACILITY_NAME || visit.facility_name || "Unknown Facility";
-            let province = visit.PROVINCE || visit.province || "Unknown Province";
+            data.slice(0, 20).forEach((visit) => {
+                const facilityName = escapeHtml(visit.FACILITY_NAME || visit.facility_name || "Unknown Facility");
+                const province = escapeHtml(visit.PROVINCE || visit.province || "Unknown Province");
+                const value = formatValue(visit, type);
 
-            let value = type === "numbers" 
-                ? visit.UNSATISFACTORY_COUNT || visit.unsatisfactory_count || 0 
-                : (visit.UNSAT_RATE || visit.unsat_rate || 0) + "%";
-
-            container.append(`
-                <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                    <div class="d-flex">
-                        <img class="img-sm rounded-10" src="assets/images/hospital.png" alt="Hospital">
-                        <div class="wrapper ms-3">
-                            <p class="ms-1 mb-1 fw-bold">${facilityName}</p>
-                            <small class="text-muted mb-0">${province}</small>
+                container.append(`
+                    <div class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
+                        <div class="d-flex">
+                            <img class="img-sm rounded-10" src="assets/images/hospital.png" alt="Hospital">
+                            <div class="wrapper ms-3">
+                                <p class="ms-1 mb-1 fw-bold">${facilityName}</p>
+                                <small class="text-muted mb-0">${province}</small>
+                            </div>
                         </div>
+                        <div class="text-muted text-big fw-bold">${value}</div>
                     </div>
-                    <div class="text-muted text-big fw-bold">${value}</div>
-                </div>
-            `);
+                `);
+            });
+        })
+        .fail(function () {
+            container.html(`<p class="text-danger text-center">Error loading data</p>`);
         });
-    }).fail(function (err) {
-        console.error("❌ Error fetching top unsatisfactory contributors!", err);
-        $(".scrollable-container").html(`<p class="text-danger text-center">Error loading data</p>`);
-    });
 }

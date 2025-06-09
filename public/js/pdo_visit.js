@@ -38,10 +38,9 @@ function fetchVisits() {
                     <td class="color">${visit.province}</td>
                     <td class="limited-width-wrap color" title="${remarks}">${remarks}</td>
                     <td>
-                        <button class="btn btn-sm btn-${statusClass}"
-                                onclick="toggleStatus(${visit.id}, '${visit.status}')">
+                        <span class="badge badge-${statusClass}">
                             ${statusText}
-                        </button>
+                        </span>
                     </td>
                     
                     <td>
@@ -151,25 +150,47 @@ $("#facilityCode").off("keypress").on("keypress", function (e) {
 
 // Open modal for adding or editing visit
 function openModal(id, facilityCode, facilityName, dateVisited, province, status, remarks) {
-    $("#visitId").val(id || "");
-    $("#facilityCode").val(facilityCode || "");
-    $("#facilityName").val(facilityName || "");
+    // Clear all form fields first to ensure clean state
+    clearModalForm();
     
-    // Format date for datetime-local input
-    if (dateVisited) {
-        const date = new Date(dateVisited);
-        const formattedDate = date.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
-        $("#dateVisited").val(formattedDate);
+    // Check if we have a valid ID (not null, undefined, or empty string)
+    if (id && id !== "" && id !== "undefined" && id !== "null") {
+        // We're editing - populate the fields
+        $("#visitId").val(id);
+        $("#facilityCode").val(facilityCode || "");
+        $("#facilityName").val(facilityName || "");
+        
+        // Format date for datetime-local input
+        if (dateVisited) {
+            const date = new Date(dateVisited);
+            const formattedDate = date.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+            $("#dateVisited").val(formattedDate);
+        }
+        
+        $("#province").val(province || "");
+        $("#status").val(status || "");
+        $("#remarks").val(remarks || "");
+        
+        $("#visitModalLabel").text("Edit Facility Visit");
     } else {
-        $("#dateVisited").val("");
+        // For new entries, explicitly set the modal title
+        $("#visitModalLabel").text("Add Facility Visit");
     }
     
-    $("#province").val(province || "");
-    $("#status").val(status || "");
-    $("#remarks").val(remarks || "");
-    
-    $("#visitModalLabel").text(id ? "Edit Facility Visit" : "Add Facility Visit");
     $("#visitModal").modal("show");
+}
+
+// Clear all modal form fields
+function clearModalForm() {
+    $("#visitId").val("");
+    $("#facilityCode").val("");
+    $("#facilityName").val("");
+    $("#dateVisited").val("");
+    $("#province").val("");
+    $("#status").val("");
+    $("#remarks").val("");
+    // Also reset the modal title to default
+    $("#visitModalLabel").text("Add Facility Visit");
 }
 
 // Save visit (Add or Edit)
@@ -199,6 +220,10 @@ function saveFacilityVisit() {
 
     let url = id ? `http://localhost:3001/api/facility-visits/${id}` : "http://localhost:3001/api/facility-visits";
     let method = id ? "PUT" : "POST";
+    
+    // Debug logging to verify operation type
+    console.log(id ? `Updating facility visit ID: ${id}` : "Adding new facility visit");
+    console.log("URL:", url, "Method:", method);
 
     $.ajax({
         url: url,
@@ -208,6 +233,7 @@ function saveFacilityVisit() {
         success: function (response) {
             alert(response.message);
             $("#visitModal").modal("hide");
+            clearModalForm(); // Clear form after successful save
             fetchVisits();
         },
         error: function () {
@@ -359,5 +385,10 @@ $(document).ready(function () {
 
         $("#exportStartDate").val(formatDateForInput(startDate));
         $("#exportEndDate").val(formatDateForInput(endDate));
+    });
+    
+    // Clear form when modal is closed
+    $("#visitModal").on("hidden.bs.modal", function () {
+        clearModalForm();
     });
 });
