@@ -9,68 +9,34 @@
     <script src="/public/js/login.js" defer></script>
 </head>
 <body>
-    <!--
-    <div class="logo-container">
-        <img src="/public/assets/images/LOGO NEWWWWWWW.jpg" alt="" class="side-logo">
-    </div>
-
-    <div class="login-container">
-        <h2>Login</h2>
-        <div class="input-group">
-            <input type="text" id="username" placeholder="Username" required>
-        </div>
-        <div class="input-group">
-            <input type="password" id="password" placeholder="Password" required>
-            <button class="toggle-password" onclick="togglePassword()">
-                <img src="https://cdn-icons-png.flaticon.com/512/709/709612.png" id="eye-icon">
-            </button>
-        </div>
-        <button id="loginButton">Login</button>
-    </div>
-
--->
-      <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-
-    <div class="login-wrapper">
-        <div class="logo-container">
-            <img src="/public/assets/images/LOGO NEWWWWWWW.jpg" alt="NSCSL Logo" class="side-logo">
-        </div>
-
-        <div class="login-container">
-            <h2>Welcome Back</h2>
+      <div class="login-container">
+        <h2 class="login-title">Login Form</h2>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" class="input-field" id="username" placeholder="Email or Phone" required>
+            </div>
             
-            <form id="loginForm">
-                <div class="input-group">
-                    <div class="input-wrapper" id="usernameWrapper">
-                        <i class="fas fa-user input-icon"></i>
-                        <input type="text" id="username" required>
-                        <label class="floating-label">Username</label>
-                    </div>
+            <div class="form-group">
+                <div class="password-container">
+                    <input type="password" class="input-field" id="password" placeholder="Password" required>
+                    <button type="button" class="show-password" onclick="togglePassword()">
+                        <span id="password-text">SHOW</span>
+                    </button>
                 </div>
-                
-                <div class="input-group">
-                    <div class="input-wrapper" id="passwordWrapper">
-                        <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="password" required>
-                        <label class="floating-label">Password</label>
-                        <button type="button" class="toggle-password" onclick="togglePassword()">
-                            <i class="fas fa-eye" id="eye-icon"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <button type="submit" class="login-button" id="loginButton">
-                    Sign In
-                </button>
-            </form>
+            </div>
             
             <div class="forgot-password">
-                <a href="#" onclick="forgotPassword()">Forgot your password?</a>
+                <a href="#" onclick="forgotPassword()">Forgot Password?</a>
             </div>
+            
+            <button type="submit" class="login-btn" id="loginButton">
+                LOGIN
+            </button>
+        </form>
+
+        <div class="signup-link">
+            Don't have an account? <a href="#" onclick="signUp()">Sign Up Now</a>
         </div>
     </div>
 </body>

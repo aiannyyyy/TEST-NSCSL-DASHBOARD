@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
-    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">                 
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     <!-- endinject -->
     <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
-    <!-- End plugin css for this page -->
+        <!-- End plugin css for this page -->
 
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
@@ -326,6 +326,193 @@ table.table-sm td:first-child {
       font-size: 14px;
       padding: 6px 8px;
     }
+
+    /* Notification Style */
+    /* Notification Styles */
+    .notification-dropdown {
+        position: relative;
+        margin-right: 15px;
+    }
+
+    .notification-bell {
+        position: relative;
+        padding: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 28px;
+        color: #6c757d;
+        transition: color 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        color: #007bff;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .notification-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 320px;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .notification-dropdown-menu.show {
+        display: block;
+    }
+
+    .notification-header {
+        padding: 15px;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .notification-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f1f1f1;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 3px solid #007bff;
+    }
+
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .notification-icon.info {
+        background-color: #17a2b8;
+    }
+
+    .notification-icon.success {
+        background-color: #28a745;
+    }
+
+    .notification-icon.warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .notification-icon.danger {
+        background-color: #dc3545;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #495057;
+        margin-bottom: 4px;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        color: #6c757d;
+        margin-bottom: 4px;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        font-size: 11px;
+        color: #adb5bd;
+    }
+
+    .notification-footer {
+        padding: 10px 15px;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .view-all-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    .clear-all-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .clear-all-btn:hover {
+        color: #495057;
+    }
+
+    .no-notifications {
+        padding: 30px 15px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .no-notifications i {
+        font-size: 24px;
+        margin-bottom: 10px;
+        display: block;
+    }
+    /* End Notification Style */
   </style>
   <body class="with-welcome-text">
     <!--
@@ -375,6 +562,27 @@ table.table-sm td:first-child {
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
+            <!-- Notification Dropdown -->
+              <li class="nav-item notification-dropdown">
+                <button class="notification-bell" id="notificationBell">
+                  <i class="mdi mdi-bell-outline"></i>
+                  <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                <div class="notification-dropdown-menu" id="notificationDropdown">
+                  <div class="notification-header">
+                    <h6>Notifications 
+                      <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                    </h6>
+                </div>
+                <div id="notificationList">
+                  <!-- Notifications will be populated here -->
+                  </div>
+                    <div class="notification-footer">
+                      <a href="#" class="view-all-link">View All Notifications</a>
+                    </div>
+                  </div>
+                </li>   
+
             <li class="nav-item dropdown d-none d-lg-block user-dropdown">
               <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="img-xs rounded-circle" src="assets/images/faces/user.png" alt="Profile image"> </a>
@@ -431,7 +639,9 @@ table.table-sm td:first-child {
             <div class="collapse" id="nscsl-pdo">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
-                
+                <li class="nav-item"> <a class="nav-link" href="sample_receive.html">Sample Received</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sample_screened.html">Sample Screened</a></li>
+                <li class="nav-item"> <a class="nav-link" href="pdo_endorsements.html">Endorsements</a></li>
                 <!--
                 <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
                 <li class="nav-item"> <a class="nav-link" href="/public/nsfperformance.html">NSF Performance</a></li>
@@ -550,117 +760,7 @@ table.table-sm td:first-child {
                             <div class="col-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
                                     <div class="card-body">
-                                        <!-- Header Section -->
-                                        <div class="d-sm-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h4 class="card-title card-title-dash"> Cumulative Sample Screened Per Province </h4>
-                                                <h5 class="card-subtitle card-subtitle-dash" id="chartTitle2">2024 vs 2025</h5>
-                                            </div>
-                                            <div>
-                                                <!-- Year Selection -->
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnA" data-bs-toggle="dropdown">2024</button>
-                                                    <div class="dropdown-menu" id="yearDropdownA">
-                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div>
-                                                    <span> VS </span>
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtnB" data-bs-toggle="dropdown">2025</button>
-                                                    <div class="dropdown-menu" id="yearDropdownB">
-                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div>
-                                                </div>
-                        
-                                                <!-- Province Selection -->
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="provinceDropdownBtn2" data-bs-toggle="dropdown">Batangas</button>
-                                                    <div class="dropdown-menu" id="provinceDropdown2">
-                                                        <a class="dropdown-item" href="#" data-province="Cavite">Cavite</a>
-                                                        <a class="dropdown-item" href="#" data-province="Laguna">Laguna</a>
-                                                        <a class="dropdown-item" href="#" data-province="Batangas">Batangas</a>
-                                                        <a class="dropdown-item" href="#" data-province="Rizal">Rizal</a>
-                                                        <a class="dropdown-item" href="#" data-province="Quezon">Quezon</a>
-                                                    </div>
-                                                </div>
-                                                <!-- Month Selection -->
-                                                <div class="dropdown d-inline-block mb-2">
-                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn2" data-bs-toggle="dropdown">January</button>
-                                                  <div class="dropdown-menu" id="monthDropdown2">
-                                                    <a class="dropdown-item" href="#" data-month="January">January</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-February">January - February</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-March">January - March</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-April">January - April</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-May">January - May</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-June">January - June</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-July">January - July</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-August">January - August</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-September">January - September</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-October">January - October</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-November">January - November</a>
-                                                    <a class="dropdown-item" href="#" data-month="January-December">January - December</a>
-                                                  </div>
-                                                </div>
-
-                                                <!-- Download Excel Button -->
-                                                <button class="btn btn-light btn-lg mb-0 me-2" id="downloadCumulativeChart">
-                                                    Download Chart
-                                                </button>
-
-
-                                            </div>
-                                        </div>
-                        
-                                        <!-- Chart Section -->
-                                        <div class="chartjs-bar-wrapper mt-3">
-                                            <canvas id="marketingOverview2"></canvas>
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <!-- Table Section -->
-                                        <div class="mt-3">
-                                            <table class="table">
-                                                <tbody>
-                                                    <tr>
-                                                        <th scope="row" class="table-light">Year</th>
-                                                        <th id="yearPrev2" class="table-light">2024</th>
-                                                        <th id="yearCurrent2" class="table-light">2025</th>
-                                                        <th class="table-light"><span style="color: green;">INC</span>/<span style="color: red;">DEC</span></th>
-                                                        <th class="table-light">%</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row" class="table-light">Total Screened</th>
-                                                        <td id="totalPrev2" class="table-light">3049</td>
-                                                        <td id="totalCurrent2" class="table-light">3133</td>
-                                                        <td id="incDec2" class="table-light">84</td>
-                                                        <td id="percentChange2" class="table-light">2.76% Increase</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                        
+                                      <h1>test</h1>
                                     </div>
                                 </div>
                             </div>
@@ -766,114 +866,7 @@ table.table-sm td:first-child {
                             <div class="col-12 grid-margin stretch-card">
                                 <div class="card card-rounded">
                                     <div class="card-body">
-                                        <div class="d-sm-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h4 class="card-title card-title-dash1">Monthly Total Screened Samples </h4>
-                                                <h5 id="chartTitle" class="card-subtitle card-subtitle-dash fw-bold">{selected by yearDropdown1} vs {selected by yearDropdown2}</h5>
-                                            </div>
-                                            <div>
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtn1" data-bs-toggle="dropdown">
-                                                        2024
-                                                    </button>
-                                                    <div class="dropdown-menu" id="yearDropdown1">
-                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div>
-                                                    <span> VS </span>
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="yearDropdownBtn2" data-bs-toggle="dropdown">
-                                                        2025
-                                                    </button>
-                                                    <div class="dropdown-menu" id="yearDropdown2">
-                                                        <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                                        <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                                        <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                                        <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                                        <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                                        <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                                        <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                                        <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                                        <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                                        <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                                        <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                                        <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                                        <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                                    </div>
-                                                </div>
-                        
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="provinceDropdownBtn" data-bs-toggle="dropdown">
-                                                        Batangas
-                                                    </button>
-                                                    <div class="dropdown-menu" id="provinceDropdown">
-                                                        <a class="dropdown-item" href="#" data-province="Cavite">Cavite</a>
-                                                        <a class="dropdown-item" href="#" data-province="Laguna">Laguna</a>
-                                                        <a class="dropdown-item" href="#" data-province="Batangas">Batangas</a>
-                                                        <a class="dropdown-item" href="#" data-province="Rizal">Rizal</a>
-                                                        <a class="dropdown-item" href="#" data-province="Quezon">Quezon</a>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Download Excel Button -->
-                                                <button class="btn btn-light btn-lg mb-0 me-2" id="downloadMonthlyTotalScreened">
-                                                    Download Chart
-                                                </button>
-                                            </div>
-                                        </div>
-                        
-                                        <div class="chartjs-bar-wrapper mt-3">
-                                            <canvas id="marketingOverview"></canvas>
-                                        </div>
-                        
-                                        <table class="table mt-3">
-                                          <!-- Month Selection (Fixed IDs) -->
-                                            <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="monthDropdownBtn" data-bs-toggle="dropdown">
-                                              January
-                                            </button>
-                                            <div class="dropdown-menu" id="monthDropdown">
-                                              <a class="dropdown-item" href="#" data-month="January">January</a>
-                                              <a class="dropdown-item" href="#" data-month="February">February</a>
-                                              <a class="dropdown-item" href="#" data-month="March">March</a>
-                                              <a class="dropdown-item" href="#" data-month="April">April</a>
-                                              <a class="dropdown-item" href="#" data-month="May">May</a>
-                                              <a class="dropdown-item" href="#" data-month="June">June</a>
-                                              <a class="dropdown-item" href="#" data-month="July">July</a>
-                                              <a class="dropdown-item" href="#" data-month="August">August</a>
-                                              <a class="dropdown-item" href="#" data-month="September">September</a>
-                                              <a class="dropdown-item" href="#" data-month="October">October</a>
-                                              <a class="dropdown-item" href="#" data-month="November">November</a>
-                                              <a class="dropdown-item" href="#" data-month="December">December</a>
-                                            </div>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row" class="table-light">Year</th>
-                                                    <th id="yearPrev" class="table-light">2024</th>
-                                                    <th id="yearCurrent" class="table-light">2025</th>
-                                                    <th class="table-light">
-                                                      <span style="color: green;">INC</span>/<span style="color: red;">DEC</span>
-                                                    </th>                                                  
-                                                    <th class="table-light">%</th>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row" class="table-light">Total Screened</th>
-                                                    <td id="totalPrev" class="table-light">3049</td>
-                                                    <td id="totalCurrent" class="table-light">3133</td>
-                                                    <td id="incDec" class="table-light">84</td>
-                                                    <td id="percentChange" class="table-light">2.76% Increase</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                      <h1> test1</h1>
                                     </div>
                                 </div>
                             </div>
@@ -1135,6 +1128,7 @@ table.table-sm td:first-child {
                                                         <th>Date and Time Visited</th>
                                                         <th>Province</th>
                                                         <th>Remarks</th>
+                                                        <th>Attachment</th>
                                                         <th>Status</th>
                                                         <th>Actions</th>
                                                     </tr>
@@ -1157,24 +1151,24 @@ table.table-sm td:first-child {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <form id="visitForm">
+                                <form id="visitForm" enctype="multipart/form-data">
                                   <input type="hidden" id="visitId">
-                                  
+
                                   <div class="mb-3">
                                     <label class="form-label">Facility Code</label>
-                                    <input type="text" class="form-control" id="facilityCode" required >
+                                    <input type="text" class="form-control" id="facilityCode" required>
                                   </div>
-                                  
+
                                   <div class="mb-3">
                                     <label class="form-label">Facility Name</label>
                                     <input type="text" class="form-control" id="facilityName" required readonly>
                                   </div>
-                                  
+
                                   <div class="mb-3">
                                     <label class="form-label">Date and Time Visited</label>
                                     <input type="datetime-local" class="form-control" id="dateVisited" required>
                                   </div>
-                                  
+
                                   <div class="mb-3">
                                     <label class="form-label">Province</label>
                                     <select class="form-control" id="province" required>
@@ -1186,28 +1180,37 @@ table.table-sm td:first-child {
                                       <option value="Quezon">Quezon</option>
                                     </select>
                                   </div>
-                        
+
                                   <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <select class="form-control" id="status" required>
                                       <option value="">-- Select Status --</option>
                                       <option value="1">Active</option>
                                       <option value="0">Inactive</option>
-                                      <option value="2">Closed</option> <!-- Added Closed Status -->
+                                      <option value="2">Closed</option>
                                     </select>
                                   </div>
-                        
+
                                   <div class="mb-3">
                                     <label class="form-label">Remarks</label>
                                     <textarea class="form-control" id="remarks" rows="3" placeholder="Enter any remarks or notes about this visit"></textarea>
                                   </div>
-                        
+
+                                  <div class="mb-3">
+                                      <label class="form-label">Attachment (PDF/Image/Other)</label>
+                                      <input type="file" class="form-control" id="attachment">
+                                      <small class="form-text text-muted">Optional</small>
+                                  </div>
+
+
+
                                   <button type="button" class="btn btn-white text-dark fw-bold" onclick="saveFacilityVisit()">Save</button>
                                 </form>
                               </div>
                             </div>
                           </div>
                         </div>
+
 
                         <!-- Export Date Range Modal -->
                         <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
@@ -1218,7 +1221,7 @@ table.table-sm td:first-child {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <form id="exportForm">
+                                <form id="exportForm"> 
                                   <div class="mb-3">
                                     <label class="form-label">Start Date</label>
                                     <input type="datetime-local" class="form-control" id="exportStartDate" required>
@@ -1289,23 +1292,23 @@ table.table-sm td:first-child {
                                           <form id="notebookForm">
                                             <div class="mb-2">
                                               <label for="labno" class="form-label">Lab Number</label>
-                                              <input type="text" class="form-control form-control-sm search-field" id="labno" name="labno" style="max-width: 100%;">
+                                              <input type="text" class="form-control form-control-sm search-field" id="labno" name="labno" style="max-width: 100%;" autocomplete="on">
                                             </div>
                                             <div class="mb-2">
                                               <label for="labid" class="form-label">Filter Card Number</label>
-                                              <input type="text" class="form-control form-control-sm search-field" id="labid" name="labid" style="max-width: 100%;">
+                                              <input type="text" class="form-control form-control-sm search-field" id="labid" name="labid" style="max-width: 100%;" autocomplete="on">
                                             </div>
                                             <div class="mb-2">
                                               <label for="fname" class="form-label">First Name</label>
-                                              <input type="text" class="form-control form-control-sm search-field" id="fname" name="fname" style="max-width: 100%;">
+                                              <input type="text" class="form-control form-control-sm search-field" id="fname" name="fname" style="max-width: 100%;" autocomplete="on">
                                             </div>
                                             <div class="mb-2">
                                               <label for="lname" class="form-label">Last Name</label>
-                                              <input type="text" class="form-control form-control-sm search-field" id="lname" name="lname" style="max-width: 100%;">
+                                              <input type="text" class="form-control form-control-sm search-field" id="lname" name="lname" style="max-width: 100%;" autocomplete="on">
                                             </div>
                                             <div class="mb-3">
                                               <label for="submid" class="form-label">Facility Code</label>
-                                              <input type="text" class="form-control form-control-sm search-field" id="submid" name="submid" style="max-width: 100%;">
+                                              <input type="text" class="form-control form-control-sm search-field" id="submid" name="submid" style="max-width: 100%;" autocomplete="on">
                                             </div>
                                             <div class="d-flex gap-2">
                                               <button type="submit" class="btn btn-primary btn-sm text-white search-button" disabled>Search</button>
@@ -1408,8 +1411,6 @@ table.table-sm td:first-child {
                                               </div>
                                             </div>
 
-
-
                                               <!-- Right Section: Results + Notebook -->
                                               <div class="col-md-7 d-flex flex-column gap-3">
                                                 <!-- Results Table -->
@@ -1477,7 +1478,9 @@ table.table-sm td:first-child {
                                                   <form id="addNotebookForm">
                                                       <div class="mb-3">
                                                           <label for="notebookNotes" class="form-label">Notes</label>
-                                                          <textarea class="form-control" id="notebookNotes" name="notebookNotes" rows="6" placeholder="Enter your notes here..." required></textarea>
+                                                          <textarea class="form-control" id="notebookNotes" name="notebookNotes"
+                                                            placeholder="Enter your notes here..." required
+                                                            style="height: 200px;"></textarea>
                                                       </div>
                                                   </form>
                                               </div>
@@ -1978,41 +1981,74 @@ table.table-sm td:first-child {
                             </div>
 
                             <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h4 class="card-title card-title-dash">
-                                            Top Unsatisfactory Sample Contributor <br>
-                                            <span class="selected-month-year text-primary"></span>
-                                          </h4>
-                                        </div>                                                                          
-                                        <!-- Scrollable Container -->
-                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
-                                          <!-- Data will be inserted dynamically here -->
-                                        </div>
-                                        <!-- End Scrollable Container -->
-                                      </div>
-                                    </div>
-                                    <br>
-                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                                      <label class="btn btn-outline-primary" for="btnradio1">By Numbers</label>
-                                    
-                                      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                                      <label class="btn btn-outline-primary" for="btnradio2">By Percentages</label>
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="card-title card-title-dash">
+                                          <i class="mdi mdi-chart-line me-2 text-primary"></i>
+                                          Top Unsatisfactory Sample Contributor <br>
+                                          <span class="selected-month-year text-primary"></span>
+                                        </h4>
+                                      </div>                                                                          
                                       
-                                       <!-- Button to Open Modal -->
-                                       <button class="btn btn-success custom-btn" data-bs-toggle="modal" data-bs-target="#dateRangeModal">
-                                        Select Date Range
-                                      </button>
+                                      <!-- Scrollable Container -->
+                                      <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 10px;">
+                                        <!-- Data will be inserted dynamically here -->
+                                      </div>
+                                      <!-- End Scrollable Container -->
                                     </div>
+                                  </div>
+                                  <br>
+                                  <div class="btn-group w-100" role="group" aria-label="Basic radio toggle button group">
+                                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                                    <label class="btn btn-outline-primary" for="btnradio1">
+                                      <i class="mdi mdi-counter me-1"></i>
+                                      By Numbers
+                                    </label>
+                                  
+                                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                                    <label class="btn btn-outline-primary" for="btnradio2">
+                                      <i class="mdi mdi-percent me-1"></i>
+                                      By Percentages
+                                    </label>
+                                    
+                                    <!-- Button to Open Modal -->
+                                    <button class="btn btn-success custom-btn" data-bs-toggle="modal" data-bs-target="#dateRangeModal">
+                                      <i class="mdi mdi-calendar-range me-1"></i>
+                                      Select Date Range
+                                    </button>
                                   </div>
                                 </div>
                               </div>
                             </div>
+                          </div>
+
+                          <!-- Facility Details Modal -->
+                          <div class="modal fade" id="facilityDetailsModal" tabindex="-1" aria-labelledby="facilityDetailsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                              <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                  <h5 class="modal-title" id="facilityDetailsModalLabel">
+                                    <i class="mdi mdi-hospital-building me-2"></i>
+                                    Facility Details
+                                  </h5>
+                                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" id="facilityDetailsModalBody">
+                                  <!-- Content will be loaded dynamically -->
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">
+                                    <i class="mdi mdi-close me-1"></i>
+                                    Close
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
                             <!-- Modal -->
                             <div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
@@ -2101,9 +2137,8 @@ table.table-sm td:first-child {
     <!--
     <script src="js/facility_chart.js"></script>
     -->
-    <script src="js/screened_chart.js"></script>
+
     <script src="js/facilitiesVisitMonth.js"></script>
-    <script src="js/screened_province.js"></script>
     <script src="js/pdo_visit.js"></script>
     <script src="js/julianDate.js"></script>
     <script src="js/reportGen.js"></script>
@@ -2113,6 +2148,7 @@ table.table-sm td:first-child {
     <script src="js/notebook-details.js"></script>
     <script src="js/addNotebook.js"></script>
     <script src="js/notebook-fetch.js"></script>
+    <script src="js/notification.js"></script>
 
     <script src="js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -2124,7 +2160,8 @@ table.table-sm td:first-child {
     <!-- Include SheetJS library for Excel export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-            <!-- Latest Chart.js v4 -->
+
+    <!-- Latest Chart.js v4 -->
   
     <!--end inject-->
 
@@ -2200,6 +2237,21 @@ table.table-sm td:first-child {
       });
     </script>
     <!--END SCRIPT-->
+
+    <!--Attachemt crud script-->
+    <script>
+      const attachmentsInput = document.getElementById("attachments");
+      const fileList = document.getElementById("fileList");
+
+      attachmentsInput.addEventListener("change", function () {
+        fileList.innerHTML = ""; // Clear previous list
+        for (let i = 0; i < this.files.length; i++) {
+          const li = document.createElement("li");
+          li.textContent = this.files[i].name;
+          fileList.appendChild(li);
+        }
+      });
+    </script>
 
     <script>
        function loadWeather() {

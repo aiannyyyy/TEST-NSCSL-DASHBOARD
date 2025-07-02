@@ -1,3 +1,4 @@
+//addNotebook.js
 document.addEventListener('DOMContentLoaded', function () {
     const saveBtn = document.getElementById('saveNotebookBtn');
     const closeBtn = document.getElementById('closeAddNotebookBtn');
@@ -294,3 +295,4 @@ function showSuccessNotification(message) {
         }
     }, 4000);
 }
+

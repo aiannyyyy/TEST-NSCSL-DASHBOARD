@@ -217,6 +217,14 @@ app.use("/api/patient-details", require("./routes/patient-detailsRoutes"));
 app.use("/api", require("./routes/notebookRoutes"));
 app.use("/api/notebook-query", require("./routes/notebookQuery"));
 
+app.use("/api/endorsement", require("./routes/endorsementRoutes")); //FOR ENDORSEMENT
+app.use("/api/endorsement-details", require("./routes/endorsmentDetailsRoutes")); //FOR ENDORSEMENT DETAILS
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Test Server Error:", err.stack || err.message || err);

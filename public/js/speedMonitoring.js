@@ -166,89 +166,86 @@ document.addEventListener("DOMContentLoaded", function () {
                 ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: selectedType,
-                        font: {
-                            size: 18
-                        }
-                    },
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.dataset.label || '';
-                                const value = context.raw;
-                                if (label === "Total # of Samples Encoded") {
-                                    return `${label}: ${value}`;
-                                } else {
-                                    return `${label}: ${Math.round(value)} seconds`;
-                                }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: false  // Changed from true to false to hide the chart title
+                },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw;
+                            if (label === "Total # of Samples Encoded") {
+                                return `${label}: ${value}`;
+                            } else {
+                                return `${label}: ${Math.round(value)} seconds`;
                             }
-                        }
-                    },
-                    datalabels: {
-                        color: '#000',
-                        font: {
-                            size: 12
                         }
                     }
                 },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
-                    ySamples: {
-                        type: "linear",
-                        position: "left",
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: "No. of Samples",
-                            font: {
-                                weight: 'bold'
-                            }
-                        },
-                        ticks: {
-                            callback: function (value) {
-                                return value.toLocaleString();
-                            }
-                        },
-                        grid: {
-                            color: function (context) {
-                                return 'rgba(0, 0, 0, 0.1)';
-                            }
-                        }
-                    },
-                    ySeconds: {
-                        type: "linear",
-                        position: "right",
-                        beginAtZero: true,
-                        max: 70,
-                        title: {
-                            display: true,
-                            text: "seconds",
-                            font: {
-                                weight: 'bold'
-                            }
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
+                datalabels: {
+                    color: '#000',
+                    font: {
+                        size: 12
                     }
                 }
             },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                ySamples: {
+                    type: "linear",
+                    position: "left",
+                    beginAtZero: true,
+                    max: 7000,
+                    title: {
+                        display: true,
+                        text: "No. of Samples",
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return value.toLocaleString();
+                        }
+                    },
+                    grid: {
+                        color: function (context) {
+                            return 'rgba(0, 0, 0, 0.1)';
+                        }
+                    }
+                },
+                ySeconds: {
+                    type: "linear",
+                    position: "right",
+                    beginAtZero: true,
+                    max: 70,
+                    title: {
+                        display: true,
+                        text: "seconds",
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            }
+        },
             plugins: [ChartDataLabels, {
                 id: 'backgroundColorPlugin',
                 beforeDraw: function (chart) {
@@ -291,14 +288,16 @@ document.addEventListener("DOMContentLoaded", function () {
             existingLegend.remove();
         }
 
-        const chartContainer = document.getElementById("speedMonitoringGraph").parentElement;
+        const chartCanvas = document.getElementById("speedMonitoringGraph");
+        const chartContainer = chartCanvas.parentElement;
 
         const legendContainer = document.createElement("div");
         legendContainer.className = "performance-legend mt-3";
         legendContainer.style.display = "flex";
         legendContainer.style.justifyContent = "center";
-        legendContainer.style.gap = "20px";
-        legendContainer.style.marginTop = "15px";
+        legendContainer.style.gap = "40px";
+        legendContainer.style.marginTop = "20px";
+        legendContainer.style.position = "static";
 
         const legendItems = [
             { color: "rgba(75, 192, 75, 0.4)", label: "Ideal" },
@@ -310,13 +309,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const box = document.createElement("div");
             box.style.display = "flex";
             box.style.alignItems = "center";
-            box.innerHTML = `<div style="width: 20px; height: 20px; background-color: ${item.color}; margin-right: 8px;"></div>${item.label}`;
+            box.innerHTML = `<div style="width: 20px; height: 20px; background-color: ${item.color}; margin-right: 8px; border: 1px solid #ccc;"></div>${item.label}`;
             legendContainer.appendChild(box);
         });
 
-        chartContainer.appendChild(legendContainer);
+        // Insert AFTER the canvas (chart)
+        chartContainer.parentElement.insertBefore(legendContainer, chartContainer.nextSibling);
     }
 
+    
     // Event listeners for dropdown menu changes
     document.querySelectorAll("#year-dropdown-menu .dropdown-item").forEach(item => {
         item.addEventListener("click", function () {

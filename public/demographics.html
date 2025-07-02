@@ -26,9 +26,6 @@
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
-
-    
   </head>
   <style>
     .table-responsive {
@@ -211,6 +208,742 @@
     }
   /* end container */
 
+  /* Notification Style */
+    /* Notification Styles */
+    .notification-dropdown {
+        position: relative;
+        margin-right: 15px;
+    }
+
+    .notification-bell {
+        position: relative;
+        padding: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 28px;
+        color: #6c757d;
+        transition: color 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        color: #007bff;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .notification-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 320px;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .notification-dropdown-menu.show {
+        display: block;
+    }
+
+    .notification-header {
+        padding: 15px;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .notification-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f1f1f1;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 3px solid #007bff;
+    }
+
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .notification-icon.info {
+        background-color: #17a2b8;
+    }
+
+    .notification-icon.success {
+        background-color: #28a745;
+    }
+
+    .notification-icon.warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .notification-icon.danger {
+        background-color: #dc3545;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #495057;
+        margin-bottom: 4px;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        color: #6c757d;
+        margin-bottom: 4px;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        font-size: 11px;
+        color: #adb5bd;
+    }
+
+    .notification-footer {
+        padding: 10px 15px;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .view-all-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    .clear-all-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .clear-all-btn:hover {
+        color: #495057;
+    }
+
+    .no-notifications {
+        padding: 30px 15px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .no-notifications i {
+        font-size: 24px;
+        margin-bottom: 10px;
+        display: block;
+    }
+    /* End Notification Style */
+
+    /*chart styles */
+     /* Chart container styles - Horizontal Layout */
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 0;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 550px; /* Increased from 450px */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px 15px 25px;
+        border-bottom: 2px solid #f0f0f0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px 12px 0 0;
+        flex-shrink: 0; /* Prevent header from shrinking */
+    }
+
+    .chart-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+
+    .expand-btn {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+    }
+
+    .expand-btn:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+    }
+
+    .chart-content {
+        flex: 1; /* Takes remaining space */
+        position: relative;
+        padding: 25px;
+        display: flex;
+        flex-direction: column; /* Changed to column for better chart layout */
+        min-height: 0; /* Important for flex child to shrink */
+    }
+
+    /* CRITICAL: Chart wrapper styling for full space utilization */
+    .chartjs-bar-wrapper {
+        flex: 1; /* Takes all available space in chart-content */
+        position: relative;
+        min-height: 300px; /* Minimum height */
+        width: 100%;
+    }
+
+    .chartjs-bar-wrapper canvas {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Table section - make it more compact */
+    .chart-table-section {
+        flex-shrink: 0;
+        margin-top: 20px;
+        max-height: 120px; /* Limit table height */
+        overflow-y: auto;
+    }
+
+    .table {
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    .table th, .table td {
+        padding: 8px 12px;
+        vertical-align: middle;
+    }
+
+    /* Chart row and column transitions */
+    .chart-row {
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chart-column {
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Expanded and collapsed states */
+    .chart-container.expanded {
+        transform: scale(1.02);
+        z-index: 10;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        height: 650px; /* Increased expanded height */
+    }
+
+    .chart-container.expanded .chart-content {
+        padding: 30px;
+    }
+
+    .chart-container.expanded .chart-title {
+        font-size: 22px;
+    }
+
+    .chart-container.collapsed {
+        transform: scale(0.95);
+        opacity: 0.7;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .chart-container.collapsed .chart-content {
+        padding: 15px;
+    }
+
+    .chart-container.collapsed .chart-title {
+        font-size: 16px;
+    }
+
+    /* Bootstrap grid overrides for expansion */
+    .chart-column.expanding {
+        flex: 0 0 75% !important;
+        max-width: 75% !important;
+    }
+
+    .chart-column.shrinking {
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
+    }
+
+    /* Chart placeholder styling */
+    .chart-placeholder {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .chart-placeholder p {
+        font-size: 16px;
+        color: #6c757d;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .chart-placeholder i {
+        font-size: 48px;
+        color: #adb5bd;
+        margin-bottom: 15px;
+    }
+    /* end chart styles */
+    .chart-controls{
+      display: none;
+    }
+
+    /* Enhanced Endorsement Interface Styles */
+
+/* Modal Enhancements */
+#endorseModal .modal-dialog {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#endorseModal .modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+#endorseModal .modal-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+#endorseModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+#endorseModal .modal-body {
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+/* Form Field Enhancements */
+.form-label {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.form-label.fw-bold {
+    color: #212529;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    background-color: #fff;
+}
+
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    color: #6c757d;
+}
+
+/* Input Group Styling */
+.input-group .btn {
+    border-radius: 0 8px 8px 0;
+}
+
+.input-group .form-control {
+    border-radius: 8px 0 0 8px;
+}
+
+/* File Upload Enhancements */
+#attachment {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#attachment:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+#attachment:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* File Preview Styling */
+#filePreview {
+    animation: slideDown 0.3s ease-out;
+}
+
+#filePreview .alert {
+    border-radius: 8px;
+    border: 1px solid #e3f2fd;
+    background-color: #f8f9ff;
+    margin-bottom: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        max-height: 100px;
+        transform: translateY(0);
+    }
+}
+
+/* Alert Enhancements */
+.alert-temp {
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9rem;
+    animation: slideInFromTop 0.4s ease-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button Enhancements */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+    border: none;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Badge Enhancements */
+.badge {
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.badge.bg-light {
+    background-color: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #f39c12 100%) !important;
+}
+
+.badge.bg-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+}
+
+/* Table Enhancements */
+.table-responsive {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    padding: 1rem 0.75rem;
+}
+
+.table tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9ff;
+}
+
+/* Chart Container Enhancements */
+.chart-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.chart-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+}
+
+.chart-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.table-content {
+    padding: 0;
+}
+
+/* Loading States */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.125em;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #endorseModal .modal-dialog {
+        margin: 1rem 0.5rem;
+    }
+    
+    #endorseModal .modal-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .chart-header .d-flex {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Custom Scrollbar */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Success Animation */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.alert-success.alert-temp {
+    animation: slideInFromTop 0.4s ease-out, successPulse 0.6s ease-in-out 0.4s;
+}
+
+/* Focus Management */
+.form-control:focus,
+.btn:focus {
+    outline: none;
+}
+
+/* Required Field Indicator */
+.text-danger {
+    font-weight: 600;
+}
+
+/* Form Text Styling */
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.form-text .text-muted {
+    color: #6c757d !important;
+}
   </style>
   <body class="with-welcome-text">
       <!-- partial:partials/_navbar.html -->
@@ -223,10 +956,10 @@
           </div>
           <div>
             <a class="navbar-brand brand-logo" href="index.html">
-              <img src="images/nscsl.PNG" alt="logo" />
+              <img src="assets/images/nscsl.PNG" alt="logo" />
             </a>
             <a class="navbar-brand brand-logo-mini" href="index.html">
-              <img src="images/nscsl logo copy.png" alt="logo" />
+              <img src="assets/images/nscsl logo copy.png" alt="logo" />
             </a>
           </div>
         </div>
@@ -238,12 +971,34 @@
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
+
+             <!-- Notification Dropdown -->
+              <li class="nav-item notification-dropdown">
+                <button class="notification-bell" id="notificationBell">
+                  <i class="mdi mdi-bell-outline"></i>
+                  <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                <div class="notification-dropdown-menu" id="notificationDropdown">
+                  <div class="notification-header">
+                    <h6>Notifications 
+                      <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                    </h6>
+                </div>
+                <div id="notificationList">
+                  <!-- Notifications will be populated here -->
+                  </div>
+                    <div class="notification-footer">
+                      <a href="#" class="view-all-link">View All Notifications</a>
+                    </div>
+                  </div>
+                </li>
+
             <li class="nav-item dropdown d-none d-lg-block user-dropdown">
               <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="img-xs rounded-circle" src="images/faces/user.png" alt="Profile image"> </a>
+                <img class="img-xs rounded-circle" src="assets/images/faces/user.png" alt="Profile image"> </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                   <div class="dropdown-header text-center">
-                    <img class="img-md rounded-circle" src="images/faces/user.png" alt="Profile image">
+                    <img class="img-md rounded-circle" src="assets/images/faces/user.png" alt="Profile image">
                     <p class="mb-1 mt-3 fw-semibold" id="user-name1">Loading...</p>  <!-- Name will be inserted here -->
                     <p class="fw-light text-muted mb-0" id="user-email">Loading...</p>  <!-- Email will be inserted here -->
                 </div>
@@ -288,6 +1043,8 @@
             <div class="collapse" id="nscsl-pdo">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sample_receive.html">Sample Received</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sample_screened.html">Sample Screened</a></li>
                 <!--
                 <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
                 -->
@@ -328,106 +1085,95 @@
         </ul>
       </nav>
 
-        <!-- partial -->
-        <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="home-tab">
-                  <div class="d-sm-flex align-items-center justify-content-between border-bottom">
-                    <!--
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#buttons" role="tab" aria-selected="false">Buttons</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#reports" role="tab" aria-controls="reports" aria-selected="false">Reports</a>
-                        </li>
-                    </ul>
-                    -->
-                    <!--
-                    <div>
-                      <div class="btn-wrapper">
-                        <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
-                        <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
-                        <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
-                      </div>
-                    </div>
-                    -->
-                  </div>
-                  
-                  <div class="tab-content tab-content-basic">
-                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                      <!-- Charts --> 
-                      <div class="row">
-                        <div class="container mt-4">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="card-title" id="summary-title">
-                                  Summary of Total Data Entry of the Encoders this Month
-                                  <img src="assets/images/programation.png" alt="Change Data Icon" class="switch-icon" style="width: 30px; margin-left: 10px; cursor: pointer;">
-                                </h4>
-                                <button class="btn btn-primary button-custom" onclick="runNeometrics('neometrics')">Run Neometrics</button>
-                              </div>
-                          <div class="row">
-                            <div class="col-md-3">
-                              <div class="task-card total">
-                                <div class="icon-box"></div> <!-- Male icon -->
-                                <div class="task-content">
-                                  <p class="task-label">Jay Arr Apelado</p>
-                                  <h2 class="task-value jay-arr-value">-</h2>
-                                  <span class="task-subtext">at the moment</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="task-card completed">
-                                <div class="icon-box"></div> <!-- Female icon -->
-                                <div class="task-content">
-                                  <p class="task-label">Angelica Brutas</p>
-                                  <h2 class="task-value angge-value">-</h2>
-                                  <span class="task-subtext">at the moment</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="task-card pending">
-                                <div class="icon-box"></div> <!-- Male icon -->
-                                <div class="task-content">
-                                  <p class="task-label">Mary Rose Gomez</p>
-                                  <h2 class="task-value rose-value">-</h2>
-                                  <span class="task-subtext">at the moment</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="task-card overdue">
-                                <div class="icon-box"></div> <!-- Female icon -->
-                                <div class="task-content">
-                                  <p class="task-label">Abigail Morfe</p>
-                                  <h2 class="task-value abi-value">-</h2>
-                                  <span class="task-subtext">at the moment</span>
-                                </div>
+      <div class="main-panel">
+            <div class="content-wrapper">
+              <div class="row">
+            <div class="col-sm-12">
+              <div class="home-tab">
+                <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                </div>
+
+                <div class="tab-content tab-content-basic">
+                  <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                    <!-- Charts -->
+                    <div class="row">
+                      <div class="container mt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h4 class="card-title" id="summary-title">
+                            Summary of Total Data Entry of the Encoders this Month
+                            <img src="assets/images/programation.png" alt="Change Data Icon" class="switch-icon" style="width: 30px; margin-left: 10px; cursor: pointer;">
+                          </h4>
+                          <button class="btn btn-primary button-custom" onclick="runNeometrics('neometrics')">Run Neometrics</button>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3">
+                            <div class="task-card total">
+                              <div class="icon-box"></div> <!-- Male icon -->
+                              <div class="task-content">
+                                <p class="task-label">Jay Arr Apelado</p>
+                                <h2 class="task-value jay-arr-value">-</h2>
+                                <span class="task-subtext">at the moment</span>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        
-                        <div class="col-lg-8 d-flex flex-column">
-                          <div class="row flex-grow">
-                            <div class="col-12 grid-margin stretch-card" style="width: 98%;">
-                                <div class="card card-rounded">
-                                    <div class="card-body">
-                                        <div class="d-sm-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h4 class="card-title card-title-dash"> Speed Monitoring - Data Entry <br> January 2025 </h4>
-                                            </div>
-                                            <div>
-                                                <!-- Year Selection Dropdown -->
+
+                          <div class="col-md-3">
+                            <div class="task-card completed">
+                              <div class="icon-box"></div> <!-- Female icon -->
+                              <div class="task-content">
+                                <p class="task-label">Angelica Brutas</p>
+                                <h2 class="task-value angge-value">-</h2>
+                                <span class="task-subtext">at the moment</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="task-card pending">
+                              <div class="icon-box"></div> <!-- Male icon -->
+                              <div class="task-content">
+                                <p class="task-label">Mary Rose Gomez</p>
+                                <h2 class="task-value rose-value">-</h2>
+                                <span class="task-subtext">at the moment</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="task-card overdue">
+                              <div class="icon-box"></div> <!-- Female icon -->
+                              <div class="task-content">
+                                <p class="task-label">Abigail Morfe</p>
+                                <h2 class="task-value abi-value">-</h2>
+                                <span class="task-subtext">at the moment</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div> <!-- row -->
+                      </div> <!-- container -->
+                    </div> <!-- row -->
+                  </div> <!-- tab-pane -->
+                </div> <!-- tab-content -->
+              </div> <!-- home-tab -->
+            </div> <!-- col-sm-12 -->
+          </div> 
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <div class="container-fluid">
+                        <div class="row chart-row" id="chartRow">
+                            <!-- Chart 1 -->
+                            <div class="col-lg-6 col-md-12 chart-column" id="chart1Column">
+                                <div class="chart-container" id="chart1Container">
+                                    <div class="chart-header">
+                                      <h4 class="card-title card-title-dash chart title"> Speed Monitoring - Data Entry  <br> January 2025 </h4>
+
+                                        <div class="chart-controls">
+
+                                            <!-- Year Selection Dropdown -->
                                                 <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" 
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" 
                                                             type="button" id="year-dropdown" data-bs-toggle="dropdown">2025</button>
                                                     <div class="dropdown-menu" id="year-dropdown-menu">
                                                         <a class="dropdown-item" href="#" data-year="2025">2025</a>
@@ -448,7 +1194,7 @@
                         
                                                 <!-- Month Selection Dropdown -->
                                                 <div class="dropdown d-inline-block mb-2">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="month-dropdown" data-bs-toggle="dropdown">January</button>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" type="button" id="month-dropdown" data-bs-toggle="dropdown">January</button>
                                                     <div class="dropdown-menu" id="month-dropdown-menu">
                                                         <a class="dropdown-item" href="#" data-month="January">January</a>
                                                         <a class="dropdown-item" href="#" data-month="February">February</a>
@@ -467,151 +1213,45 @@
                         
                                                 <!-- Data Type Selection Dropdown -->
                                                 <div class="dropdown d-inline-block mb-2">
-                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2" type="button" id="type-dropdown" data-bs-toggle="dropdown">Data Entry</button>
+                                                    <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" type="button" id="type-dropdown" data-bs-toggle="dropdown">Data Entry</button>
                                                     <div class="dropdown-menu" id="type-dropdown-menu">
                                                         <a class="dropdown-item" href="#" data-type="Data Entry">Data Entry</a>
                                                         <a class="dropdown-item" href="#" data-type="Data Verification">Data Verification</a>
                                                     </div>
                                                 </div>
-                                            </div>
+
                                         </div>
-                                        <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 98%;">
+
+                                        <button class="expand-btn" onclick="toggleChart('chart1')">
+                                            <i class="mdi mdi-arrow-expand-all"></i> Expand
+                                        </button>
+                                    </div>
+
+                                    <div class="chart-content">
+                                        <!-- Chart Section -->
+                                        <div class="chartjs-bar-wrapper mt-3">
                                             <canvas id="speedMonitoringGraph"></canvas>
                                         </div>
-                                        <br>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-lg-4 d-flex flex-column">
-                        <div class="row flex-grow">
-                          <div class="col-md-6 col-lg-12 grid-margin stretch-card" style="height: fit-content;">
-                            <div class="card card-rounded">
-                              <div class="card-body">
-                                <!-- Title as a single line -->
-                                <h5 class="mb-3">Demographic Encoders Most Common Errors (TOP 5)</h5>
-                                
-                                <!-- All dropdowns in a row below the title -->
-                                <div class="d-flex flex-wrap gap-2 mb-4">
-                                  <!-- Year Selection Dropdown -->
-                                  <div class="dropdown">
-                                    <button class="btn btn-light dropdown-toggle px-3 py-2" 
-                                            type="button" id="error-year-dropdown-btn" data-bs-toggle="dropdown">
-                                      2025
-                                    </button>
-                                    <div class="dropdown-menu" id="error-year-dropdown">
-                                      <a class="dropdown-item" href="#" data-year="2025">2025</a>
-                                      <a class="dropdown-item" href="#" data-year="2024">2024</a>
-                                      <a class="dropdown-item" href="#" data-year="2023">2023</a>
-                                      <a class="dropdown-item" href="#" data-year="2022">2022</a>
-                                      <a class="dropdown-item" href="#" data-year="2021">2021</a>
-                                      <a class="dropdown-item" href="#" data-year="2020">2020</a>
-                                      <a class="dropdown-item" href="#" data-year="2019">2019</a>
-                                      <a class="dropdown-item" href="#" data-year="2018">2018</a>
-                                      <a class="dropdown-item" href="#" data-year="2017">2017</a>
-                                      <a class="dropdown-item" href="#" data-year="2016">2016</a>
-                                      <a class="dropdown-item" href="#" data-year="2015">2015</a>
-                                      <a class="dropdown-item" href="#" data-year="2014">2014</a>
-                                      <a class="dropdown-item" href="#" data-year="2013">2013</a>
-                                    </div> 
-                                  </div>
-                                  
-                                  <!-- Month Selection Dropdown -->
-                                  <div class="dropdown">
-                                    <button class="btn btn-light dropdown-toggle px-3 py-2" 
-                                            type="button" id="error-month-dropdown-btn" data-bs-toggle="dropdown">
-                                      January
-                                    </button>
-                                    <div class="dropdown-menu" id="error-month-dropdown">
-                                      <a class="dropdown-item" href="#" data-month="January">January</a>
-                                      <a class="dropdown-item" href="#" data-month="February">February</a>
-                                      <a class="dropdown-item" href="#" data-month="March">March</a>
-                                      <a class="dropdown-item" href="#" data-month="April">April</a>
-                                      <a class="dropdown-item" href="#" data-month="May">May</a>
-                                      <a class="dropdown-item" href="#" data-month="June">June</a>
-                                      <a class="dropdown-item" href="#" data-month="July">July</a>
-                                      <a class="dropdown-item" href="#" data-month="August">August</a>
-                                      <a class="dropdown-item" href="#" data-month="September">September</a>
-                                      <a class="dropdown-item" href="#" data-month="October">October</a>
-                                      <a class="dropdown-item" href="#" data-month="November">November</a>
-                                      <a class="dropdown-item" href="#" data-month="December">December</a>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div class="chartjs-bar-wrapper">
-                                  <canvas id="commonErrorGraph"></canvas>
-                                </div>
 
-                              </div>
-                            </div>
-                          </div>          
-                        </div>
-                        <div class="col-md-6 col-lg-12 grid-margin stretch-card" style="height: fit-content;">
-                          <div class="card card-rounded">
-                            <div class="card-body">
-                              <h6 class="card-title">Additional Info</h6>
-                              <p class="card-text">This is a small container added below the tracking system.</p>
-                              <!-- You can add buttons, charts, tables, or anything else here -->
-                            </div>
-                          </div>
-                        </div>
-                        
-                      </div>
+                            <!-- End Chart 1 -->
 
-                      <div class="row">
-                        <div class="col-lg-8 d-flex flex-column">
-                          <div class="row flex-grow">
-                            <div class="col-12 grid-margin stretch-card">
-                              <div class="card card-rounded shadow-sm">
-                                <div class="card-body">
-                                  <div class="d-sm-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                      <h4 class="card-title card-title-dash2">Typing Test</h4>
-                                      <p class="text-muted">Type the paragraph below as fast and accurately as you can.</p>
-                                    </div>
-                                  </div>
-                          
-                                  <div class="mb-3">
-                                    <p class="lead font-weight-bold" id="testText" style="user-select: none;">
-                                      Click "Start Test" to generate a paragraph.
-                                    </p>
-                                  </div>
-                          
-                                  <div class="mb-3">
-                                    <textarea class="form-control" rows="6" id="typingInput" placeholder="Start typing here..." disabled></textarea>
-                                  </div>
-                          
-                                  <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <div>
-                                      <button class="btn btn-primary btn-sm rounded-pill px-4 text-white me-2" onclick="startTest()">Start Test</button>
-                                      <button class="btn btn-danger btn-sm rounded-pill px-4 text-white" onclick="stopTest()">Stop Test</button>
-                                    </div>
-                                    <h5 class="mb-0 text-success" id="wpmDisplay">WPM: 0</h5>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div class="row flex-grow">
-                            <div class="col-md-12 col-lg-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body card-rounded">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <div>
-                                            <h4 class="card-title card-title-dash5">
-                                              Year to Date Comparison of Unsat Rate (Year 1 VS Year 2)
-                                            </h4>
-                                          </div>
-                                          <!-- Sample Type Selection -->
-                                          <div class="dropdown d-inline-block mb-2">
-                                            <div>
-                                              <!-- Year A Selection -->
+
+                            <!-- Chart 2 -->
+                            <div class="col-lg-6 col-md-12 chart-column" id="chart2Column">
+                                <div class="chart-container" id="chart2Container">
+                                    <div class="chart-header">
+                                        <h6 class="card-title card-title-dash5 chart-title">
+                                          Year to Date Comparison of Unsat Rate (Year 1 VS Year 2)
+                                        </h6>
+
+                                        <!-- Chart 2 Controls (Year, Province, Month) -->
+                                        <div class="chart-controls">
+                                           <!-- Year A Selection -->
                                               <div class="dropdown d-inline-block">
-                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2"
                                                           type="button" id="unsat-year1-dropdown" data-bs-toggle="dropdown">2024</button>
                                                   <div class="dropdown-menu" id="unsat-year1-dropdown">
                                                       <a class="dropdown-item" href="#" data-year="2024">2024</a>
@@ -631,7 +1271,7 @@
                                               <span>VS</span>
                                               <!-- Year B Selection -->
                                               <div class="dropdown d-inline-block">
-                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-lg mb-0 me-2"
+                                                  <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2"
                                                           type="button" id="unsat-year2-dropdown" data-bs-toggle="dropdown">2025</button>
                                                   <div class="dropdown-menu" id="unsat-year2-dropdown">
                                                       <a class="dropdown-item" href="#" data-year="2025">2025</a>
@@ -649,171 +1289,474 @@
                                                       <a class="dropdown-item" href="#" data-year="2013">2013</a>
                                                   </div> 
                                               </div>
+                                        </div>
+
+                                        <!-- Expand Button -->
+                                        <button class="expand-btn" onclick="toggleChart('chart2')">
+                                            <i class="mdi mdi-arrow-expand-all"></i> Expand
+                                        </button>
+                                    </div>
+
+                                    <!-- Chart Area -->
+                                    <div class="chart-content">
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="unsatRate"></canvas>
+                                        </div>
+                                    </div>
+
+                                
+                                </div>
+                            </div>
+
+                            <!-- End Chart 2 -->
+
+                            <!-- Chart 3 -->
+                            <div class="col-lg-6 col-md-12 chart-column" id="chart3Column">
+                                <div class="chart-container" id="chart3Container">
+                                    <div class="chart-header">
+                                      <h4 class="card-title card-title-dash chart-title">Demographic Encoders Most Common Errors (TOP 5)</h4>
+
+                                        <div class="chart-controls">
+
+                                             <!-- Year Selection Dropdown -->
+                                            <div class="dropdown d-inline-block">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" 
+                                                      type="button" id="error-year-dropdown-btn" data-bs-toggle="dropdown">
+                                                2025
+                                              </button>
+                                              <div class="dropdown-menu" id="error-year-dropdown">
+                                                <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                              </div> 
                                             </div>
-                                          </div>
-                                        </div>
-
-                                    <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
-                                      <canvas id="unsatRate"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                          </div>
-
-                        <!--
-                        <div class="row flex-grow">
-                          <div class="col-md-12 col-lg-12 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                  <div class="card-body card-rounded">
-                                      <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div>
-                                          <h4 class="card-title card-title-dash4">
-                                            Cumulative Annual Census of Samples Received
-                                          </h4>
-                                        </div>
-
-                                        
-                                      </div>
-
-                                      <div class="chartjs-bar-wrapper mt-3" style="height: 490px; width: 95%;">
-                                        <canvas id="cumulativeAnnualSamples"></canvas>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                        </div>
-                        -->  
-
-                        <!--
-                        <div class="row flex-grow">
-                              <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body card-rounded">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="card-title card-title-dash">Sample Title</h4>
-                                        </div>
-                        
-                                    </div>
-                                </div>
-                              </div>
-                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h4 class="card-title card-title-dash fw-bold">Sample Title</h4>
-                                        
-                                    </div>
-                            
-                                  
-                                </div>
-                            </div>        
-                            </div>
-                          </div>
-                        </div>
-                        -->
-
-                          <!--
-                          <div class="col-lg-4 d-flex flex-column">
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                                <h3>sample1</h3>
-                                          <div class="add-items d-flex mb-0">
                                             
-
-                                          </div>
+                                            <!-- Month Selection Dropdown -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" 
+                                                      type="button" id="error-month-dropdown-btn" data-bs-toggle="dropdown">
+                                                January
+                                              </button>
+                                              <div class="dropdown-menu" id="error-month-dropdown">
+                                                <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                <a class="dropdown-item" href="#" data-month="February">February</a>
+                                                <a class="dropdown-item" href="#" data-month="March">March</a>
+                                                <a class="dropdown-item" href="#" data-month="April">April</a>
+                                                <a class="dropdown-item" href="#" data-month="May">May</a>
+                                                <a class="dropdown-item" href="#" data-month="June">June</a>
+                                                <a class="dropdown-item" href="#" data-month="July">July</a>
+                                                <a class="dropdown-item" href="#" data-month="August">August</a>
+                                                <a class="dropdown-item" href="#" data-month="September">September</a>
+                                                <a class="dropdown-item" href="#" data-month="October">October</a>
+                                                <a class="dropdown-item" href="#" data-month="November">November</a>
+                                                <a class="dropdown-item" href="#" data-month="December">December</a>
+                                              </div>
+                                            </div>
                                         </div>
-                                        
+
+                                        <button class="expand-btn" onclick="toggleChart('chart3')">
+                                            <i class="mdi mdi-arrow-expand-all"></i> Expand
+                                        </button>
+                                    </div>
+
+                                    <div class="chart-content">
+                                        <!-- Chart Section -->
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="commonErrorGraph"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- End Chart 3 -->
+
+                              <!-- Chart 4-->
+                            <div class="col-lg-6 col-md-12 chart-column" id="chart4Column">
+                                <div class="chart-container" id="chart4Container">
+                                    <div class="chart-header">
+                                      <h4 class="card-title card-title-dash chart-title">Performance Metrics Overview</h4>
+
+                                        <div class="chart-controls">
+                                            <!-- Year Selection Dropdown -->
+                                            <div class="dropdown d-inline-block">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" 
+                                                      type="button" id="chart4-year-dropdown" data-bs-toggle="dropdown">
+                                                2025
+                                              </button>
+                                              <div class="dropdown-menu" id="chart4-year-dropdown-menu">
+                                                <a class="dropdown-item" href="#" data-year="2025">2025</a>
+                                                <a class="dropdown-item" href="#" data-year="2024">2024</a>
+                                                <a class="dropdown-item" href="#" data-year="2023">2023</a>
+                                                <a class="dropdown-item" href="#" data-year="2022">2022</a>
+                                                <a class="dropdown-item" href="#" data-year="2021">2021</a>
+                                                <a class="dropdown-item" href="#" data-year="2020">2020</a>
+                                                <a class="dropdown-item" href="#" data-year="2019">2019</a>
+                                                <a class="dropdown-item" href="#" data-year="2018">2018</a>
+                                                <a class="dropdown-item" href="#" data-year="2017">2017</a>
+                                                <a class="dropdown-item" href="#" data-year="2016">2016</a>
+                                                <a class="dropdown-item" href="#" data-year="2015">2015</a>
+                                                <a class="dropdown-item" href="#" data-year="2014">2014</a>
+                                                <a class="dropdown-item" href="#" data-year="2013">2013</a>
+                                              </div> 
+                                            </div>
+                                            
+                                            <!-- Month Selection Dropdown -->
+                                            <div class="dropdown d-inline-block mb-2">
+                                              <button class="btn btn-light dropdown-toggle toggle-dark btn-sm mb-0 me-2" 
+                                                      type="button" id="chart4-month-dropdown" data-bs-toggle="dropdown">
+                                                January
+                                              </button>
+                                              <div class="dropdown-menu" id="chart4-month-dropdown-menu">
+                                                <a class="dropdown-item" href="#" data-month="January">January</a>
+                                                <a class="dropdown-item" href="#" data-month="February">February</a>
+                                                <a class="dropdown-item" href="#" data-month="March">March</a>
+                                                <a class="dropdown-item" href="#" data-month="April">April</a>
+                                                <a class="dropdown-item" href="#" data-month="May">May</a>
+                                                <a class="dropdown-item" href="#" data-month="June">June</a>
+                                                <a class="dropdown-item" href="#" data-month="July">July</a>
+                                                <a class="dropdown-item" href="#" data-month="August">August</a>
+                                                <a class="dropdown-item" href="#" data-month="September">September</a>
+                                                <a class="dropdown-item" href="#" data-month="October">October</a>
+                                                <a class="dropdown-item" href="#" data-month="November">November</a>
+                                                <a class="dropdown-item" href="#" data-month="December">December</a>
+                                              </div>
+                                            </div>
+                                        </div>
+
+                                        <button class="expand-btn" onclick="toggleChart('chart4')">
+                                            <i class="mdi mdi-arrow-expand-all"></i> Expand
+                                        </button>
+                                    </div>
+
+                                    <div class="chart-content">
+                                        <!-- Chart Section -->
+                                        <div class="chartjs-bar-wrapper mt-3">
+                                            <canvas id="performanceMetricsGraph"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- End Chart 4 -->
+
+                        </div> <!-- End chart-row -->
+
+                        <!-- Additional row for full-width chart if needed -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Endorsement to PDO</h3>
+                                        <div class="d-flex">
+                                            <button class="btn btn-white fw-bold me-2" data-bs-toggle="modal" data-bs-target="#endorseModal">
+                                                <i class="mdi mdi-account-plus"></i> Add Endorsement
+                                            </button>
+                                            <!--
+                                            <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                                <i class="mdi mdi-file-excel"></i> Export
+                                            </button>
+                                            -->
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="table-content">
+                                        <!-- Scrollable Table -->
+                                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                            <table class="table table-hover align-middle">
+                                                <thead class="table-light sticky-top">
+                                                    <tr>
+                                                        <th scope="col" class="text-center" style="width: 10%;">#</th>
+                                                        <th scope="col" style="width: 12%;">Lab Number</th>
+                                                        <th scope="col" style="width: 15%;">Patient Name</th>
+                                                        <th scope="col" class="text-center" style="width: 8%;">Facility Code</th>
+                                                        <th scope="col" style="width: 15%;">Facility Name</th>
+                                                        <th scope="col" class="text-center" style="width: 10%;">Test Result</th>
+                                                        <th scope="col" style="width: 12%;">Remarks</th>
+                                                        <th scope="col" class="text-center" style="width: 8%;">Attachment</th>
+                                                        <th scope="col" class="text-center" style="width: 10%;">Date and Time Endorsed</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="visitTable">
+                                                    <!-- Sample Data for Demo -->
+                                                    <tr>
+                                                        <td class="text-center fw-bold">1</td>
+                                                        <td><span class="badge bg-light text-dark">LAB2024001</span></td>
+                                                        <td>
+                                                            <div>
+                                                                <div class="fw-semibold">John Doe</div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge bg-secondary">FC001</span></td>
+                                                        <td>
+                                                            <div class="text-truncate" style="max-width: 150px;" title="Metro Manila General Hospital">
+                                                                Metro Manila General Hospital
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="badge bg-success">Positive</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-truncate d-inline-block" style="max-width: 120px;" title="Patient shows symptoms">
+                                                                Patient shows symptoms
+                                                            </span>
+                                                        </td>
+                                                         <td class="text-center">
+                                                            <div class="btn-group" role="group">
+                                                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                                                    <i class="mdi mdi-eye"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <small>2024-01-15 12:42:22 PM</small><br>
+                                                            <small class="text-muted">Dr. Smith</small>
+                                                        </td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center fw-bold">2</td>
+                                                        <td><span class="badge bg-light text-dark">LAB2024002</span></td>
+                                                        <td>
+                                                            <div>
+                                                                <div class="fw-semibold">Jane Smith</div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge bg-secondary">FC002</span></td>
+                                                        <td>
+                                                            <div class="text-truncate" style="max-width: 150px;" title="City Health Center">
+                                                                City Health Center
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="badge bg-danger">Negative</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-truncate d-inline-block" style="max-width: 120px;" title="Normal results">
+                                                                Normal results
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group" role="group">
+                                                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                                                    <i class="mdi mdi-eye"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <small>2024-01-14 12:42:22 PM</small><br>
+                                                            <small class="text-muted">Dr. Johnson</small>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center fw-bold">3</td>
+                                                        <td><span class="badge bg-light text-dark">LAB2024003</span></td>
+                                                        <td>
+                                                            <div>
+                                                                <div class="fw-semibold">Mike Wilson</div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge bg-secondary">FC001</span></td>
+                                                        <td>
+                                                            <div class="text-truncate" style="max-width: 150px;" title="Metro Manila General Hospital">
+                                                                Metro Manila General Hospital
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="badge bg-warning text-dark">Pending</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-truncate d-inline-block" style="max-width: 120px;" title="Awaiting confirmation">
+                                                                Awaiting confirmation
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group" role="group">
+                                                                <button class="btn btn-sm btn-outline-primary" title="View Details">
+                                                                    <i class="mdi mdi-eye"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <small>2024-01-13 12:42:22 PM</small><br>
+                                                            <small class="text-muted">Dr. Brown</small>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Add Endorsement Modal with File Upload -->
+                        <div class="modal fade" id="endorseModal" tabindex="-1" aria-labelledby="endorseModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="endorseModalLabel">
+                                  <i class="mdi mdi-account-plus me-2"></i>Add Endorsement
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <!-- Alert will be inserted here dynamically -->
+                                
+                                <div class="alert alert-info" role="alert">
+                                  <i class="mdi mdi-information me-2"></i>
+                                  <strong>Note:</strong> After you input this entry and click save, the endorsement will be sent to the PDO.
+                                </div>
+
+                                <form id="endorseForm" enctype="multipart/form-data">
+                                  <input type="hidden" id="endorseId">
+
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="mb-3">
+                                        <label for="labnoratoryNumber" class="form-label fw-bold">
+                                          Laboratory Number <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                          <input type="text" class="form-control" id="labnoratoryNumber" required 
+                                                placeholder="Enter lab number and press Enter">
+                                          <button type="button" class="btn btn-outline-secondary" onclick="searchLabData()">
+                                            <i class="mdi mdi-magnify"></i>
+                                          </button>
+                                        </div>
+                                        <small class="form-text text-muted">Press Enter after typing to search automatically</small>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h4>sample</h4>
-                                        </div>
-                                       
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
 
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                          <h3>Sample2</h3>
-                                        </div>
-                                      </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            </div>
-                            -->
-
-                            <!--
-                            <div class="row flex-grow">
-                              <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-lg-12">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                           <h4>sample</h4>
-                                          <div class="d-flex align-items-center">
-                                          </div>
-                                        <div class="mt-3 scrollable-container" style="max-height: 400px; overflow-y: auto;">
-
-                                        </div>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="mb-3">
+                                        <label for="fname" class="form-label fw-bold">First Name</label>
+                                        <input type="text" class="form-control" id="fname" required readonly 
+                                              style="background-color: #f8f9fa;">
                                       </div>
                                     </div>
+                                    <div class="col-md-6">
+                                      <div class="mb-3">
+                                        <label for="lname" class="form-label fw-bold">Last Name</label>
+                                        <input type="text" class="form-control" id="lname" readonly 
+                                              style="background-color: #f8f9fa;">
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="row">
+                                    <div class="col-md-4">
+                                      <div class="mb-3">
+                                        <label for="facilityCode" class="form-label fw-bold">Facility Code</label>
+                                        <input type="text" class="form-control" id="facilityCode" readonly 
+                                              style="background-color: #f8f9fa;">
+                                      </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                      <div class="mb-3">
+                                        <label for="facilityName" class="form-label fw-bold">Facility Name</label>
+                                        <input type="text" class="form-control" id="facilityName" readonly 
+                                              style="background-color: #f8f9fa;">
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <div class="mb-3">
+                                        <label for="testResult" class="form-label fw-bold">Test Result</label>
+                                        <input type="text" class="form-control" id="testResult" readonly 
+                                              style="background-color: #f8f9fa;">
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <div class="mb-3">
+                                        <label for="remarks" class="form-label fw-bold">
+                                          Remarks <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="remarks" required 
+                                              placeholder="Enter your remarks">
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="mb-3">
+                                    <label for="attachment" class="form-label fw-bold">
+                                      <i class="mdi mdi-attachment me-1"></i>Attachment (PDF/Image/Other)
+                                    </label>
+                                    <input type="file" class="form-control" id="attachment" 
+                                          accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                                    <div class="form-text">
+                                      <small class="text-muted">
+                                        <i class="mdi mdi-information-outline me-1"></i>
+                                        Supported formats: PDF, Images (JPG, PNG, GIF), Word documents. Max size: 10MB
+                                      </small>
+                                    </div>
+                                    <!-- File preview area -->
+                                    <div id="filePreview" class="mt-2" style="display: none;">
+                                      <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="mdi mdi-file-document-outline me-2 text-primary"></i>
+                                        <span id="fileName"></span>
+                                        <span id="fileSize" class="text-muted ms-2"></span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="clearFileSelection()">
+                                          <i class="mdi mdi-close"></i>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <hr>
                                   
+                                  <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                      <i class="mdi mdi-close me-1"></i>Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-primary fw-bold" onclick="saveEndorsement()">
+                                      <i class="mdi mdi-content-save me-1"></i>Save Endorsement
+                                    </button>
                                   </div>
-                                  -->
-                                </div>
+                                </form>
                               </div>
-                            </div>   
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- content-wrapper ends -->
 
-          <!-- partial:partials/_footer.html 
-          <footer class="footer">
-            <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
-              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
+                        
+
+                        <!-- Additional row for full-width chart if needed -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Additional Data Visualization</h3>
+                                    </div>
+                                    <div class="chart-content">
+                                        <!-- Your Chart 5 will go here -->
+                                        <div class="chart-placeholder">
+                                            <i class="mdi mdi-chart-donut"></i>
+                                            <p>Chart 5 Content Area</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </footer>
-          -->
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
-      </div>
-      <!-- page-body-wrapper ends -->
     </div>
+
     <!-- container-scroller -->
         <!-- Load jQuery FIRST -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -848,6 +1791,9 @@
         <script src="js/unsatRate.js"></script>
         <script src="js/typingTest.js"></script>
         <script src="js/neometrics.js"></script>
+        <script src="js/demographics-notification.js"></script>
+        <script src="js/demog-chart.js"></script>
+        <script src="js/unsat-pdoEndorsement.js"></script>
 
         <!-- Custom Scripts (Ensure DOM is ready before running) -->
         <script>

@@ -38,7 +38,7 @@ async function fetchSummaryData() {
         const title = document.getElementById("summary-title");
         title.innerHTML = `
             Summary of Total Data ${currentMode === "entry" ? "Entry" : "Verification"} of the Encoders this Month
-            <img src="/src/assets/images/programation.png" alt="Change Data Icon" class="switch-icon" style="width: 30px; margin-left: 10px; cursor: pointer;">
+            <img src="assets/images/programation.png" alt="Change Data Icon" class="switch-icon" style="width: 30px; margin-left: 10px; cursor: pointer;">
         `;
 
         document.querySelector(".switch-icon").addEventListener("click", toggleMode);

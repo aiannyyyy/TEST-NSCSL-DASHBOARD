@@ -99,6 +99,8 @@ function renderChart(months, year1Data, year2Data) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: true,  // 👈 Add this to maintain aspect ratio
+            aspectRatio: 2,             // 👈 Set desired aspect ratio (width/height)
             scales: {
                 y: {
                     beginAtZero: true,
@@ -119,12 +121,12 @@ function renderChart(months, year1Data, year2Data) {
                 datalabels: {
                     anchor: 'end',
                     align: 'top',
-                    formatter: (value) => `${value}%`, // Remove .toFixed(1) to show the exact value
+                    formatter: (value) => `${value}%`,
                     color: '#000',
                 }                
             }
         },
-        plugins: [ChartDataLabels] // 👈 enable datalabels
+        plugins: [ChartDataLabels]
     });
 }
 
