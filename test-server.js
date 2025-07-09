@@ -105,6 +105,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 app.use('/css', express.static(publicPath));
 app.use('/js', express.static(publicPath));
+app.use('/uploads', express.static('\\\\10.1.1.151\\uploads'));
 
 // Main route - serve login.html at root
 app.get("/", (req, res) => {
@@ -222,11 +223,10 @@ app.use("/api/notebook-query", require("./routes/notebookQuery"));
 app.use("/api/endorsement", require("./routes/endorsementRoutes")); //FOR ENDORSEMENT
 app.use("/api/endorsement-details", require("./routes/endorsmentDetailsRoutes")); //FOR ENDORSEMENT DETAILS
 app.use("/api/pdo-notification", require("./routes/pdoNotificationRoutes")); //FOR PDO NOTIFICATIONS
+app.use("/api/pdo-endorsement", require("./routes/pdo-endorsement-routes")); //FOR PDO ENDORSEMENT PAGE
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {

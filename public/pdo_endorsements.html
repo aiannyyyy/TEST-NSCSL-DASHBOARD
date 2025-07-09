@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     <!-- endinject -->
     <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
+
+    <!-- Material Design Icons (Required for mdi icons) -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
     <!-- End plugin css for this page -->
 
     <!-- inject:css -->
@@ -270,6 +273,65 @@
         display: block;
     }
     /* End Notification Style */
+
+    /* Endorsement Status Styles */
+    /* Custom styles for the redesigned buttons */
+    .btn-group .btn-check:checked + .btn {
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+
+    .btn-group .btn-check:checked + .btn.btn-outline-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: white;
+    }
+
+    .btn-group .btn-check:checked + .btn.btn-outline-success {
+        background-color: var(--bs-success);
+        border-color: var(--bs-success);
+        color: white;
+    }
+
+    .btn-group .btn-check:checked + .btn.btn-outline-danger {
+        background-color: var(--bs-danger);
+        border-color: var(--bs-danger);
+        color: white;
+    }
+
+    /* Hover effects */
+    .btn-outline-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Smooth transitions */
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Input styling */
+    #searchLabno {
+        border-radius: 20px;
+        border: 2px solid #e9ecef;
+        padding: 8px 16px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #searchLabno:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+    /* Endorsement Status Styles */
 </style>
 <body class="with-welcome-text">
 
@@ -413,14 +475,107 @@
 
             </ul>
         </nav>
+
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <!-- Row for full-width chart -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <!-- Table Content -->
+                            <div class="table-content">
+                                <!-- 🔍 Search Box -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <label for="searchLabno" class="form-label mb-0 fw-semibold">Search:</label>
+                                        <input type="text" id="searchLabno" class="form-control" style="width: 200px;" placeholder="Search Lab Number...">
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-semibold">Status:</span>
+                                        <div class="btn-group" role="group" aria-label="Filter by status">
+                                            <input type="radio" class="btn-check" name="statusOptions" id="bothStatus" value="all" autocomplete="off" checked>
+                                            <label class="btn btn-outline-primary rounded-pill me-2" for="bothStatus">
+                                                <i class="mdi mdi-format-list-bulleted me-1"></i>All
+                                            </label>
+
+                                            <input type="radio" class="btn-check" name="statusOptions" id="openStatus" value="open" autocomplete="off">
+                                            <label class="btn btn-outline-success rounded-pill me-2" for="openStatus">
+                                                <i class="mdi mdi-lock-open-variant me-1"></i>Open
+                                            </label>
+
+                                            <input type="radio" class="btn-check" name="statusOptions" id="closedStatus" value="closed" autocomplete="off">
+                                            <label class="btn btn-outline-danger rounded-pill" for="closedStatus">
+                                                <i class="mdi mdi-lock me-1"></i>Closed
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light sticky-top">
+                                            <tr>
+                                                <th style="width: 12%;">Lab Number</th>
+                                                <th style="width: 15%;">Patient Name</th>
+                                                <th class="text-center" style="width: 8%;">Facility Code</th>
+                                                <th style="width: 15%;">Facility Name</th>
+                                                <th class="text-center" style="width: 10%;">Test Result</th>
+                                                <th style="width: 12%;">Remarks</th>
+                                                <th class="text-center" style="width: 8%;">Attachment</th>
+                                                <th class="text-center" style="width: 10%;">Date and Time Endorsed</th>
+                                                <th class="text-center" style="width: 12%;">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="visitTable">
+                                            <!-- JavaScript will populate rows here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+    <div class="modal fade" id="statusConfirmationModal" tabindex="-1" aria-labelledby="statusConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusConfirmationModalLabel">
+                        <i class="mdi mdi-alert-circle text-warning me-2"></i>
+                        Confirm Status Change
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="mdi mdi-information-outline text-info me-2"></i>
+                        <strong>Lab Number: <span id="modalLabNumber"></span></strong>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="mdi mdi-account text-primary me-2"></i>
+                        <strong>Patient: <span id="modalPatientName"></span></strong>
+                    </div>
+                    <hr>
+                    <p id="modalMessage" class="mb-0"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="mdi mdi-close me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmStatusChange">
+                        <i class="mdi mdi-check me-1"></i>Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-
-
-
-
-    <!-- plugins:js -->
+    </div>
+plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- endinject -->
@@ -456,6 +611,7 @@
     -->
 
     <script src="js/pdo-notification.js"></script>
+    <script src="js/pdo-endorsement.js"></script>
 
     <script src="js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
