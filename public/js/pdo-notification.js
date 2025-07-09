@@ -1,4 +1,5 @@
 // Enhanced Notification System Frontend JavaScript
+/*
 class NotificationManager {
     constructor() {
         this.notifications = [];
@@ -787,6 +788,747 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export for module usage
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NotificationManager;
+}
+
+*/
+
+// pdo-notifications.js - Enhanced Notification System
+
+/*
+class NotificationManager {
+    constructor() {
+        this.notifications = [];
+        this.userId = null;
+        this.isLoading = false;
+        this.pollingInterval = null;
+        this.refreshInterval = null; // 👈 5-second refresh interval
+        this.elements = {};
+
+        this.init();
+    }
+
+    init() {
+        this.userId = this.getUserId();
+
+        if (!this.userId) {
+            console.error('No user ID found. Please ensure user is logged in.');
+            return;
+        }
+
+        this.cacheElements();
+        this.setupEventListeners();
+        this.fetchNotifications(); // Initial load
+        this.startPolling();       // Start background fetching
+    }
+
+    getUserId() {
+        return localStorage.getItem("user_id") ||
+               sessionStorage.getItem("user_id") ||
+               document.querySelector('[data-user-id]')?.getAttribute('data-user-id') ||
+               window.currentUserId ||
+               "3";
+    }
+
+    cacheElements() {
+        this.elements = {
+            notificationBell: document.getElementById('notificationBell'),
+            notificationBadge: document.getElementById('notificationBadge'),
+            notificationDropdown: document.getElementById('notificationDropdown'),
+            notificationList: document.getElementById('notificationList'),
+            clearAllBtn: document.getElementById('clearAllBtn')
+        };
+    }
+
+    setupEventListeners() {
+        const { notificationBell, notificationDropdown, clearAllBtn } = this.elements;
+
+        notificationBell?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleDropdown();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown?.contains(e.target) && !notificationBell?.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+
+        notificationDropdown?.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        clearAllBtn?.addEventListener('click', () => {
+            this.clearAllNotifications();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.fetchNotifications();
+            }
+        });
+    }
+
+    async fetchNotifications() {
+        if (this.isLoading) return;
+        this.isLoading = true;
+
+        this.showLoadingState();
+
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.notifications = data.data.map(n => ({
+                    id: n.notification_id,
+                    type: this.getTypeFromTitle(n.title),
+                    title: n.title,
+                    message: n.message,
+                    time: this.formatTimeAgo(n.created_at),
+                    read: n.is_read === 1,
+                    createdAt: new Date(n.created_at),
+                    endorsedBy: n.endorsed_by || 'System'
+                }));
+
+                this.renderNotifications();
+                this.updateBadge();
+            } else {
+                this.showError(data.message || 'Failed to fetch notifications');
+            }
+        } catch (err) {
+            console.error('Fetch error:', err);
+            this.showError('Unable to load notifications. Please try again.');
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async fetchUnreadCount() {
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}/unread-count`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateBadge(data.count);
+            }
+        } catch (err) {
+            console.error('Unread count error:', err);
+        }
+    }
+
+    getTypeFromTitle(title) {
+        const lower = title.toLowerCase();
+        if (lower.includes('urgent') || lower.includes('critical') || lower.includes('error')) return 'danger';
+        if (lower.includes('success') || lower.includes('complete') || lower.includes('approved')) return 'success';
+        if (lower.includes('pending') || lower.includes('reminder')) return 'warning';
+        return 'info';
+    }
+
+    formatTimeAgo(dateStr) {
+        const then = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - then) / 60000);
+
+        if (diff < 1) return "just now";
+        if (diff < 60) return `${diff} minute${diff !== 1 ? 's' : ''} ago`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+        const days = Math.floor(hours / 24);
+        return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+
+    renderNotifications() {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        if (this.notifications.length === 0) {
+            notificationList.innerHTML = `<div class="no-notifications"><i class="mdi mdi-bell-off-outline"></i><div>No notifications</div></div>`;
+            return;
+        }
+
+        const sorted = this.notifications.sort((a, b) => b.createdAt - a.createdAt);
+
+        notificationList.innerHTML = sorted.map(n => `
+            <div class="notification-item ${!n.read ? 'unread' : ''}" data-id="${n.id}">
+                <div class="notification-icon ${n.type}">
+                    <i class="mdi ${this.getNotificationIcon(n.type)}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${this.escapeHtml(n.title)}</div>
+                    <div class="notification-message">${this.escapeHtml(n.message)}</div>
+                    <div class="notification-time">${n.time}</div>
+                    ${n.endorsedBy !== 'System' ? `<div class="notification-endorser">From: ${this.escapeHtml(n.endorsedBy)}</div>` : ''}
+                </div>
+                ${!n.read ? '<div class="unread-indicator"></div>' : ''}
+            </div>
+        `).join('');
+
+        this.setupNotificationItemListeners();
+    }
+
+    setupNotificationItemListeners() {
+        document.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const id = parseInt(item.dataset.id);
+                this.markAsRead(id);
+            });
+        });
+    }
+
+    getNotificationIcon(type) {
+        const icons = {
+            info: 'mdi-information',
+            success: 'mdi-check-circle',
+            warning: 'mdi-alert',
+            danger: 'mdi-alert-circle'
+        };
+        return icons[type] || 'mdi-bell';
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    updateBadge(count = null) {
+        const { notificationBadge } = this.elements;
+        const unreadCount = count !== null ? count : this.notifications.filter(n => !n.read).length;
+
+        notificationBadge.textContent = unreadCount;
+        notificationBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+
+        this.updateDocumentTitle(unreadCount);
+    }
+
+    updateDocumentTitle(unreadCount) {
+        const base = document.title.replace(/^\(\d+\) /, '');
+        document.title = unreadCount > 0 ? `(${unreadCount}) ${base}` : base;
+    }
+
+    async markAsRead(id) {
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${id}/read`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.notifications = this.notifications.map(n => n.id === id ? { ...n, read: true } : n);
+                this.renderNotifications();
+                this.updateBadge();
+            }
+        } catch (err) {
+            console.error('Mark as read error:', err);
+        }
+    }
+
+    async clearAllNotifications() {
+        const { clearAllBtn } = this.elements;
+        if (clearAllBtn) {
+            clearAllBtn.disabled = true;
+            clearAllBtn.textContent = 'Clearing...';
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}/mark-all-read`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+                this.renderNotifications();
+                this.updateBadge();
+            }
+        } catch (err) {
+            console.error('Clear error:', err);
+        } finally {
+            if (clearAllBtn) {
+                clearAllBtn.disabled = false;
+                clearAllBtn.textContent = 'Clear All';
+            }
+        }
+    }
+
+    toggleDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        const isOpen = notificationDropdown.classList.contains('show');
+        if (isOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
+    }
+
+    openDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        notificationDropdown.classList.add('show');
+        this.fetchNotifications(); // Refresh when opened
+    }
+
+    closeDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        notificationDropdown.classList.remove('show');
+    }
+
+    showLoadingState() {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        notificationList.innerHTML = `<div class="loading"><i class="mdi mdi-loading mdi-spin"></i><div>Loading notifications...</div></div>`;
+    }
+
+    showError(message) {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        notificationList.innerHTML = `<div class="error-message"><i class="mdi mdi-alert-circle"></i>${this.escapeHtml(message)}</div>`;
+    }
+
+    startPolling() {
+        // 🔁 30-second badge count refresh
+        this.pollingInterval = setInterval(() => {
+            if (!document.hidden) {
+                this.fetchUnreadCount();
+            }
+        }, 30000);
+
+        // 🔄 30-second full notification refresh
+        this.refreshInterval = setInterval(() => {
+            if (!document.hidden) {
+                this.fetchNotifications();
+            }
+        }, 30000);
+    }
+
+    stopPolling() {
+        clearInterval(this.pollingInterval);
+        clearInterval(this.refreshInterval);
+    }
+
+    refresh() {
+        this.fetchNotifications();
+    }
+
+    destroy() {
+        this.stopPolling();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    window.notificationManager = new NotificationManager();
+});
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NotificationManager;
+}
+
+*/
+class NotificationManager {
+    constructor() {
+        this.notifications = [];
+        this.userId = null;
+        this.isLoading = false;
+        this.pollingInterval = null;
+        this.refreshInterval = null;
+        this.elements = {};
+
+        this.init();
+    }
+
+    init() {
+        this.userId = this.getUserId();
+
+        if (!this.userId) {
+            console.error('❌ No user ID found. Please ensure user is logged in.');
+            this.showError('User not logged in. Please login first.');
+            return;
+        }
+
+        console.log('✅ Initialized NotificationManager for user_id:', this.userId);
+
+        this.cacheElements();
+        this.setupEventListeners();
+        this.fetchNotifications(); // Initial load
+        this.startPolling();       // Start background fetching
+    }
+
+    getUserId() {
+        // 🔧 FIXED: Removed hardcoded fallback and improved user ID retrieval
+        const userId = localStorage.getItem("user_id") ||
+                      sessionStorage.getItem("user_id") ||
+                      document.querySelector('[data-user-id]')?.getAttribute('data-user-id') ||
+                      window.currentUserId;
+
+        if (!userId) {
+            console.error('❌ No user_id found in localStorage, sessionStorage, or data attributes');
+            return null;
+        }
+
+        // Ensure it's a valid number
+        const numericUserId = parseInt(userId);
+        if (isNaN(numericUserId)) {
+            console.error('❌ Invalid user_id format:', userId);
+            return null;
+        }
+
+        return numericUserId.toString(); // Return as string for consistency
+    }
+
+    getUserName() {
+        // Get user's name from localStorage (stored during login)
+        return localStorage.getItem("username") || 
+               sessionStorage.getItem("username") || 
+               "User";
+    }
+
+    cacheElements() {
+        this.elements = {
+            notificationBell: document.getElementById('notificationBell'),
+            notificationBadge: document.getElementById('notificationBadge'),
+            notificationDropdown: document.getElementById('notificationDropdown'),
+            notificationList: document.getElementById('notificationList'),
+            clearAllBtn: document.getElementById('clearAllBtn')
+        };
+    }
+
+    setupEventListeners() {
+        const { notificationBell, notificationDropdown, clearAllBtn } = this.elements;
+
+        notificationBell?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleDropdown();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown?.contains(e.target) && !notificationBell?.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+
+        notificationDropdown?.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        clearAllBtn?.addEventListener('click', () => {
+            this.clearAllNotifications();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.fetchNotifications();
+            }
+        });
+    }
+
+    async fetchNotifications() {
+        if (this.isLoading || !this.userId) return;
+        this.isLoading = true;
+
+        this.showLoadingState();
+
+        try {
+            console.log('🔍 Fetching notifications for user_id:', this.userId);
+            
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('✅ Received notifications:', data.data.length);
+                
+                this.notifications = data.data.map(n => ({
+                    id: n.notification_id,
+                    type: this.getTypeFromTitle(n.title),
+                    title: n.title,
+                    message: n.message,
+                    time: this.formatTimeAgo(n.created_at),
+                    read: n.is_read === 1,
+                    createdAt: new Date(n.created_at),
+                    endorsedBy: n.endorsed_by || 'System'
+                }));
+
+                this.renderNotifications();
+                this.updateBadge();
+            } else {
+                console.error('❌ Failed to fetch notifications:', data.message);
+                this.showError(data.message || 'Failed to fetch notifications');
+            }
+        } catch (err) {
+            console.error('❌ Fetch error:', err);
+            this.showError('Unable to load notifications. Please try again.');
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async fetchUnreadCount() {
+        if (!this.userId) return;
+        
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}/unread-count`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateBadge(data.count);
+            }
+        } catch (err) {
+            console.error('Unread count error:', err);
+        }
+    }
+
+    getTypeFromTitle(title) {
+        const lower = title.toLowerCase();
+        if (lower.includes('urgent') || lower.includes('critical') || lower.includes('error')) return 'danger';
+        if (lower.includes('success') || lower.includes('complete') || lower.includes('approved')) return 'success';
+        if (lower.includes('pending') || lower.includes('reminder')) return 'warning';
+        return 'info';
+    }
+
+    formatTimeAgo(dateStr) {
+        const then = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - then) / 60000);
+
+        if (diff < 1) return "just now";
+        if (diff < 60) return `${diff} minute${diff !== 1 ? 's' : ''} ago`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+        const days = Math.floor(hours / 24);
+        return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+
+    renderNotifications() {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        if (this.notifications.length === 0) {
+            const userName = this.getUserName();
+            notificationList.innerHTML = `
+                <div class="no-notifications">
+                    <i class="mdi mdi-bell-off-outline"></i>
+                    <div>No notifications found for ${userName}</div>
+                </div>
+            `;
+            return;
+        }
+
+        const sorted = this.notifications.sort((a, b) => b.createdAt - a.createdAt);
+
+        notificationList.innerHTML = sorted.map(n => `
+            <div class="notification-item ${!n.read ? 'unread' : ''}" data-id="${n.id}">
+                <div class="notification-icon ${n.type}">
+                    <i class="mdi ${this.getNotificationIcon(n.type)}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${this.escapeHtml(n.title)}</div>
+                    <div class="notification-message">${this.escapeHtml(n.message)}</div>
+                    <div class="notification-time">${n.time}</div>
+                    ${n.endorsedBy !== 'System' ? `<div class="notification-endorser">From: ${this.escapeHtml(n.endorsedBy)}</div>` : ''}
+                </div>
+                ${!n.read ? '<div class="unread-indicator"></div>' : ''}
+            </div>
+        `).join('');
+
+        this.setupNotificationItemListeners();
+    }
+
+    setupNotificationItemListeners() {
+        document.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const id = parseInt(item.dataset.id);
+                this.markAsRead(id);
+            });
+        });
+    }
+
+    getNotificationIcon(type) {
+        const icons = {
+            info: 'mdi-information',
+            success: 'mdi-check-circle',
+            warning: 'mdi-alert',
+            danger: 'mdi-alert-circle'
+        };
+        return icons[type] || 'mdi-bell';
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    updateBadge(count = null) {
+        const { notificationBadge } = this.elements;
+        if (!notificationBadge) return;
+
+        const unreadCount = count !== null ? count : this.notifications.filter(n => !n.read).length;
+
+        notificationBadge.textContent = unreadCount;
+        notificationBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+
+        this.updateDocumentTitle(unreadCount);
+    }
+
+    updateDocumentTitle(unreadCount) {
+        const base = document.title.replace(/^\(\d+\) /, '');
+        document.title = unreadCount > 0 ? `(${unreadCount}) ${base}` : base;
+    }
+
+    async markAsRead(id) {
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${id}/read`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.notifications = this.notifications.map(n => n.id === id ? { ...n, read: true } : n);
+                this.renderNotifications();
+                this.updateBadge();
+            }
+        } catch (err) {
+            console.error('Mark as read error:', err);
+        }
+    }
+
+    async clearAllNotifications() {
+        if (!this.userId) return;
+
+        const { clearAllBtn } = this.elements;
+        if (clearAllBtn) {
+            clearAllBtn.disabled = true;
+            clearAllBtn.textContent = 'Clearing...';
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3001/api/pdo-notification/${this.userId}/mark-all-read`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+                this.renderNotifications();
+                this.updateBadge();
+            }
+        } catch (err) {
+            console.error('Clear error:', err);
+        } finally {
+            if (clearAllBtn) {
+                clearAllBtn.disabled = false;
+                clearAllBtn.textContent = 'Clear All';
+            }
+        }
+    }
+
+    toggleDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        const isOpen = notificationDropdown.classList.contains('show');
+        if (isOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
+    }
+
+    openDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        notificationDropdown.classList.add('show');
+        this.fetchNotifications(); // Refresh when opened
+    }
+
+    closeDropdown() {
+        const { notificationDropdown } = this.elements;
+        if (!notificationDropdown) return;
+
+        notificationDropdown.classList.remove('show');
+    }
+
+    showLoadingState() {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        notificationList.innerHTML = `
+            <div class="loading">
+                <i class="mdi mdi-loading mdi-spin"></i>
+                <div>Loading notifications...</div>
+            </div>
+        `;
+    }
+
+    showError(message) {
+        const { notificationList } = this.elements;
+        if (!notificationList) return;
+
+        notificationList.innerHTML = `
+            <div class="error-message">
+                <i class="mdi mdi-alert-circle"></i>
+                ${this.escapeHtml(message)}
+            </div>
+        `;
+    }
+
+    startPolling() {
+        if (!this.userId) return;
+
+        // 🔁 30-second badge count refresh
+        this.pollingInterval = setInterval(() => {
+            if (!document.hidden) {
+                this.fetchUnreadCount();
+            }
+        }, 30000);
+
+        // 🔄 30-second full notification refresh
+        this.refreshInterval = setInterval(() => {
+            if (!document.hidden) {
+                this.fetchNotifications();
+            }
+        }, 30000);
+    }
+
+    stopPolling() {
+        clearInterval(this.pollingInterval);
+        clearInterval(this.refreshInterval);
+    }
+
+    refresh() {
+        this.fetchNotifications();
+    }
+
+    destroy() {
+        this.stopPolling();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    window.notificationManager = new NotificationManager();
+});
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = NotificationManager;
 }

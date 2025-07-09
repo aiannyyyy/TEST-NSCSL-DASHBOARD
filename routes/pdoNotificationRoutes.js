@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const db = require('../config/mysqlConnectionPromise'); // Adjust path if needed
@@ -18,10 +19,10 @@ const handleDbResponse = (result) => {
 // GET: All notifications for a user
 // ========================
 router.get('/:userId', async (req, res) => {
-    const userId = String(req.params.userId); // Ensure consistent type for comparison
+    const userId = req.params.userId;
 
-    // Basic input check
-    if (!userId || userId.trim() === '') {
+    // 🔧 FIXED: Consistent validation - check if it's a valid number
+    if (!userId || isNaN(parseInt(userId))) {
         return res.status(400).json({
             success: false,
             message: 'Invalid or missing user ID'
@@ -29,16 +30,23 @@ router.get('/:userId', async (req, res) => {
     }
 
     try {
-        console.log(`🔍 Fetching notifications for user_id: "${userId}"`);
+        console.log(`🔍 Fetching notifications for user_id: ${userId}`);
 
+        // 🔧 FIXED: Use consistent integer comparison
         const [rows] = await db.execute(
             `SELECT * FROM test_pdo_notifications 
-             WHERE CAST(user_id AS CHAR) = ? 
+             WHERE user_id = ? 
              ORDER BY created_at DESC`,
-            [userId]
+            [parseInt(userId)]
         );
 
         console.log(`✅ Found ${rows.length} notification(s) for user_id: ${userId}`);
+        
+        // 🔧 ADDED: Log the user_ids found for debugging
+        if (rows.length > 0) {
+            const userIds = [...new Set(rows.map(row => row.user_id))];
+            console.log(`📋 User IDs in results: ${userIds.join(', ')}`);
+        }
 
         res.json({
             success: true,
@@ -47,15 +55,11 @@ router.get('/:userId', async (req, res) => {
         });
 
     } catch (err) {
-        // Print entire error object for debugging
         console.error('❌ Error fetching notifications:', err);
-
-        // Respond with full details (temporarily while debugging)
         res.status(500).json({
             success: false,
             message: 'Error fetching notifications',
-            error: err.message,
-            stack: err.stack
+            error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
         });
     }
 });
