@@ -62,7 +62,9 @@ router.post('/login', async (req, res) => {
             };
 
             console.log("✅ Login successful!");
+            req.session.user = userData; // 🔐 Store user in session
             res.json({ success: true, message: 'Login successful', user: userData });
+
 
         } catch (error) {
             console.error("❌ Error comparing passwords:", error);

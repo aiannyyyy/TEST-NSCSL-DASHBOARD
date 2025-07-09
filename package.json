@@ -21,6 +21,7 @@
     "ds": "^2.0.2",
     "excel": "^1.0.1",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "fs": "^0.0.1-security",
     "fsa": "^0.5.1",
     "multer": "^2.0.1",

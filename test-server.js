@@ -10,6 +10,7 @@ const oracledb = require("oracledb");
 const mysqlDb = require("./config/mysqlConnection"); // ✅ MySQL Connection
 const connectOracle = require("./config/oracleConnection"); // ✅ Oracle Connection
 const mysqlDb1 = require("./config/inhouseConnection"); // ✅ Oracle Connection
+const mysql2Db = require("./config/mysqlConnectionPromise"); // ✅ MySQL Promise Connection
 
 const app = express();
 
@@ -219,6 +220,7 @@ app.use("/api/notebook-query", require("./routes/notebookQuery"));
 
 app.use("/api/endorsement", require("./routes/endorsementRoutes")); //FOR ENDORSEMENT
 app.use("/api/endorsement-details", require("./routes/endorsmentDetailsRoutes")); //FOR ENDORSEMENT DETAILS
+app.use("/api/pdo-notification", require("./routes/pdoNotificationRoutes")); //FOR PDO NOTIFICATIONS
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -260,4 +262,3 @@ app.listen(PORT, 'localhost', () => {
   console.log(`🚀 Test Server running on http://localhost:${PORT}`);
   console.log(`🧪 Test Environment Active`);
 });
-

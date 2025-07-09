@@ -252,7 +252,7 @@ async function saveEndorsement() {
     const testResult = document.getElementById('testResult').value.trim();
     const remarks = document.getElementById('remarks').value.trim();
     const attachmentFile = document.getElementById('attachment').files[0];
-    const endorsed_by = document.getElementById('user-name').value.trim(); // Replace with actual user if available
+    const endorsed_by = document.getElementById('user-name')?.textContent.trim() || 'System'; // Replace with actual user if available
 
     // Log all form data for debugging
     console.log('Form Data:', {
@@ -267,7 +267,8 @@ async function saveEndorsement() {
             name: attachmentFile.name,
             size: attachmentFile.size,
             type: attachmentFile.type
-        } : null
+        } : null,
+        endorsed_by
     });
 
     // Enhanced validation
