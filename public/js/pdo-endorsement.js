@@ -1,24 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const visitTable = document.getElementById('visitTable');
     let currentStatusData = null;
-    let allEndorsements = []; // Store all data for filtering
+    let allEndorsements = [];
 
     if (!visitTable) {
         console.error('visitTable element not found in DOM');
         return;
     }
 
-    // Load all endorsements initially
     loadEndorsements();
 
     function loadEndorsements() {
         fetch('http://localhost:3001/api/pdo-endorsement')
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(result => {
-                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+                if (result.success && Array.isArray(result.data)) {
                     allEndorsements = result.data;
                     renderTable(allEndorsements);
                     attachEventListeners();
@@ -34,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTable(data) {
         visitTable.innerHTML = '';
-        
+
         if (data.length === 0) {
             visitTable.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No matching endorsements found</td></tr>`;
             return;
@@ -43,37 +39,24 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach(item => {
             const fullName = `${item.fname} ${item.lname}`;
             const dateTime = formatDateTime(item.date_endorsed);
-
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><span class="badge bg-light text-dark">${item.labno}</span></td>
                 <td><div class="fw-semibold">${fullName}</div></td>
                 <td class="text-center"><span class="badge bg-secondary">${item.facility_code}</span></td>
-                <td>
-                    <div class="text-truncate" style="max-width: 150px;" title="${item.facility_name}">
-                        ${item.facility_name}
-                    </div>
-                </td>
+                <td><div class="text-truncate" style="max-width: 150px;" title="${item.facility_name}">${item.facility_name}</div></td>
                 <td class="text-center">${getTestResultBadge(item.test_result)}</td>
-                <td>
-                    <span class="text-truncate d-inline-block" style="max-width: 120px;" title="${item.remarks}">
-                        ${item.remarks}
-                    </span>
-                </td>
+                <td><span class="text-truncate d-inline-block" style="max-width: 120px;" title="${item.remarks}">${item.remarks}</span></td>
                 <td class="text-center">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary view-btn" title="View Attachment" data-id="${item.id}">
-                            <i class="mdi mdi-eye"></i>
-                        </button>
-                    </div>
+                    <button class="btn btn-sm btn-outline-primary view-btn" title="View Attachment" data-id="${item.id}">
+                        <i class="mdi mdi-eye"></i>
+                    </button>
                 </td>
                 <td class="text-center">
                     <small>${dateTime}</small><br>
                     <small class="text-muted">${item.endorsed_by}</small>
                 </td>
-                <td class="text-center">
-                    ${getStatusButton(item)}
-                </td>
+                <td class="text-center">${getStatusButton(item)}</td>
             `;
             visitTable.appendChild(row);
         });
@@ -82,101 +65,66 @@ document.addEventListener('DOMContentLoaded', () => {
     function filterData() {
         const searchValue = document.getElementById('searchLabno').value.toLowerCase();
         const statusFilter = document.querySelector('input[name="statusOptions"]:checked').value;
-        
-        let filteredData = allEndorsements;
+        let filtered = allEndorsements;
 
-        // Filter by status
         if (statusFilter !== 'all') {
-            filteredData = filteredData.filter(item => {
-                // Convert database status to string format
-                let itemStatus;
-                if (item.status === 0 || item.status === '0') {
-                    itemStatus = 'closed';
-                } else if (item.status === 1 || item.status === '1') {
-                    itemStatus = 'open';
-                } else if (item.status === null || item.status === undefined || item.status === '') {
-                    itemStatus = 'open'; // Default to 'open' for null/undefined
-                } else if (typeof item.status === 'string') {
-                    itemStatus = item.status.toLowerCase();
-                } else {
-                    itemStatus = 'open'; // Default fallback
-                }
-                return itemStatus === statusFilter;
-            });
+            filtered = filtered.filter(item => normalizeStatus(item.status) === statusFilter);
         }
 
-        // Filter by lab number
         if (searchValue) {
-            filteredData = filteredData.filter(item => 
-                item.labno.toLowerCase().includes(searchValue)
-            );
+            filtered = filtered.filter(item => item.labno.toLowerCase().includes(searchValue));
         }
 
-        renderTable(filteredData);
+        renderTable(filtered);
         attachEventListeners();
     }
 
+    function normalizeStatus(status) {
+        if (status === 0 || status === '0') return 'closed';
+        if (status === 1 || status === '1') return 'open';
+        if (!status) return 'open';
+        return typeof status === 'string' ? status.toLowerCase() : 'open';
+    }
+
     function attachEventListeners() {
-        // View button listeners
-        document.querySelectorAll('.view-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.currentTarget.dataset.id;
                 window.open(`http://localhost:3001/api/pdo-endorsement/view/${id}`, '_blank');
             });
         });
 
-        // Status button listeners
-        document.querySelectorAll('.status-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                const labno = e.currentTarget.getAttribute('data-labno');
-                const patientName = e.currentTarget.getAttribute('data-patient');
-                const currentStatus = e.currentTarget.getAttribute('data-status');
-                
-                showStatusModal({ id, labno, patientName, status: currentStatus });
-            });
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            const id = btn.dataset.id;
+            const labno = btn.dataset.labno;
+            const patientName = btn.dataset.patient;
+            const status = btn.dataset.status;
+            btn.addEventListener('click', () => showStatusModal({ id, labno, patientName, status }));
         });
     }
 
-    // Search functionality
     document.getElementById('searchLabno').addEventListener('input', filterData);
-
-    // Status filter functionality
     document.querySelectorAll('input[name="statusOptions"]').forEach(radio => {
         radio.addEventListener('change', filterData);
     });
 
-    function showStatusModal(item) {
-        currentStatusData = item;
+    function showStatusModal(data) {
+        currentStatusData = data;
         const modal = new bootstrap.Modal(document.getElementById('statusConfirmationModal'));
+        document.getElementById('modalLabNumber').textContent = data.labno;
+        document.getElementById('modalPatientName').textContent = data.patientName;
 
-        document.getElementById('modalLabNumber').textContent = item.labno;
-        document.getElementById('modalPatientName').textContent = item.patientName;
-
+        const currentStatus = normalizeStatus(data.status);
         const modalMessage = document.getElementById('modalMessage');
         const confirmButton = document.getElementById('confirmStatusChange');
 
-        const currentStatus = typeof item.status === 'string' ? item.status.toLowerCase() : 'open';
-
         if (currentStatus === 'open') {
-            modalMessage.innerHTML = `
-                <div class="alert alert-warning">
-                    <i class="mdi mdi-lock me-2"></i>
-                    Are you sure you want to <strong>close</strong> this case?
-                </div>
-                <small class="text-muted">This action will mark the case as closed and may restrict further modifications.</small>
-            `;
-            confirmButton.innerHTML = '<i class="mdi mdi-lock me-1"></i>Close Case';
+            modalMessage.innerHTML = `<div class="alert alert-warning"><i class="mdi mdi-lock me-2"></i>Close this case?</div>`;
+            confirmButton.textContent = 'Close Case';
             confirmButton.className = 'btn btn-warning';
         } else {
-            modalMessage.innerHTML = `
-                <div class="alert alert-success">
-                    <i class="mdi mdi-lock-open-variant me-2"></i>
-                    Are you sure you want to <strong>reopen</strong> this case?
-                </div>
-                <small class="text-muted">This action will mark the case as open and allow further modifications.</small>
-            `;
-            confirmButton.innerHTML = '<i class="mdi mdi-lock-open-variant me-1"></i>Reopen Case';
+            modalMessage.innerHTML = `<div class="alert alert-success"><i class="mdi mdi-lock-open-variant me-2"></i>Reopen this case?</div>`;
+            confirmButton.textContent = 'Reopen Case';
             confirmButton.className = 'btn btn-success';
         }
 
@@ -184,142 +132,163 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('confirmStatusChange').addEventListener('click', () => {
-        if (currentStatusData) {
-            const currentStatus = typeof currentStatusData.status === 'string' ? currentStatusData.status.toLowerCase() : 'open';
-            const newStatus = currentStatus === 'open' ? 'closed' : 'open';
+        if (!currentStatusData) return;
+        const currentStatus = normalizeStatus(currentStatusData.status);
+        const newStatus = currentStatus === 'open' ? 'closed' : 'open';
 
-            fetch(`http://localhost:3001/api/pdo-endorsement/update-status/${currentStatusData.id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: newStatus })
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    // Update the local data and re-render instead of full page reload
-                    const itemIndex = allEndorsements.findIndex(item => item.id == currentStatusData.id);
-                    if (itemIndex !== -1) {
-                        allEndorsements[itemIndex].status = newStatus;
-                        filterData(); // Re-apply current filters
-                    }
-                    showToast(`Case ${currentStatusData.labno} has been ${newStatus}ed successfully.`);
-                } else {
-                    showToast('Failed to update status. Please try again.', 'error');
+        const confirmBtn = document.getElementById('confirmStatusChange');
+        confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Updating...';
+        confirmBtn.disabled = true;
+
+        fetch(`http://localhost:3001/api/pdo-endorsement/update-status/${currentStatusData.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                const index = allEndorsements.findIndex(i => i.id == currentStatusData.id);
+                if (index !== -1) {
+                    allEndorsements[index].status = newStatus === 'open' ? 1 : 0;
                 }
-            })
-            .catch(error => {
-                console.error('Error updating status:', error);
-                showToast('Failed to update status. Please try again.', 'error');
-            });
-
-            const modal = bootstrap.Modal.getInstance(document.getElementById('statusConfirmationModal'));
-            modal.hide();
-            currentStatusData = null;
-        }
+                filterData();
+                showToast(`Case ${currentStatusData.labno} ${newStatus}ed successfully.`);
+            } else {
+                showToast(result.message || 'Failed to update status.', 'error');
+            }
+        })
+        .catch(() => showToast('Failed to update status.', 'error'))
+        .finally(() => {
+            confirmBtn.textContent = newStatus === 'open' ? 'Reopen Case' : 'Close Case';
+            confirmBtn.disabled = false;
+            bootstrap.Modal.getInstance(document.getElementById('statusConfirmationModal')).hide();
+        });
     });
 
     function getStatusButton(item) {
-        // Convert database status to string format
-        let status;
-        if (item.status === 0 || item.status === '0') {
-            status = 'closed';
-        } else if (item.status === 1 || item.status === '1') {
-            status = 'open';
-        } else if (item.status === null || item.status === undefined || item.status === '') {
-            status = 'open'; // Default to 'open' for null/undefined
-        } else if (typeof item.status === 'string') {
-            status = item.status.toLowerCase();
-        } else {
-            status = 'open'; // Default fallback
-        }
-        
+        const status = normalizeStatus(item.status);
         const fullName = `${item.fname} ${item.lname}`;
-
-        if (status === 'open') {
-            return `
-                <button class="btn btn-sm btn-outline-success status-btn" 
-                        data-id="${item.id}" 
-                        data-labno="${item.labno}"
-                        data-patient="${fullName}"
-                        data-status="open"
-                        title="Click to close case">
-                    <i class="mdi mdi-lock-open-variant me-1"></i>Open
-                </button>
-            `;
-        } else {
-            return `
-                <button class="btn btn-sm btn-outline-danger status-btn" 
-                        data-id="${item.id}" 
-                        data-labno="${item.labno}"
-                        data-patient="${fullName}"
-                        data-status="closed"
-                        title="Click to reopen case">
-                    <i class="mdi mdi-lock me-1"></i>Closed
-                </button>
-            `;
-        }
+        return `
+            <button class="btn btn-sm btn-outline-${status === 'open' ? 'success' : 'danger'} status-btn"
+                data-id="${item.id}" data-labno="${item.labno}" data-patient="${fullName}" data-status="${status}">
+                <i class="mdi mdi-lock${status === 'open' ? '-open-variant' : ''} me-1"></i>${status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>`;
     }
 
     function formatDateTime(dateStr) {
         if (!dateStr) return 'N/A';
         const date = new Date(dateStr);
         return date.toLocaleString('en-PH', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
         });
     }
 
     function getTestResultBadge(result) {
-        let badgeClass = 'bg-secondary';
-        if (typeof result === 'string') {
-            const val = result.toLowerCase();
-            if (val === 'positive') badgeClass = 'bg-success';
-            else if (val === 'negative') badgeClass = 'bg-danger';
-            else if (val === 'pending') badgeClass = 'bg-warning text-dark';
-        }
-        return `<span class="badge ${badgeClass}">${result || 'N/A'}</span>`;
+        const value = (result || '').toLowerCase();
+        let badge = 'bg-secondary';
+        if (value === 'positive') badge = 'bg-success';
+        else if (value === 'negative') badge = 'bg-danger';
+        else if (value === 'pending') badge = 'bg-warning text-dark';
+        return `<span class="badge ${badge}">${result || 'N/A'}</span>`;
     }
 
     function showToast(message, type = 'success') {
-        const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+        const container = document.getElementById('toastContainer') || createToastContainer();
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.setAttribute('role', 'alert');
-
-        const iconClass = type === 'success' ? 'mdi-check-circle text-success' : 'mdi-alert-circle text-danger';
-        const titleText = type === 'success' ? 'Success' : 'Error';
-
         toast.innerHTML = `
             <div class="toast-header">
-                <i class="mdi ${iconClass} me-2"></i>
-                <strong class="me-auto">${titleText}</strong>
+                <i class="mdi mdi-${type === 'success' ? 'check-circle text-success' : 'alert-circle text-danger'} me-2"></i>
+                <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
             </div>
             <div class="toast-body">${message}</div>
         `;
-
-        toastContainer.appendChild(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
-
-        toast.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
-        });
+        container.appendChild(toast);
+        new bootstrap.Toast(toast).show();
+        toast.addEventListener('hidden.bs.toast', () => toast.remove());
     }
 
     function createToastContainer() {
         const container = document.createElement('div');
         container.id = 'toastContainer';
         container.className = 'toast-container position-fixed top-0 end-0 p-3';
-        container.style.zIndex = '9999';
+        container.style.zIndex = 9999;
         document.body.appendChild(container);
         return container;
     }
+
+    // === EXPORT FEATURE ===
+    document.getElementById('exportForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const start = new Date(document.getElementById('startDate').value);
+        const end = new Date(document.getElementById('endDate').value);
+        end.setHours(23, 59, 59); // Include entire end date
+
+        const filtered = allEndorsements.filter(item => {
+            const date = new Date(item.date_endorsed);
+            return date >= start && date <= end;
+        });
+
+        if (filtered.length === 0) {
+            showToast('No data in selected date range.', 'error');
+            return;
+        }
+
+        exportToCSV(filtered);
+        bootstrap.Modal.getInstance(document.getElementById('exportModal')).hide();
+    });
+
+    function exportToCSV(data) {
+        const headers = ['Lab Number', 'Name', 'Facility Code', 'Facility Name', 'Test Result', 'Remarks', 'Date Endorsed', 'Endorsed By', 'Status'];
+        const rows = data.map(i => [
+            i.labno,
+            `${i.fname} ${i.lname}`,
+            i.facility_code,
+            i.facility_name,
+            i.test_result,
+            i.remarks,
+            formatDateTime(i.date_endorsed),
+            i.endorsed_by,
+            normalizeStatus(i.status)
+        ]);
+
+        const csv = [headers, ...rows].map(r => r.map(cell => `"${(cell || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `PDO_Endorsements_${Date.now()}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Auto-fill export modal with full current month (e.g., 2025-07-01 to 2025-07-31)
+    const exportModal = document.getElementById('exportModal');
+    exportModal.addEventListener('show.bs.modal', () => {
+        const today = new Date();
+
+        const year = today.getFullYear();
+        const month = today.getMonth(); // 0-indexed
+
+        // Force first and last day of *this* month
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0); // Day 0 of next month = last day of this month
+
+        // Format to YYYY-MM-DD (required for HTML date inputs)
+        const formatYYYYMMDD = (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        };
+
+        document.getElementById('startDate').value = formatYYYYMMDD(firstDay);
+        document.getElementById('endDate').value = formatYYYYMMDD(lastDay);
+    });
+
 });
