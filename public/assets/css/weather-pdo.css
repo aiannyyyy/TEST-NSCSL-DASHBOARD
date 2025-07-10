@@ -1,0 +1,319 @@
+
+
+        .weather-widget {
+            color: white;
+            border-radius: 15px;
+            padding: 18px 25px;
+            width: 101%;
+            max-width: 2000px;
+            height: 100px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .weather-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        .weather-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            gap: 20px;
+        }
+
+        .current-weather {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .temp-display {
+            font-size: 2rem;
+            font-weight: 300;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            min-width: 80px;
+        }
+
+        .weather-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .weather-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .location-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .weather-condition {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-transform: capitalize;
+        }
+
+        .forecast-compact {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .forecast-day-compact {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 8px 10px;
+            text-align: center;
+            flex: 1;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 55px;
+        }
+
+        .forecast-day-compact:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .forecast-date-compact {
+            font-size: 0.65rem;
+            opacity: 0.8;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .forecast-icon-compact {
+            font-size: 1rem;
+            margin: 2px 0;
+        }
+
+        .forecast-temp-compact {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .province-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: #fff;
+            transform: scale(1.4);
+        }
+
+        .refresh-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Weather condition backgrounds */
+        .weather-widget.clear {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+        }
+
+        .weather-widget.clouds {
+            background: linear-gradient(90deg, #bdc3c7, #2c3e50);
+        }
+
+        .weather-widget.rain {
+            background: linear-gradient(90deg, #314755, #26a0da);
+        }
+
+        .weather-widget.drizzle {
+            background: linear-gradient(90deg, #5D4157, #A8CABA);
+        }
+
+        .weather-widget.thunderstorm {
+            background: linear-gradient(90deg, #232526, #414345);
+        }
+
+        .weather-widget.mist, .weather-widget.haze, .weather-widget.fog {
+            background: linear-gradient(90deg, #606c88, #3f4c6b);
+        }
+
+        .weather-widget.snow {
+            background: linear-gradient(90deg, #E6DADA, #274046);
+        }
+
+        .loading {
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .error {
+            background: linear-gradient(90deg, #e74c3c, #c0392b) !important;
+            justify-content: center;
+        }
+
+        .spinner {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-top: 1px solid white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .weather-widget {
+                padding: 12px 15px;
+                height: 50px;
+            }
+            
+            .temp-display {
+                font-size: 1.5rem;
+                min-width: 60px;
+            }
+            
+            .weather-icon {
+                font-size: 1.5rem;
+            }
+            
+            .location-name {
+                font-size: 0.9rem;
+            }
+            
+            .weather-condition {
+                font-size: 0.7rem;
+            }
+            
+            .forecast-compact {
+                max-width: 200px;
+                gap: 6px;
+            }
+            
+            .forecast-day-compact {
+                min-width: 35px;
+                padding: 4px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .weather-widget {
+                padding: 10px 12px;
+                height: 45px;
+            }
+            
+            .temp-display {
+                font-size: 1.3rem;
+                min-width: 50px;
+            }
+            
+            .weather-icon {
+                font-size: 1.3rem;
+            }
+            
+            .forecast-compact {
+                max-width: 150px;
+                gap: 4px;
+            }
+            
+            .forecast-day-compact {
+                min-width: 30px;
+                padding: 3px 5px;
+            }
+        }

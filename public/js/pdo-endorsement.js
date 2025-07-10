@@ -2,13 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const visitTable = document.getElementById('visitTable');
     let currentStatusData = null;
     let allEndorsements = [];
+    let pollingInterval = null;
+    let isPollingActive = true;
+    const POLLING_INTERVAL = 3 * 60 * 1000; // 3 minutes in milliseconds
 
     if (!visitTable) {
         console.error('visitTable element not found in DOM');
         return;
     }
 
+    // Initial load
     loadEndorsements();
+    
+    // Start polling
+    startPolling();
 
     function loadEndorsements() {
         fetch('http://localhost:3001/api/pdo-endorsement')
@@ -27,6 +34,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 visitTable.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Failed to load data</td></tr>`;
             });
     }
+
+    function startPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+        
+        pollingInterval = setInterval(() => {
+            if (isPollingActive) {
+                console.log('Auto-refreshing data...');
+                loadEndorsements();
+            }
+        }, POLLING_INTERVAL);
+    }
+
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+
+    function pausePolling() {
+        isPollingActive = false;
+    }
+
+    function resumePolling() {
+        isPollingActive = true;
+    }
+
+    // Pause polling when user is interacting with modals
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(trigger => {
+        trigger.addEventListener('click', pausePolling);
+    });
+
+    // Resume polling when modals are closed
+    document.addEventListener('hidden.bs.modal', () => {
+        resumePolling();
+    });
+
+    // Pause polling when page is not visible (user switched tabs)
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pausePolling();
+        } else {
+            resumePolling();
+        }
+    });
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        stopPolling();
+    });
 
     function renderTable(data) {
         visitTable.innerHTML = '';
@@ -290,5 +349,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('startDate').value = formatYYYYMMDD(firstDay);
         document.getElementById('endDate').value = formatYYYYMMDD(lastDay);
     });
+
+    // Optional: Add manual refresh button functionality
+    // You can add this to your HTML: <button id="manualRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+    const manualRefreshBtn = document.getElementById('manualRefresh');
+    if (manualRefreshBtn) {
+        manualRefreshBtn.addEventListener('click', () => {
+            loadEndorsements();
+            showToast('Data refreshed manually.');
+        });
+    }
 
 });
