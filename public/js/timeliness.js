@@ -1,3 +1,4 @@
+/*
 document.addEventListener("DOMContentLoaded", function () {
     let selectedYear1 = new Date().getFullYear() - 1; // last year
     let selectedYear2 = new Date().getFullYear();     // current year
@@ -206,4 +207,185 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize dropdown text and fetch initial data
     updateDropdownText();
     fetchData();
+});
+*/
+document.addEventListener("DOMContentLoaded", function () {
+    let selectedYear1 = new Date().getFullYear() - 1;
+    let selectedYear2 = new Date().getFullYear();
+    let selectedProvince = "Batangas";
+    let selectedMonth = new Date().getMonth() + 1;
+
+    const monthMap = {
+        "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+        "Jul": 7, "Aug": 8, "Sept": 9, "Oct": 10, "Nov": 11, "Dec": 12
+    };
+    const numberToMonth = {};
+    Object.keys(monthMap).forEach(month => {
+        numberToMonth[monthMap[month]] = month;
+    });
+
+    let chartAOC = null;
+    let chartTransit = null;
+    let chartAOS = null;
+
+    function updateDropdownText() {
+        document.getElementById("monthDropdownButton").textContent = numberToMonth[selectedMonth];
+        document.getElementById("year1Dropdown").textContent = selectedYear1;
+        document.getElementById("year2Dropdown").textContent = selectedYear2;
+        document.getElementById("provinceDropdownButton").textContent = selectedProvince;
+
+        const provinceTitle = document.querySelector(".province");
+        if (provinceTitle) provinceTitle.textContent = selectedProvince;
+    }
+
+    async function fetchChartData() {
+        try {
+            const url = `http://localhost:3001/api/timeliness?year1=${selectedYear1}&year2=${selectedYear2}&month=${selectedMonth}&province=${selectedProvince}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+            const data = await response.json();
+            if (!data || data.length === 0 || data.message === "No data found") {
+                console.warn("No data available for selected criteria");
+                return;
+            }
+
+            const year1Data = data.find(item => item.MONTH_YEAR.startsWith(selectedYear1.toString()));
+            const year2Data = data.find(item => item.MONTH_YEAR.startsWith(selectedYear2.toString()));
+
+            if (!year1Data || !year2Data) {
+                console.warn("Data incomplete for both years");
+                return;
+            }
+
+            const commonOptions = {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Days' }
+                    }
+                }
+            };
+
+            if (chartAOC) chartAOC.destroy();
+            if (chartTransit) chartTransit.destroy();
+            if (chartAOS) chartAOS.destroy();
+
+            // Chart 1: Age of Collection
+            chartAOC = new Chart(document.getElementById('chartAOC'), {
+                type: 'bar',
+                data: {
+                    labels: ['Mean', 'Median', 'Mode'],
+                    datasets: [
+                        {
+                            label: `${selectedYear1}`,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            data: [year1Data.AOC_AVE, year1Data.AOC_MED, year1Data.AOC_MOD]
+                        },
+                        {
+                            label: `${selectedYear2}`,
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                            data: [year2Data.AOC_AVE, year2Data.AOC_MED, year2Data.AOC_MOD]
+                        }
+                    ]
+                },
+                options: commonOptions
+            });
+
+            // Chart 2: Transit Time
+            chartTransit = new Chart(document.getElementById('chartTransit'), {
+                type: 'bar',
+                data: {
+                    labels: ['Mean', 'Median', 'Mode'],
+                    datasets: [
+                        {
+                            label: `${selectedYear1}`,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            data: [year1Data.TRANSIT_AVE, year1Data.TRANSIT_MED, year1Data.TRANSIT_MOD]
+                        },
+                        {
+                            label: `${selectedYear2}`,
+                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                            data: [year2Data.TRANSIT_AVE, year2Data.TRANSIT_MED, year2Data.TRANSIT_MOD]
+                        }
+                    ]
+                },
+                options: commonOptions
+            });
+
+            // Chart 3: Age Upon Receipt (AOS)
+            chartAOS = new Chart(document.getElementById('chartAOS'), {
+                type: 'bar',
+                data: {
+                    labels: ['Mean', 'Median', 'Mode'],
+                    datasets: [
+                        {
+                            label: `${selectedYear1}`,
+                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                            data: [year1Data.AOS_AVE, year1Data.AOS_MED, year1Data.AOS_MOD]
+                        },
+                        {
+                            label: `${selectedYear2}`,
+                            backgroundColor: 'rgba(255, 205, 86, 0.6)',
+                            data: [year2Data.AOS_AVE, year2Data.AOS_MED, year2Data.AOS_MOD]
+                        }
+                    ]
+                },
+                options: commonOptions
+            });
+
+        } catch (error) {
+            console.error("Chart fetch error:", error);
+            alert("Failed to load chart data.");
+        }
+    }
+
+    // Year 1 dropdown
+    document.querySelectorAll("#year1Menu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function (event) {
+            event.preventDefault();
+            selectedYear1 = parseInt(item.getAttribute("time-year1-value"));
+            updateDropdownText();
+            fetchChartData();
+        });
+    });
+
+    // Year 2 dropdown
+    document.querySelectorAll("#year2Menu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function (event) {
+            event.preventDefault();
+            selectedYear2 = parseInt(item.getAttribute("time-year2-value"));
+            updateDropdownText();
+            fetchChartData();
+        });
+    });
+
+    // Month dropdown
+    document.querySelectorAll("#monthMenu .dropdown-item").forEach(item => {
+        item.addEventListener("click", function (event) {
+            event.preventDefault();
+            const monthName = item.getAttribute("time-month-value");
+            selectedMonth = monthMap[monthName];
+            updateDropdownText();
+            fetchChartData();
+        });
+    });
+
+    // Province dropdown
+    document.querySelectorAll(".province-item").forEach(item => {
+        item.addEventListener("click", function (event) {
+            event.preventDefault();
+            selectedProvince = item.getAttribute("time-prov-value");
+            updateDropdownText();
+            fetchChartData();
+        });
+    });
+
+    updateDropdownText();
+    fetchChartData();
 });
