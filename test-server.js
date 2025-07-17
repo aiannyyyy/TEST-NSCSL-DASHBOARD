@@ -225,6 +225,8 @@ app.use("/api/endorsement-details", require("./routes/endorsmentDetailsRoutes"))
 app.use("/api/pdo-notification", require("./routes/pdoNotificationRoutes")); //FOR PDO NOTIFICATIONS
 app.use("/api/pdo-endorsement", require("./routes/pdo-endorsement-routes")); //FOR PDO ENDORSEMENT PAGE
 
+app.use("/api", require("./routes/nsf-performanceRoutes")); // FOR NSF PERFORMANCE
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

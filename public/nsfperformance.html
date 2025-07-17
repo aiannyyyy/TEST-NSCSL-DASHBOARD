@@ -4,29 +4,584 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>NSCSL DASHBOARD </title>
+    <title>NSCSL DASHBOARD</title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="/public/assets/vendors/feather/feather.css">
-    <link rel="stylesheet" href="/public/assets/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="/public/assets/vendors/ti-icons/css/themify-icons.css">
-    <link rel="stylesheet" href="/public/assets/vendors/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/public/assets/vendors/typicons/typicons.css">
-    <link rel="stylesheet" href="/public/assets/vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="/public/assets/vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="/public/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     <!-- endinject -->
     <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="/public/assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
-    <link rel="stylesheet" type="text/css" href="/public/assets/js/select.dataTables.min.css">
+    <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
     <!-- End plugin css for this page -->
 
     <!-- inject:css -->
-    <link rel="stylesheet" href="/public/assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
-    <link rel="shortcut icon" href="/public/assets/images/ncslogo.ico" />
+    <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
     
   </head>
   <style>
+    .nav .nav-item {
+        padding: 10px 0; /* Adds vertical spacing */
+        }
+
+        .nav .nav-link {
+        padding: 12px 15px; /* Adjust link padding for better spacing */
+        border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+    }
+
+     /* Notification Style */
+    /* Notification Styles */
+    .notification-dropdown {
+        position: relative;
+        margin-right: 15px;
+    }
+
+    .notification-bell {
+        position: relative;
+        padding: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 28px;
+        color: #6c757d;
+        transition: color 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        color: #007bff;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .notification-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 320px;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .notification-dropdown-menu.show {
+        display: block;
+    }
+
+    .notification-header {
+        padding: 15px;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .notification-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f1f1f1;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 3px solid #007bff;
+    }
+
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .notification-icon.info {
+        background-color: #17a2b8;
+    }
+
+    .notification-icon.success {
+        background-color: #28a745;
+    }
+
+    .notification-icon.warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .notification-icon.danger {
+        background-color: #dc3545;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #495057;
+        margin-bottom: 4px;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        color: #6c757d;
+        margin-bottom: 4px;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        font-size: 11px;
+        color: #adb5bd;
+    }
+
+    .notification-footer {
+        padding: 10px 15px;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .view-all-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    .clear-all-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .clear-all-btn:hover {
+        color: #495057;
+    }
+
+    .no-notifications {
+        padding: 30px 15px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .no-notifications i {
+        font-size: 24px;
+        margin-bottom: 10px;
+        display: block;
+    }
+    /* End Notification Style */
+
+    /* Performance Main Panel */
+    .main-panel {
+        padding: 20px;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .province-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .province-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .province-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+
+    .province-card h3 {
+        color: #2c3e50;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .province-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .province-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .facility-performance {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .performance-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 25px;
+        border-left: 4px solid #667eea;
+    }
+
+    .performance-card h4 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .metric-item {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .metric-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .breakdown-section {
+        background: #fff3cd;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border-left: 4px solid #ffc107;
+    }
+
+    .breakdown-section h5 {
+        color: #856404;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .unsatisfactory-section {
+        background: #f8d7da;
+        border-radius: 12px;
+        padding: 25px;
+        border-left: 4px solid #dc3545;
+    }
+
+    .unsatisfactory-section h3 {
+        color: #721c24;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .unsat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .unsat-item {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .unsat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #dc3545;
+    }
+
+    .unsat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .facilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .facility-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .facility-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+
+    .facility-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+    }
+
+    .facility-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .facility-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .facility-info h4 {
+        color: #2c3e50;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .facility-info p {
+        color: #495057;
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .facility-location {
+        background: #e9ecef;
+        color: #6c757d;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .facility-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .filter-controls {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-controls select,
+    .filter-controls input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .province-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .performance-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .metric-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .filter-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+    /* End Performance Main Panel */
   
   </style>
   <body class="with-welcome-text">
@@ -51,10 +606,31 @@
             <ul class="navbar-nav">
                 <li class="nav-item fw-semibold d-none d-lg-block ms-0">
                 <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
-                <h3 class="welcome-sub-text fw-semibold">Welcome to PDO Dashboard </h3>
+                <h3 class="welcome-sub-text fw-semibold">Welcome to NSF Performance Dashboard </h3>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+                <!-- Notification Dropdown -->
+                <li class="nav-item notification-dropdown">
+                    <button class="notification-bell" id="notificationBell">
+                    <i class="mdi mdi-bell-outline"></i>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    <div class="notification-dropdown-menu" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h6>Notifications 
+                        <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                        </h6>
+                    </div>
+                    <div id="notificationList">
+                    <!-- Notifications will be populated here -->
+                    </div>
+                        <div class="notification-footer">
+                        <a href="#" class="view-all-link">View All Notifications</a>
+                        </div>
+                    </div>
+                </li>
+
                 <li class="nav-item dropdown d-none d-lg-block user-dropdown">
                 <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                     <img class="img-xs rounded-circle" src="assets/images/faces/user.png" alt="Profile image"> </a>
@@ -95,9 +671,9 @@
                 </a>
                 <div class="collapse" id="nscsl-admin">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="/public/admin.html">Overview</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="/public/admin.html">Accounting</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="/public/admin.html">Supply & Purchasing</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="admin.html">Overview</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="admin.html">Accounting</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="admin.html">Supply & Purchasing</a></li>
                 </ul>
                 </div>
             </li>
@@ -110,8 +686,8 @@
                 </a>
                 <div class="collapse" id="nscsl-pdo">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="/public/index.html">Overview</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="/public/nsfperformance.html">NSF Performance</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="nsfperformance.html">NSF Performance</a></li>
                     <!--
                     <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
                     -->
@@ -127,8 +703,8 @@
                 </a>
                 <div class="collapse" id="nscsl-lab">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="/public/labindex.html">Overview</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="/public/demographics.html">Demo & Unsat</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="labindex.html">Overview</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="demographics.html">Demo & Unsat</a></li>
                     <!--
                     <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
                     -->
@@ -144,7 +720,7 @@
                 </a>
                 <div class="collapse" id="nscsl-followup">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="/public/followup.html">Overview</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="followup.html">Overview</a></li>
                 </ul>
                 </div>
             </li>
@@ -153,66 +729,449 @@
         </nav>
 
         <div class="main-panel">
-            <div class="content-wrapper">
-                <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                    <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">NSF Performance Report</h4>
-                        <form id="reportForm" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="facilityCode" class="form-label">Facility Code</label>
-                            <input type="text" class="form-control" id="facilityCode" name="facilityCode" placeholder="Enter facility code" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-primary">View Report</button>
-                        </div>
-                        </form>
-
-                        <!-- Report Viewer Output -->
-                        <div id="reportResult" class="mt-4">
-                        <!-- Chart or table will be displayed here -->
-                        <p class="text-muted">Please fill out the form and click "View Report" to see data.</p>
-                        </div>
-
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1><i class="fas fa-chart-line"></i> UNFIT AND UNSAT FACILITY PERFORMANCE</h1>
+                <p>Comprehensive analysis of facility performance across all provinces</p>
             </div>
 
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <h5 class="mb-3"><i class="fas fa-filter"></i> Filter Options</h5>
+                <div class="filter-controls">
+                    <select id="provinceFilter">
+                        <option value="cavite">Cavite</option>
+                        <option value="laguna">Laguna</option>
+                        <option value="batangas">Batangas</option>
+                        <option value="rizal">Rizal</option>
+                        <option value="quezon">Quezon</option>
+                    </select>
+                    <input type="date" id="startDate" placeholder="Start Date">
+                    <input type="date" id="endDate" placeholder="End Date">
+                    <button class="btn btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Province Overview -->
+            <div class="province-grid">
+                <div class="province-card" onclick="selectProvince('cavite')">
+                    <h3>
+                        <div class="province-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        Cavite
+                    </h3>
+                    <div class="province-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">24</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,245</div>
+                            <div class="stat-label">Samples</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3.2%</div>
+                            <div class="stat-label">Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="province-card" onclick="selectProvince('laguna')">
+                    <h3>
+                        <div class="province-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        Laguna
+                    </h3>
+                    <div class="province-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">18</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">967</div>
+                            <div class="stat-label">Samples</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2.8%</div>
+                            <div class="stat-label">Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="province-card" onclick="selectProvince('batangas')">
+                    <h3>
+                        <div class="province-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        Batangas
+                    </h3>
+                    <div class="province-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">31</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,532</div>
+                            <div class="stat-label">Samples</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">4.1%</div>
+                            <div class="stat-label">Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="province-card" onclick="selectProvince('rizal')">
+                    <h3>
+                        <div class="province-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        Rizal
+                    </h3>
+                    <div class="province-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">789</div>
+                            <div class="stat-label">Samples</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2.1%</div>
+                            <div class="stat-label">Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="province-card" onclick="selectProvince('quezon')">
+                    <h3>
+                        <div class="province-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        Quezon
+                    </h3>
+                    <div class="province-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">42</div>
+                            <div class="stat-label">Facilities</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2,156</div>
+                            <div class="stat-label">Samples</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3.7%</div>
+                            <div class="stat-label">Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilities List Section -->
+            <div id="facilitiesSection" class="facility-performance">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    Select a Facility to View Performance
+                </div>
+
+                <div class="facilities-grid">
+                    <div class="facility-card" onclick="showFacilityPerformance('F001', 'Cavite Provincial Hospital', 'Cavite')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F001</h4>
+                                <p>Cavite Provincial Hospital</p>
+                                <span class="facility-location">Cavite</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">1,245</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">3.2%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="facility-card" onclick="showFacilityPerformance('F002', 'Laguna Medical Center', 'Laguna')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F002</h4>
+                                <p>Laguna Medical Center</p>
+                                <span class="facility-location">Laguna</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">967</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">2.8%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="facility-card" onclick="showFacilityPerformance('F003', 'Batangas General Hospital', 'Batangas')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F003</h4>
+                                <p>Batangas General Hospital</p>
+                                <span class="facility-location">Batangas</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">1,532</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.1%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="facility-card" onclick="showFacilityPerformance('F004', 'Rizal Provincial Hospital', 'Rizal')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F004</h4>
+                                <p>Rizal Provincial Hospital</p>
+                                <span class="facility-location">Rizal</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">789</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">2.1%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="facility-card" onclick="showFacilityPerformance('F005', 'Quezon Memorial Hospital', 'Quezon')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F005</h4>
+                                <p>Quezon Memorial Hospital</p>
+                                <span class="facility-location">Quezon</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">2,156</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">3.7%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="facility-card" onclick="showFacilityPerformance('F006', 'Antipolo District Hospital', 'Rizal')">
+                        <div class="facility-header">
+                            <div class="facility-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="facility-info">
+                                <h4>F006</h4>
+                                <p>Antipolo District Hospital</p>
+                                <span class="facility-location">Rizal</span>
+                            </div>
+                        </div>
+                        <div class="facility-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">654</div>
+                                <div class="stat-label">Total Samples</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">1.9%</div>
+                                <div class="stat-label">Unsat Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Overview Section (Initially Hidden) -->
+            <div id="performanceSection" class="facility-performance" style="display: none;">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <span id="selectedFacilityTitle">Facility Performance Overview</span>
+                        <button class="btn btn-sm btn-outline-primary ms-3" onclick="backToFacilities()">
+                            <i class="fas fa-arrow-left"></i> Back to Facilities
+                        </button>
+                    </div>
+                </div>
+
+                <div class="performance-grid">
+                    <div class="performance-card">
+                        <h4><i class="fas fa-info-circle"></i> Facility Information</h4>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="facilityCode">F001</div>
+                                <div class="metric-label">Facility Code</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="facilityName">General Hospital</div>
+                                <div class="metric-label">Facility Name</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="performance-card">
+                        <h4><i class="fas fa-vial"></i> Sample Statistics</h4>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="totalSamples">1,245</div>
+                                <div class="metric-label">Total Samples</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="averageAOC">2.5</div>
+                                <div class="metric-label">Average AOC</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="avgTransitTime">3.2h</div>
+                                <div class="metric-label">Avg Transit Time</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="performance-card">
+                        <h4><i class="fas fa-chart-pie"></i> Birth Classification</h4>
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <div class="metric-value" id="inbornTotal">892</div>
+                                <div class="metric-label">Inborn Total</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="outbornTotal">353</div>
+                                <div class="metric-label">Outborn Total</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="avgAOCInborn">2.3</div>
+                                <div class="metric-label">Avg AOC Inborn</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value" id="avgAOCOutborn">2.8</div>
+                                <div class="metric-label">Avg AOC Outborn</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breakdown Section -->
+                <div class="breakdown-section">
+                    <h5><i class="fas fa-chart-bar"></i> Breakdown of Outborn</h5>
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-value" id="homebirth">178</div>
+                            <div class="metric-label">Homebirth</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="hobNotEqualHO">125</div>
+                            <div class="metric-label">HOB ≠ HO</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="unknown">50</div>
+                            <div class="metric-label">Unknown</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unsatisfactory Section -->
+                <div class="unsatisfactory-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Unsatisfactory Samples</h3>
+                    <div class="unsat-grid">
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="contaminated">12</div>
+                            <div class="unsat-label">Contaminated</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="insufficient">8</div>
+                            <div class="unsat-label">Insufficient</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="lessThan24h">15</div>
+                            <div class="unsat-label">Less than 24h</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="dataErasures">3</div>
+                            <div class="unsat-label">Data Erasures</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="missingInfo">2</div>
+                            <div class="unsat-label">Missing Info</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="totalUnsatCount">40</div>
+                            <div class="unsat-label">Total Unsat Count</div>
+                        </div>
+                        <div class="unsat-item">
+                            <div class="unsat-value" id="totalUnsatRate">3.2%</div>
+                            <div class="unsat-label">Total Unsat Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- main-panel ends -->
       </div>
       <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="/public/assets/vendors/js/vendor.bundle.base.js"></script>
-    <script src="/public/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
-    <script src="/publicassets/vendors/chart.js/chart.umd.js"></script>
+    <script src="assets/vendors/chart.js/chart.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/publicassets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
     <!-- End plugin js for this page -->
     <!-- inject:js -->
-    <script src="/public/assets/js/off-canvas.js"></script>
-    <script src="/public/seets/js/template.js"></script>
-    <script src="/public/assets/js/settings.js"></script>
-    <script src="/public/assets/js/hoverable-collapse.js"></script>
-    <script src="/public/assets/js/todolist.js"></script>
-    <script src="/public/assets/js/event.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="aseets/js/template.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <script src="assets/js/event.js"></script>
     <!-- endinject -->
 
+    <script src="js/pdo-notification.js"></script>
+    <script src="js/nsf-performance.js"></script>
 
     <!--
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>

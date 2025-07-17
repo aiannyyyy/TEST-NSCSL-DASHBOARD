@@ -83,7 +83,7 @@
     overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
     border: 1px solid #ddd;
     white-space: nowrap;
-    display: block;
+    display: block; 
     max-height: none; /* Remove max-height to prevent extra space */
   }
 
@@ -1328,36 +1328,39 @@ table.table-sm td:first-child {
             </div>
         </div>
       </div>
-    
-              
 
-
-      <!-- ✅ Facilities Modal -->
-      <div class="modal fade" id="facilitiesModal" tabindex="-1" aria-labelledby="facilitiesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="facilitiesModalLabel">Facility List</h5>
+  <!-- ✅ Facilities Modal -->
+  <div class="modal fade" id="facilitiesModal" tabindex="-1" aria-labelledby="facilitiesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-between align-items-center">
+            <h5 class="modal-title" id="facilitiesModalLabel">Facility List</h5>
+            <div class="d-flex align-items-center gap-2">
+              <button type="button" class="btn btn-outline-dark btn-sm" onclick="exportFacilitiesToExcel()">
+                <i class="mdi mdi-download"></i> Export
+              </button>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Facility Code</th>
-                    <th>Facility Name</th>
-                    <th>Date Visited</th>
-                    <th>Province</th>
-                  </tr>
-                </thead>
-                <tbody id="facilityTableBody">
+          </div>
+          <div class="modal-body">
+            <table class="table table-bordered" id="facilityTable">
+              <thead>
+                <tr>
+                  <th>Facility Code</th>
+                  <th>Facility Name</th>
+                  <th>Date Visited</th>
+                  <th>Province</th>
+                </tr>
+              </thead>
+              <tbody id="facilityTableBody">
                 <!-- dynamically filled -->
-                </tbody>
-              </table>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
+
     <!-- Add/Edit Facility Visit Modal -->
     <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -1548,6 +1551,16 @@ table.table-sm td:first-child {
               document.getElementById("user-name").textContent = username;
           }
       });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DOWNLOADING FACILITIES MODAL-->
+    <script>
+    function exportFacilitiesToExcel() {
+        const table = document.getElementById("facilityTable");
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Facilities" });
+        XLSX.writeFile(wb, "Facility_List.xlsx");
+    }
     </script>
     <!--END SCRIPT-->
 

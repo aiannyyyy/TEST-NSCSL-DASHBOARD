@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
         LEFT JOIN PHMSDS.RESULT_ARCHIVE ra 
             ON sda.LABNO = ra.LABNO
         WHERE sda.SPECTYPE IN (20, 87)
-          AND EXTRACT(YEAR FROM sda.DTRECV) IN (:year1, :year2)
+            AND EXTRACT(YEAR FROM sda.DTRECV) IN (:year1, :year2)
         GROUP BY TO_CHAR(sda.DTRECV, 'YYYY-MM')
         ORDER BY month
     `;
