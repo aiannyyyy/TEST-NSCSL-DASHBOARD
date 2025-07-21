@@ -6,11 +6,25 @@ let currentProvinceData = {};
 document.addEventListener('DOMContentLoaded', function() {
     // Set default date range (current month - first day to last day)
     const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const year = today.getFullYear();
+    const month = today.getMonth(); // 0-based month (July = 6)
     
-    document.getElementById('startDate').value = firstDayOfMonth.toISOString().split('T')[0];
-    document.getElementById('endDate').value = lastDayOfMonth.toISOString().split('T')[0];
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0); // Day 0 of next month = last day of current month
+    
+    // Format dates to YYYY-MM-DD for input fields
+    const startDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+    const endDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDayOfMonth.getDate()).padStart(2, '0')}`;
+    
+    console.log('Today:', today);
+    console.log('Month (0-based):', month);
+    console.log('First day of month:', firstDayOfMonth);
+    console.log('Last day of month:', lastDayOfMonth);
+    console.log('Start date string:', startDateStr);
+    console.log('End date string:', endDateStr);
+    
+    document.getElementById('startDate').value = startDateStr;
+    document.getElementById('endDate').value = endDateStr;
     
     // Set default province in dropdown
     document.getElementById('provinceFilter').value = 'batangas';
@@ -47,10 +61,13 @@ async function loadProvinceData(county, dateFrom = null, dateTo = null) {
         // Set default dates if not provided (current month - first day to last day)
         if (!dateFrom || !dateTo) {
             const today = new Date();
-            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            dateFrom = firstDayOfMonth.toISOString().split('T')[0];
-            dateTo = lastDayOfMonth.toISOString().split('T')[0];
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            
+            dateFrom = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            dateTo = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDayOfMonth.getDate()).padStart(2, '0')}`;
         }
 
         const url = `http://localhost:3001/api/nsf-performance?county=${encodeURIComponent(county)}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
