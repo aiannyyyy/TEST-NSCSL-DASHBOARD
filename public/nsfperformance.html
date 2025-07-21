@@ -677,7 +677,7 @@
                 </div>
             </li>
 
-            <li class="nav-item">
+             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
                 <i class="mdi mdi-office-building menu-icon"></i>
                 <span class="menu-title"> PDO </span>
@@ -686,9 +686,14 @@
                 <div class="collapse" id="nscsl-pdo">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="sample_receive.html">Sample Received</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="sample_screened.html">Sample Screened</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="pdo_endorsements.html">Endorsements</a></li>
                     <li class="nav-item"> <a class="nav-link" href="nsfperformance.html">NSF Performance</a></li>
+                    
                     <!--
                     <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="/public/nsfperformance.html">NSF Performance</a></li>
                     -->
                 </ul>
                 </div>
@@ -741,7 +746,7 @@
                     <select id="provinceFilter">
                         <option value="cavite">Cavite</option>
                         <option value="laguna">Laguna</option>
-                        <option value="batangas">Batangas</option>
+                        <option value="batangas" selected>Batangas</option>
                         <option value="rizal">Rizal</option>
                         <option value="quezon">Quezon</option>
                     </select>
@@ -752,7 +757,6 @@
                     </button>
                 </div>
             </div>
-
             <!-- Province Overview -->
             <div class="province-grid">
                 <div class="province-card" onclick="selectProvince('cavite')">
