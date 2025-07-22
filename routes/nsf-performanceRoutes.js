@@ -24,59 +24,6 @@ router.get("/nsf-performance", async (req, res) => {
 
         console.log("[REQUEST PARAMS]", { county, dateFrom, dateTo });
 
-        /*
-        const query = `
-            SELECT
-                sda.SUBMID,
-                rpa.DESCR1 AS FACILITY_NAME,
-                COUNT(DISTINCT sda.LABNO) AS TOTAL_SAMPLE_COUNT,
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP = sda.SUBMID THEN sda.LABNO END) AS TOTAL_INBORN,
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP = 'HOME' THEN sda.LABNO END) AS TOTAL_HOMEBIRTH,
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP NOT IN ('HOME', 'UNK') AND sda.BIRTHHOSP <> sda.SUBMID THEN sda.LABNO END) AS TOTAL_HOB,
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP = 'UNK' THEN sda.LABNO END) AS TOTAL_UNKNOWN,
-
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP = 'HOME' THEN sda.LABNO END) +
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP NOT IN ('HOME', 'UNK') AND sda.BIRTHHOSP <> sda.SUBMID THEN sda.LABNO END) +
-                COUNT(DISTINCT CASE WHEN sda.BIRTHHOSP = 'UNK' THEN sda.LABNO END) AS OUTBORN_TOTAL,
-
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC = 'E100' THEN sda.LABNO END) AS MISSING_INFORMATION,
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC = 'E102' THEN sda.LABNO END) AS LESS_THAN_24_HOURS,
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC = 'E108' THEN sda.LABNO END) AS INSUFFICIENT,
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC = 'E109' THEN sda.LABNO END) AS CONTAMINATED,
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC = 'DE' THEN sda.LABNO END) AS DATA_ERASURES,
-
-                COUNT(DISTINCT CASE WHEN ldr.MNEMONIC IN ('E100', 'E102', 'E108', 'E109', 'DE') THEN sda.LABNO END) AS TOTAL_UNSAT_COUNT,
-
-                ROUND(
-                    COUNT(DISTINCT CASE WHEN ldr.MNEMONIC IN ('E100', 'E102', 'E108', 'E109', 'DE') THEN sda.LABNO END) * 100.0
-                    / NULLIF(COUNT(DISTINCT sda.LABNO), 0),
-                    2
-                ) AS TOTAL_UNSAT_RATE,
-
-                ROUND(AVG(CASE WHEN sda.SPECTYPE IN (20, 87) THEN sda.AGECOLL / 24 END), 2) AS AVE_AOC,
-                ROUND(AVG(sda.DTRECV - sda.DTCOLL), 2) AS TRANSIT_TIME,
-                ROUND(AVG(CASE WHEN sda.BIRTHHOSP = sda.SUBMID AND sda.SPECTYPE IN (20, 87) THEN sda.AGECOLL / 24 END), 2) AS INBORN_AVERAGE,
-                ROUND(AVG(CASE WHEN sda.BIRTHHOSP <> sda.SUBMID AND sda.SPECTYPE IN (20, 87) THEN sda.AGECOLL / 24 END), 2) AS OUTBORN_AVERAGE
-
-            FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
-            JOIN PHMSDS.REF_PROVIDER_ADDRESS rpa 
-                ON rpa.PROVIDERID = sda.SUBMID AND rpa.ADRS_TYPE = '1'
-            JOIN PHMSDS.RESULT_ARCHIVE ra 
-                ON sda.LABNO = ra.LABNO
-            JOIN PHMSDS.LIB_DISORDER_RESULT ldr 
-                ON ra.MNEMONIC = ldr.MNEMONIC
-
-            WHERE
-                rpa.ADRS_TYPE = '1'
-                AND sda.DTRECV BETWEEN TO_DATE(:dateFrom, 'YYYY-MM-DD') 
-                AND TO_DATE(:dateTo || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
-                AND sda.LABNO NOT LIKE '_______8%'
-                AND TRIM(rpa.COUNTY) = :county
-
-            GROUP BY sda.SUBMID, rpa.COUNTY, rpa.DESCR1
-            ORDER BY sda.SUBMID, rpa.DESCR1
-        `;
-        */
         const query = `WITH filtered_sda AS (
                     SELECT *
                     FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE
@@ -202,5 +149,86 @@ router.get("/nsf-performance", async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: err.message });
     }
 });
+
+router.get("/nsf-performance-details", async (req, res) => {
+    try {
+        const oracleDb = req.app.locals.oracleDb;
+
+        if (!oracleDb) {
+            console.error("[DB ERROR] OracleDB not connected");
+            return res.status(500).json({ error: "OracleDB is not connected" });
+        }
+
+        const { submid, dateFrom, dateTo, category } = req.query;
+
+        if (!submid || !dateFrom || !dateTo || !category) {
+            return res.status(400).json({ error: "Missing required parameters" });
+        }
+
+        // Map category to SQL WHERE conditions
+        let condition = "";
+        switch (category) {
+            case "TOTAL_SAMPLE_COUNT":
+                condition = `sda.submid = :submid`;
+                break;
+            case "TOTAL_INBORN":
+                condition = `sda.birthplace = '1' AND sda.submid = :submid`;
+                break;
+            case "TOTAL_HOMEBIRTH":
+                condition = `sda.birthplace = '2' AND sda.submid = :submid`;
+                break;
+            case "TOTAL_HOB":
+                condition = `sda.birthplace = '3' AND sda.submid = :submid`;
+                break;
+            case "TOTAL_UNKNOWN":
+                condition = `(sda.birthplace IS NULL OR sda.birthplace = '0') AND sda.submid = :submid`;
+                break;
+            case "OUTBORN_TOTAL":
+                condition = `sda.birthplace IN ('2','3','0') AND sda.submid = :submid`;
+                break;
+            case "MISSING_INFORMATION":
+                condition = `sda.reasoncode = '1' AND sda.submid = :submid`;
+                break;
+            case "LESS_THAN_24_HOURS":
+                condition = `sda.reasoncode = '2' AND sda.submid = :submid`;
+                break;
+            case "INSUFFICIENT":
+                condition = `sda.reasoncode = '3' AND sda.submid = :submid`;
+                break;
+            case "CONTAMINATED":
+                condition = `sda.reasoncode = '4' AND sda.submid = :submid`;
+                break;
+            case "DATA_ERASURES":
+                condition = `sda.reasoncode = '5' AND sda.submid = :submid`;
+                break;
+            case "TOTAL_UNSAT_COUNT":
+                condition = `sda.spectype = 'U' AND sda.submid = :submid`;
+                break;
+            default:
+                return res.status(400).json({ error: "Invalid category" });
+        }
+
+        const sql = `
+            SELECT sda.labno
+            FROM sample_demog_archive sda
+            WHERE ${condition}
+              AND sda.dtreceived BETWEEN TO_DATE(:dateFrom, 'YYYY-MM-DD') AND TO_DATE(:dateTo, 'YYYY-MM-DD')
+        `;
+
+        const binds = {
+            submid,
+            dateFrom,
+            dateTo
+        };
+
+        const result = await oracleDb.execute(sql, binds, { outFormat: oracleDb.OBJECT });
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error("Error fetching labno details:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 
 module.exports = router;
