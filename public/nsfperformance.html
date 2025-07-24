@@ -978,20 +978,21 @@
 
             <!-- Facilities List Section -->
             <div id="facilitiesSection" class="facility-performance">
-                <div class="section-title">
-                    <div class="section-icon">
-                        <i class="fas fa-hospital"></i>
+                <div class="section-title d-flex justify-content-between align-items-center flex-wrap py-2">
+                    <!-- Left side: icon and title -->
+                    <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+                        <div class="section-icon">
+                            <i class="fas fa-hospital fa-lg text-primary"></i>
+                        </div>
+                        <span class="fw-semibold fs-5">Batangas Facilities - Select to View Performance</span>
                     </div>
-                    Select a Facility to View Performance
 
-                    <!-- Search input -->
-                    <div class="d-flex align-items-center gap-2 ms-auto">
+                    <!-- Right side: search input -->
+                    <div class="d-flex align-items-center gap-2">
                         <label for="searchCode" class="form-label mb-0 fw-semibold">Search:</label>
                         <input type="text" id="searchCode" class="form-control" style="width: 200px;" placeholder="Search Facility Code...">
                     </div>
-                    
                 </div>
-                
 
                 <div class="facilities-grid">
                     <div class="facility-card" onclick="showFacilityPerformance('F001', 'Cavite Provincial Hospital', 'Cavite')">
@@ -1144,6 +1145,10 @@
                         <span id="selectedFacilityTitle">Facility Performance Overview</span>
                         <button class="btn btn-sm btn-outline-primary ms-3" onclick="backToFacilities()">
                             <i class="fas fa-arrow-left"></i> Back to Facilities
+                        </button>
+
+                        <button class="btn btn-sm btn-outline-primary ms-3" onclick="generateReport()">
+                            <i class="fas fa-arrow-left"></i> Generate Report
                         </button>
                     </div>
                 </div>
