@@ -226,6 +226,7 @@ app.use("/api/pdo-notification", require("./routes/pdoNotificationRoutes")); //F
 app.use("/api/pdo-endorsement", require("./routes/pdo-endorsement-routes")); //FOR PDO ENDORSEMENT PAGE
 
 app.use("/api", require("./routes/nsf-performanceRoutes")); // FOR NSF PERFORMANCE
+app.use("/api", require("./routes/nsf-performance-generation")); // FOR NSF PERFORMANCE GENERATION
 
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

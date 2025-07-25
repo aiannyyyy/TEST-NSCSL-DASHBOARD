@@ -954,4 +954,144 @@ style.textContent = `
     }
 `;
 
+//Generate Report on crystal
+// Updated generateReport function for your frontend
+function generateReport() {
+    // Get current filter values from the form
+    const province = document.getElementById('provinceFilter').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Validate inputs
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates before generating the report.');
+        return;
+    }
+
+    if (new Date(startDate) > new Date(endDate)) {
+        alert('Start date cannot be after end date.');
+        return;
+    }
+
+    // Map province to submid (you may need to adjust these mappings)
+    const provinceToSubmid = {
+        'cavite': '0001',
+        'laguna': '0002', 
+        'batangas': '0003',
+        'rizal': '0004',
+        'quezon': '0005'
+    };
+
+    const submid = provinceToSubmid[province] || '0001'; // Default to cavite if not found
+
+    // Build the URL with current filter parameters
+    const url = `http://localhost:3001/api/generate-report?submid=${encodeURIComponent(submid)}&from=${encodeURIComponent(startDate)}&to=${encodeURIComponent(endDate)}`;
+
+    console.log('Opening report URL:', url);
+
+    // Show loading indicator
+    showLoading(true);
+
+    // Test the URL first with fetch to handle errors gracefully
+    fetch(url)
+        .then(response => {
+            showLoading(false);
+            
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                });
+            }
+            
+            // If successful, open in new tab
+            window.open(url, '_blank');
+        })
+        .catch(error => {
+            showLoading(false);
+            console.error('Error generating report:', error);
+            alert(`Error generating report: ${error.message}`);
+        });
+}
+
+// Alternative function if you want to show loading in a modal
+function generateReportWithModal() {
+    const province = document.getElementById('provinceFilter').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates before generating the report.');
+        return;
+    }
+
+    const provinceToSubmid = {
+        'cavite': '0001',
+        'laguna': '0002', 
+        'batangas': '0003',
+        'rizal': '0004',
+        'quezon': '0005'
+    };
+
+    const submid = provinceToSubmid[province] || '0001';
+
+    // Show a custom loading modal
+    showReportGenerationModal(true);
+
+    const url = `http://localhost:3001/api/generate-report?submid=${encodeURIComponent(submid)}&from=${encodeURIComponent(startDate)}&to=${encodeURIComponent(endDate)}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                });
+            }
+            
+            // Create a blob from the response
+            return response.blob();
+        })
+        .then(blob => {
+            showReportGenerationModal(false);
+            
+            // Create a blob URL and open it
+            const blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
+            
+            // Clean up the blob URL after a delay
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        })
+        .catch(error => {
+            showReportGenerationModal(false);
+            console.error('Error generating report:', error);
+            alert(`Error generating report: ${error.message}`);
+        });
+}
+
+// Helper function to show/hide report generation modal
+function showReportGenerationModal(show) {
+    let modal = document.getElementById('reportGenerationModal');
+    
+    if (!modal) {
+        // Create modal if it doesn't exist
+        modal = document.createElement('div');
+        modal.id = 'reportGenerationModal';
+        modal.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                        background: rgba(0,0,0,0.5); z-index: 9999; display: flex; 
+                        justify-content: center; align-items: center;">
+                <div style="background: white; padding: 2rem; border-radius: 8px; text-align: center;">
+                    <div class="spinner-border text-primary" role="status" style="margin-bottom: 1rem;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <h4>Generating Report...</h4>
+                    <p>Please wait while your PDF report is being generated.</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    modal.style.display = show ? 'flex' : 'none';
+}
+
 document.head.appendChild(style);
