@@ -26,7 +26,14 @@ router.get('/generate-report', (req, res) => {
     }
 
     const exePath = path.join(__dirname, '..', 'CrystalReportExporter', 'CrystalReportExporter.exe');
-    const pdfPath = path.join(__dirname, '..', 'CrystalReportExporter', 'Reports', 'nsf_performance.pdf');
+    
+    // Generate the expected PDF filename based on your VB.NET code
+    const fromFormatted = from.replace(/-/g, ''); // 2025-07-01 -> 20250701
+    const toFormatted = to.replace(/-/g, '');     // 2025-07-25 -> 20250725
+    const expectedPdfName = `nsf_performance_${submid}_${fromFormatted}_${toFormatted}.pdf`;
+    const pdfPath = path.join(__dirname, '..', 'CrystalReportExporter', 'Reports', expectedPdfName);
+
+    console.log(`Expected PDF path: ${pdfPath}`);
 
     // Check if exe exists
     if (!fs.existsSync(exePath)) {
@@ -45,15 +52,29 @@ router.get('/generate-report', (req, res) => {
     }
 
     // Execute the Crystal Report generator
-    execFile(exePath, [submid, from, to], { timeout: 30000 }, (error, stdout, stderr) => {
+    execFile(exePath, [submid, from, to], { 
+        timeout: 60000, // Increased timeout to 60 seconds
+        cwd: path.dirname(exePath) // Set working directory
+    }, (error, stdout, stderr) => {
         console.log('VB.NET Output:', stdout);
         if (stderr) console.log('VB.NET Stderr:', stderr);
 
         if (error) {
             console.error(`Execution error: ${error.message}`);
+            
+            // Provide more detailed error information
+            let errorMessage = 'Error generating report';
+            if (error.code === 'ETIMEDOUT') {
+                errorMessage = 'Report generation timed out. Please try again.';
+            } else if (error.code === 'ENOENT') {
+                errorMessage = 'Report generator executable not found.';
+            }
+            
             return res.status(500).json({ 
-                error: 'Error generating report', 
-                details: error.message 
+                error: errorMessage, 
+                details: error.message,
+                stdout: stdout,
+                stderr: stderr
             });
         }
 
@@ -61,32 +82,80 @@ router.get('/generate-report', (req, res) => {
         fs.access(pdfPath, fs.constants.F_OK, (err) => {
             if (err) {
                 console.error(`PDF file not found at: ${pdfPath}`);
+                
+                // Try to find any PDF files in the Reports directory for debugging
+                const reportsDir = path.join(__dirname, '..', 'CrystalReportExporter', 'Reports');
+                try {
+                    const files = fs.readdirSync(reportsDir);
+                    const pdfFiles = files.filter(file => path.extname(file).toLowerCase() === '.pdf');
+                    console.log('Available PDF files in Reports directory:', pdfFiles);
+                } catch (dirError) {
+                    console.error('Could not read Reports directory:', dirError.message);
+                }
+                
                 return res.status(500).json({ 
                     error: 'Report file not generated',
-                    path: pdfPath 
+                    expectedPath: pdfPath,
+                    stdout: stdout,
+                    stderr: stderr
                 });
             }
 
             console.log(`PDF found at: ${pdfPath}`);
 
-            // Set proper headers for PDF display
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'inline; filename=nsf_performance.pdf');
-            res.setHeader('Cache-Control', 'no-cache');
-
-            // Stream the PDF file
-            const fileStream = fs.createReadStream(pdfPath);
-            
-            fileStream.on('error', (streamError) => {
-                console.error('Stream error:', streamError);
-                if (!res.headersSent) {
-                    res.status(500).json({ error: 'Error reading PDF file' });
+            // Get file stats for additional info
+            fs.stat(pdfPath, (statErr, stats) => {
+                if (statErr) {
+                    console.warn('Could not get file stats:', statErr.message);
+                } else {
+                    console.log(`PDF file size: ${stats.size} bytes`);
                 }
-            });
 
-            fileStream.pipe(res);
+                // Set proper headers for PDF display
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `inline; filename="${expectedPdfName}"`);
+                res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+                res.setHeader('Pragma', 'no-cache');
+                res.setHeader('Expires', '0');
+
+                // Stream the PDF file
+                const fileStream = fs.createReadStream(pdfPath);
+                
+                fileStream.on('error', (streamError) => {
+                    console.error('Stream error:', streamError);
+                    if (!res.headersSent) {
+                        res.status(500).json({ error: 'Error reading PDF file' });
+                    }
+                });
+
+                fileStream.on('end', () => {
+                    console.log('PDF file streamed successfully');
+                });
+
+                fileStream.pipe(res);
+            });
         });
     });
+});
+
+// Optional: Add a health check endpoint
+router.get('/health', (req, res) => {
+    const exePath = path.join(__dirname, '..', 'CrystalReportExporter', 'CrystalReportExporter.exe');
+    const reportsDir = path.join(__dirname, '..', 'CrystalReportExporter', 'Reports');
+    
+    const health = {
+        status: 'ok',
+        exeExists: fs.existsSync(exePath),
+        reportsDirectoryExists: fs.existsSync(reportsDir),
+        timestamp: new Date().toISOString()
+    };
+    
+    if (!health.exeExists || !health.reportsDirectoryExists) {
+        health.status = 'error';
+        return res.status(500).json(health);
+    }
+    
+    res.json(health);
 });
 
 module.exports = router;
