@@ -1105,58 +1105,6 @@ function showFacilityPerformance(facilityId, facilityName, province) {
     if (totalUnsatRateElement) totalUnsatRateElement.textContent = (facility.TOTAL_UNSAT_RATE || 0).toFixed(1) + '%';
 }
 
-// Generate Report function - opens PDF in new tab
-function generateReport() {
-    // Check if a facility is currently selected
-    if (!currentFacilityId) {
-        alert('Please select a facility first to generate a report.');
-        return;
-    }
-
-    // Get the date range from the filter inputs
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-
-    // Validate dates
-    if (!startDate || !endDate) {
-        alert('Please select both start and end dates.');
-        return;
-    }
-
-    if (new Date(startDate) > new Date(endDate)) {
-        alert('Start date cannot be after end date.');
-        return;
-    }
-
-    // Show loading message
-    const originalText = 'Generate Report';
-    const generateButton = document.querySelector('button[onclick="generateReport()"]');
-    if (generateButton) {
-        generateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Report...';
-        generateButton.disabled = true;
-    }
-
-    // Build the report URL
-    const reportUrl = `http://localhost:3001/api/generate-report?submid=${encodeURIComponent(currentFacilityId)}&from=${startDate}&to=${endDate}`;
-    
-    console.log('Generating report with URL:', reportUrl);
-
-    // Open the PDF in a new tab
-    const newWindow = window.open(reportUrl, '_blank');
-    
-    // Check if popup was blocked
-    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        alert('Popup blocked! Please allow popups for this site to view the report, or manually navigate to:\n' + reportUrl);
-    }
-
-    // Reset button after a delay
-    setTimeout(() => {
-        if (generateButton) {
-            generateButton.innerHTML = '<i class="fas fa-file-pdf"></i> Generate Report';
-            generateButton.disabled = false;
-        }
-    }, 2000);
-}
 
 // Go back to facilities view
 function backToFacilities() {
@@ -1264,7 +1212,7 @@ style.textContent = `
     .facility-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transition: all 0.3s ease;
+        transition: all 0.3s ease; 
     }
     
     /* Ensure grid layout remains consistent during search */
@@ -1291,5 +1239,665 @@ style.textContent = `
         66% { content: '.'; }
     }
 `;
+
+
+//for generating report
+// Simple Generate Report function - opens PDF directly in new tab
+function generateReport(event) {
+    // Prevent default form submission or page refresh
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    // Store current scroll position to maintain user's view
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const currentScrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    // Ensure performance section remains visible
+    const performanceSection = document.getElementById('performanceSection');
+    const facilitiesSection = document.getElementById('facilitiesSection');
+    
+    if (performanceSection) {
+        performanceSection.style.display = 'block';
+    }
+    if (facilitiesSection) {
+        facilitiesSection.style.display = 'none';
+    }
+
+    // Check if a facility is currently selected
+    if (!currentFacilityId) {
+        alert('Please select a facility first to generate a report.');
+        restorePageState(currentScrollLeft, currentScrollTop);
+        return false;
+    }
+
+    // Get the date range from the filter inputs
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Validate dates
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates.');
+        restorePageState(currentScrollLeft, currentScrollTop);
+        return false;
+    }
+
+    if (new Date(startDate) > new Date(endDate)) {
+        alert('Start date cannot be after end date.');
+        restorePageState(currentScrollLeft, currentScrollTop);
+        return false;
+    }
+
+    // Show loading message on button
+    const generateButton = getGenerateButton();
+    const originalButtonState = showLoadingState(generateButton);
+
+    // Build the report URL - this will directly return the PDF
+    const reportUrl = buildReportUrl(currentFacilityId, startDate, endDate);
+    
+    console.log('🚀 Generating report with URL:', reportUrl);
+    console.log('📊 Report parameters:', {
+        facility: currentFacilityId,
+        dateRange: `${startDate} to ${endDate}`
+    });
+
+    try {
+        // Open PDF directly in new tab
+        const newWindow = window.open(reportUrl, '_blank', 'noopener,noreferrer');
+        
+        // Check if popup was blocked
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            alert(`Popup blocked! Please allow popups for this site to view the report.\n\nOr manually open this URL in a new tab:\n${reportUrl}`);
+            
+            // Copy URL to clipboard as fallback
+            copyToClipboard(reportUrl);
+            console.log('📋 Report URL copied to clipboard');
+        } else {
+            console.log('✅ Report opened in new tab successfully');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error opening report:', error);
+        alert(`Error opening report: ${error.message}\n\nPlease try again or manually navigate to:\n${reportUrl}`);
+        
+        // Copy URL to clipboard as fallback
+        copyToClipboard(reportUrl);
+    }
+
+    // Reset button state after a short delay
+    setTimeout(() => {
+        resetButtonState(generateButton, originalButtonState);
+        restorePageState(currentScrollLeft, currentScrollTop);
+    }, 2000);
+
+    // Prevent any default behavior
+    return false;
+}
+
+// Helper function to find the generate button
+function getGenerateButton() {
+    return document.querySelector('button[onclick*="generateReport"]') || 
+           document.querySelector('[onclick*="generateReport"]') ||
+           document.querySelector('#generateReportBtn') ||
+           document.querySelector('.generate-report-btn');
+}
+
+// Show loading state on button
+function showLoadingState(button) {
+    if (!button) return null;
+
+    const originalState = {
+        text: button.innerHTML,
+        disabled: button.disabled,
+        cursor: button.style.cursor
+    };
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+    button.disabled = true;
+    button.style.cursor = 'wait';
+    button.style.pointerEvents = 'none';
+    
+    return originalState;
+}
+
+// Reset button to original state
+function resetButtonState(button, originalState) {
+    if (!button || !originalState) return;
+    
+    button.innerHTML = originalState.text;
+    button.disabled = originalState.disabled;
+    button.style.cursor = originalState.cursor;
+    button.style.pointerEvents = 'auto';
+}
+
+// Build report URL with proper encoding
+function buildReportUrl(facilityId, startDate, endDate) {
+    const baseUrl = window.location.protocol === 'https:' ? 
+        'https://localhost:3001' : 'http://localhost:3001';
+    
+    // Encode parameters properly
+    const params = new URLSearchParams({
+        submid: facilityId.trim(),
+        from: startDate,
+        to: endDate
+    });
+
+    return `${baseUrl}/api/generate-report?${params.toString()}`;
+}
+
+// Restore page state (scroll position and section visibility)
+function restorePageState(scrollLeft, scrollTop) {
+    setTimeout(() => {
+        window.scrollTo(scrollLeft, scrollTop);
+        
+        // Ensure sections remain in correct state
+        const performanceSection = document.getElementById('performanceSection');
+        const facilitiesSection = document.getElementById('facilitiesSection');
+        
+        if (performanceSection) {
+            performanceSection.style.display = 'block';
+        }
+        if (facilitiesSection) {
+            facilitiesSection.style.display = 'none';
+        }
+    }, 10);
+}
+
+// Copy text to clipboard utility
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // Modern clipboard API
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('📋 URL copied to clipboard');
+        }).catch(err => {
+            console.warn('Failed to copy to clipboard:', err);
+            fallbackCopyToClipboard(text);
+        });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyToClipboard(text);
+    }
+}
+
+// Fallback clipboard function for older browsers
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            console.log('📋 URL copied to clipboard (fallback method)');
+        }
+    } catch (err) {
+        console.warn('Fallback copy failed:', err);
+    } finally {
+        document.body.removeChild(textArea);
+    }
+}
+
+// Optional: Add a manual test function for debugging
+function testReportGeneration() {
+    console.log('🧪 Testing report generation...');
+    console.log('Current facility ID:', currentFacilityId);
+    console.log('Start date:', document.getElementById('startDate')?.value);
+    console.log('End date:', document.getElementById('endDate')?.value);
+    
+    if (currentFacilityId) {
+        const testUrl = buildReportUrl(currentFacilityId, '2025-07-01', '2025-07-25');
+        console.log('🔗 Test URL:', testUrl);
+        
+        // You can uncomment this to test the URL directly
+        // window.open(testUrl, '_blank');
+    } else {
+        console.warn('⚠️ No facility selected for testing');
+    }
+}
+//end generating report
+
+ // Global variables for modal functionality
+let currentLabDetailsData = [];
+let filteredLabDetailsData = [];
+let currentModalContext = {};
+
+// Function to show lab details modal
+async function showLabDetailsModal(category, facilityId, facilityName, filterValue = null) {
+    try {
+        // Store context for later use
+        currentModalContext = {
+            category,
+            facilityId,
+            facilityName,
+            filterValue
+        };
+
+        // Get date range from filters
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+
+        // Show modal and loading state
+        const modal = new bootstrap.Modal(document.getElementById('labDetailsModal'));
+        modal.show();
+        
+        showModalLoading(true);
+        hideModalError();
+        hideModalContent();
+
+        // Update modal title
+        document.getElementById('labDetailsModalLabel').innerHTML = `
+            <i class="fas fa-flask me-2"></i>
+            ${getCategoryDisplayName(category)} - Lab Details
+        `;
+
+        // Fetch data from API
+        const url = `http://localhost:3001/api/nsf-performance-lab-details?submid=${encodeURIComponent(facilityId)}&dateFrom=${startDate}&dateTo=${endDate}`;
+        console.log('Fetching lab details from:', url);
+
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Lab details data received:', data.length, 'records');
+
+        // Store the full dataset
+        currentLabDetailsData = data;
+
+        // Filter data based on category
+        filteredLabDetailsData = filterDataByCategory(data, category, filterValue);
+
+        // Update modal with data
+        updateModalSummary(facilityName, startDate, endDate, category, filteredLabDetailsData.length);
+        populateModalTable(filteredLabDetailsData);
+        showModalContent();
+
+    } catch (error) {
+        console.error('Error fetching lab details:', error);
+        showModalError('Failed to load lab details: ' + error.message);
+    } finally {
+        showModalLoading(false);
+    }
+}
+
+// Filter data based on category
+function filterDataByCategory(data, category, filterValue = null) {
+    let filtered = data;
+
+    switch (category) {
+        case 'totalSamples':
+            // Return all samples
+            break;
+            
+        case 'inbornTotal':
+            filtered = data.filter(item => item.BIRTH_CATEGORY === 'INBORN');
+            break;
+            
+        case 'outbornTotal':
+            filtered = data.filter(item => item.BIRTH_CATEGORY !== 'INBORN');
+            break;
+            
+        case 'homebirth':
+            filtered = data.filter(item => item.BIRTH_CATEGORY === 'HOMEBIRTH');
+            break;
+            
+        case 'hobNotEqualHO':
+            filtered = data.filter(item => item.BIRTH_CATEGORY === 'HOB');
+            break;
+            
+        case 'unknown':
+            filtered = data.filter(item => item.BIRTH_CATEGORY === 'UNKNOWN');
+            break;
+            
+        case 'contaminated':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION === 'CONTAMINATED');
+            break;
+            
+        case 'insufficient':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION === 'INSUFFICIENT');
+            break;
+            
+        case 'lessThan24h':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION === 'LESS_THAN_24_HOURS');
+            break;
+            
+        case 'dataErasures':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION === 'DATA_ERASURES');
+            break;
+            
+        case 'missingInfo':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION === 'MISSING_INFORMATION');
+            break;
+            
+        case 'totalUnsatCount':
+            filtered = data.filter(item => item.ISSUE_DESCRIPTION && item.ISSUE_DESCRIPTION !== 'NONE');
+            break;
+            
+        default:
+            console.warn('Unknown category:', category);
+    }
+
+    return filtered;
+}
+
+// Get display name for category
+function getCategoryDisplayName(category) {
+    const categoryNames = {
+        'totalSamples': 'All Samples',
+        'inbornTotal': 'Inborn Samples',
+        'outbornTotal': 'Outborn Samples',
+        'homebirth': 'Homebirth Samples',
+        'hobNotEqualHO': 'HOB ≠ HO Samples',
+        'unknown': 'Unknown Birth Location',
+        'contaminated': 'Contaminated Samples',
+        'insufficient': 'Insufficient Samples',
+        'lessThan24h': 'Samples Collected <24h',
+        'dataErasures': 'Samples with Data Erasures',
+        'missingInfo': 'Samples with Missing Information',
+        'totalUnsatCount': 'All Unsatisfactory Samples'
+    };
+    
+    return categoryNames[category] || category;
+}
+
+// Update modal summary section
+function updateModalSummary(facilityName, startDate, endDate, category, totalRecords) {
+    document.getElementById('summaryFacility').textContent = facilityName;
+    document.getElementById('summaryDateRange').textContent = `${startDate} to ${endDate}`;
+    document.getElementById('summaryCategory').textContent = getCategoryDisplayName(category);
+    document.getElementById('summaryTotal').textContent = totalRecords.toLocaleString();
+}
+
+// Populate modal table with data
+function populateModalTable(data) {
+    const tbody = document.getElementById('modalTableBody');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+        document.getElementById('noResultsMessage').classList.remove('d-none');
+        document.getElementById('modalFooterInfo').textContent = '';
+        return;
+    }
+
+    document.getElementById('noResultsMessage').classList.add('d-none');
+
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="font-monospace">${item.LABNO || ''}</td>
+            <td>${formatPatientName(item.FNAME, item.LNAME)}</td>
+            <td>
+                <span class="badge badge-${(item.SPECTYPE_LABEL || '').toLowerCase()} badge-category">
+                    ${item.SPECTYPE_LABEL || 'Unknown'}
+                </span>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Update footer info
+    document.getElementById('modalFooterInfo').textContent = 
+        `Showing ${data.length.toLocaleString()} of ${currentLabDetailsData.length.toLocaleString()} total records`;
+}
+
+// Format patient name
+function formatPatientName(fname, lname) {
+    const firstName = fname || '';
+    const lastName = lname || '';
+    
+    if (!firstName && !lastName) return 'N/A';
+    
+    return `${lastName}, ${firstName}`.replace(/,\s*$/, '');
+}
+
+// Format birth category for display
+function formatBirthCategory(category) {
+    const categories = {
+        'INBORN': 'Inborn',
+        'HOMEBIRTH': 'Homebirth',
+        'HOB': 'HOB ≠ HO',
+        'UNKNOWN': 'Unknown',
+        'OTHER': 'Other'
+    };
+    
+    return categories[category] || category || 'Unknown';
+}
+
+// Format issue description for display
+function formatIssueDescription(issue) {
+    const issues = {
+        'CONTAMINATED': 'Contaminated',
+        'INSUFFICIENT': 'Insufficient',
+        'LESS_THAN_24_HOURS': '<24 Hours',
+        'DATA_ERASURES': 'Data Erasures',
+        'MISSING_INFORMATION': 'Missing Info',
+        'NONE': 'Satisfactory'
+    };
+    
+    return issues[issue] || 'Satisfactory';
+}
+
+// Show/hide loading state
+function showModalLoading(show) {
+    const indicator = document.getElementById('modalLoadingIndicator');
+    if (show) {
+        indicator.classList.remove('d-none');
+    } else {
+        indicator.classList.add('d-none');
+    }
+}
+
+// Show/hide error message
+function showModalError(message) {
+    const errorDiv = document.getElementById('modalErrorMessage');
+    const errorText = document.getElementById('errorText');
+    errorText.textContent = message;
+    errorDiv.classList.remove('d-none');
+}
+
+function hideModalError() {
+    document.getElementById('modalErrorMessage').classList.add('d-none');
+}
+
+// Show/hide modal content
+function showModalContent() {
+    document.getElementById('modalSummary').classList.remove('d-none');
+    document.getElementById('modalFilters').classList.remove('d-none');
+    document.getElementById('modalDataTable').classList.remove('d-none');
+}
+
+function hideModalContent() {
+    document.getElementById('modalSummary').classList.add('d-none');
+    document.getElementById('modalFilters').classList.add('d-none');
+    document.getElementById('modalDataTable').classList.add('d-none');
+}
+
+// Filter functionality
+function applyModalFilters() {
+    const labnoFilter = document.getElementById('filterLabno').value.toLowerCase().trim();
+    const nameFilter = document.getElementById('filterName').value.toLowerCase().trim();
+    const spectypeFilter = document.getElementById('filterSpectype').value;
+
+    let filtered = filteredLabDetailsData;
+
+    if (labnoFilter) {
+        filtered = filtered.filter(item => 
+            (item.LABNO || '').toLowerCase().includes(labnoFilter)
+        );
+    }
+
+    if (nameFilter) {
+        filtered = filtered.filter(item => {
+            const fullName = `${item.FNAME || ''} ${item.LNAME || ''}`.toLowerCase();
+            return fullName.includes(nameFilter);
+        });
+    }
+
+    if (spectypeFilter) {
+        filtered = filtered.filter(item => item.SPECTYPE_LABEL === spectypeFilter);
+    }
+
+    populateModalTable(filtered);
+}
+
+// Export to CSV functionality
+function exportModalDataToCsv() {
+    if (!currentLabDetailsData || currentLabDetailsData.length === 0) {
+        alert('No data to export');
+        return;
+    }
+
+    const headers = ['Lab No', 'First Name', 'Last Name', 'Type'];
+    const csvContent = [
+        headers.join(','),
+        ...filteredLabDetailsData.map(item => [
+            `"${item.LABNO || ''}"`,
+            `"${item.FNAME || ''}"`,
+            `"${item.LNAME || ''}"`,
+            `"${item.SPECTYPE_LABEL || ''}"`
+        ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `lab_details_${currentModalContext.facilityId}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Event listeners for modal filters
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for filter inputs
+    document.getElementById('filterLabno').addEventListener('input', applyModalFilters);
+    document.getElementById('filterName').addEventListener('input', applyModalFilters);
+    document.getElementById('filterSpectype').addEventListener('change', applyModalFilters);
+    
+    // Export CSV button
+    document.getElementById('exportCsvBtn').addEventListener('click', exportModalDataToCsv);
+});
+
+// Enhanced click handlers for performance metrics (add to your existing code)
+function addClickHandlersToMetrics() {
+    // Add click handlers to all clickable metrics
+    const clickableMetrics = document.querySelectorAll('.clickable-metric');
+    clickableMetrics.forEach(metric => {
+        metric.addEventListener('click', function() {
+            if (!currentFacilityId) {
+                alert('Please select a facility first.');
+                return;
+            }
+
+            const facilityName = document.getElementById('facilityName')?.textContent || 'Unknown Facility';
+            const metricId = this.id;
+            const metricValue = this.textContent.trim();
+
+            // Only show modal if there are samples to display
+            if (metricValue === '0' || metricValue === '-') {
+                alert('No data available for this metric.');
+                return;
+            }
+
+            showLabDetailsModal(metricId, currentFacilityId, facilityName);
+        });
+    });
+}
+
+// Updated showFacilityPerformance function (replace your existing one)
+function showFacilityPerformance(facilityId, facilityName, province) {
+    const facility = facilityData.find(f => f.PROVIDER_ID === facilityId);
+    
+    if (!facility) {
+        console.error('Facility not found:', facilityId);
+        return;
+    }
+
+    // Store the current facility ID for report generation
+    currentFacilityId = facilityId;
+
+    // Hide facilities section and show performance section
+    document.getElementById('facilitiesSection').style.display = 'none';
+    document.getElementById('performanceSection').style.display = 'block';
+
+    // Update section title
+    const titleElement = document.getElementById('selectedFacilityTitle');
+    if (titleElement) {
+        titleElement.textContent = `${facilityName} (${facilityId}) - Performance Overview`;
+    }
+
+    // Update facility information
+    const facilityCodeElement = document.getElementById('facilityCode');
+    const facilityNameElement = document.getElementById('facilityName');
+    if (facilityCodeElement) facilityCodeElement.textContent = facility.PROVIDER_ID;
+    if (facilityNameElement) facilityNameElement.textContent = facility.FACILITY_NAME;
+
+    // Update sample statistics
+    const totalSamplesElement = document.getElementById('totalSamples');
+    const averageAOCElement = document.getElementById('averageAOC');
+    const avgTransitTimeElement = document.getElementById('avgTransitTime');
+    
+    if (totalSamplesElement) totalSamplesElement.textContent = (facility.TOTAL_SAMPLE_COUNT || 0).toLocaleString();
+    if (averageAOCElement) averageAOCElement.textContent = facility.AVE_AOC || '0.0';
+    if (avgTransitTimeElement) avgTransitTimeElement.textContent = facility.TRANSIT_TIME ? facility.TRANSIT_TIME + 'd' : '0.0d';
+
+    // Update birth classification
+    const inbornTotalElement = document.getElementById('inbornTotal');
+    const outbornTotalElement = document.getElementById('outbornTotal');
+    const avgAOCInbornElement = document.getElementById('avgAOCInborn');
+    const avgAOCOutbornElement = document.getElementById('avgAOCOutborn');
+    
+    if (inbornTotalElement) inbornTotalElement.textContent = (facility.TOTAL_INBORN || 0).toLocaleString();
+    if (outbornTotalElement) outbornTotalElement.textContent = (facility.OUTBORN_TOTAL || 0).toLocaleString();
+    if (avgAOCInbornElement) avgAOCInbornElement.textContent = facility.INBORN_AVERAGE || '0.0';
+    if (avgAOCOutbornElement) avgAOCOutbornElement.textContent = facility.OUTBORN_AVERAGE || '0.0';
+
+    // Update breakdown of outborn
+    const homebirthElement = document.getElementById('homebirth');
+    const hobNotEqualHOElement = document.getElementById('hobNotEqualHO');
+    const unknownElement = document.getElementById('unknown');
+    
+    if (homebirthElement) homebirthElement.textContent = (facility.TOTAL_HOMEBIRTH || 0).toLocaleString();
+    if (hobNotEqualHOElement) hobNotEqualHOElement.textContent = (facility.TOTAL_HOB || 0).toLocaleString();
+    if (unknownElement) unknownElement.textContent = (facility.TOTAL_UNKNOWN || 0).toLocaleString();
+
+    // Update unsatisfactory samples
+    const contaminatedElement = document.getElementById('contaminated');
+    const insufficientElement = document.getElementById('insufficient');
+    const lessThan24hElement = document.getElementById('lessThan24h');
+    const dataErasuresElement = document.getElementById('dataErasures');
+    const missingInfoElement = document.getElementById('missingInfo');
+    const totalUnsatCountElement = document.getElementById('totalUnsatCount');
+    const totalUnsatRateElement = document.getElementById('totalUnsatRate');
+    
+    if (contaminatedElement) contaminatedElement.textContent = facility.CONTAMINATED || 0;
+    if (insufficientElement) insufficientElement.textContent = facility.INSUFFICIENT || 0;
+    if (lessThan24hElement) lessThan24hElement.textContent = facility.LESS_THAN_24_HOURS || 0;
+    if (dataErasuresElement) dataErasuresElement.textContent = facility.DATA_ERASURES || 0;
+    if (missingInfoElement) missingInfoElement.textContent = facility.MISSING_INFORMATION || 0;
+    if (totalUnsatCountElement) totalUnsatCountElement.textContent = facility.TOTAL_UNSAT_COUNT || 0;
+    if (totalUnsatRateElement) totalUnsatRateElement.textContent = (facility.TOTAL_UNSAT_RATE || 0).toFixed(1) + '%';
+
+    // After updating all the metrics, add click handlers
+    setTimeout(() => {
+        addClickHandlersToMetrics();
+    }, 100);
+}
+
 
 document.head.appendChild(style);

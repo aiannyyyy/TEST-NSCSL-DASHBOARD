@@ -150,7 +150,7 @@ router.get("/nsf-performance", async (req, res) => {
     }
 });
 
-router.get("/nsf-performance-details", async (req, res) => {
+router.get("/nsf-performance-lab-details", async (req, res) => {
     try {
         const oracleDb = req.app.locals.oracleDb;
 
@@ -159,61 +159,58 @@ router.get("/nsf-performance-details", async (req, res) => {
             return res.status(500).json({ error: "OracleDB is not connected" });
         }
 
-        const { submid, dateFrom, dateTo, category } = req.query;
+        const { submid, dateFrom, dateTo } = req.query;
 
-        if (!submid || !dateFrom || !dateTo || !category) {
-            return res.status(400).json({ error: "Missing required parameters" });
-        }
-
-        // Map category to SQL WHERE conditions
-        let condition = "";
-        switch (category) {
-            case "TOTAL_SAMPLE_COUNT":
-                condition = `sda.submid = :submid`;
-                break;
-            case "TOTAL_INBORN":
-                condition = `sda.birthplace = '1' AND sda.submid = :submid`;
-                break;
-            case "TOTAL_HOMEBIRTH":
-                condition = `sda.birthplace = '2' AND sda.submid = :submid`;
-                break;
-            case "TOTAL_HOB":
-                condition = `sda.birthplace = '3' AND sda.submid = :submid`;
-                break;
-            case "TOTAL_UNKNOWN":
-                condition = `(sda.birthplace IS NULL OR sda.birthplace = '0') AND sda.submid = :submid`;
-                break;
-            case "OUTBORN_TOTAL":
-                condition = `sda.birthplace IN ('2','3','0') AND sda.submid = :submid`;
-                break;
-            case "MISSING_INFORMATION":
-                condition = `sda.reasoncode = '1' AND sda.submid = :submid`;
-                break;
-            case "LESS_THAN_24_HOURS":
-                condition = `sda.reasoncode = '2' AND sda.submid = :submid`;
-                break;
-            case "INSUFFICIENT":
-                condition = `sda.reasoncode = '3' AND sda.submid = :submid`;
-                break;
-            case "CONTAMINATED":
-                condition = `sda.reasoncode = '4' AND sda.submid = :submid`;
-                break;
-            case "DATA_ERASURES":
-                condition = `sda.reasoncode = '5' AND sda.submid = :submid`;
-                break;
-            case "TOTAL_UNSAT_COUNT":
-                condition = `sda.spectype = 'U' AND sda.submid = :submid`;
-                break;
-            default:
-                return res.status(400).json({ error: "Invalid category" });
+        if (!submid || !dateFrom || !dateTo) {
+            return res.status(400).json({ error: "Missing required parameters: submid, dateFrom, dateTo" });
         }
 
         const sql = `
-            SELECT sda.labno
-            FROM sample_demog_archive sda
-            WHERE ${condition}
-              AND sda.dtreceived BETWEEN TO_DATE(:dateFrom, 'YYYY-MM-DD') AND TO_DATE(:dateTo, 'YYYY-MM-DD')
+            SELECT 
+                sda.LABNO,
+                MAX(sda.FNAME) AS FNAME,
+                MAX(sda.LNAME) AS LNAME,
+                MAX(sda.SPECTYPE) AS SPECTYPE,
+                CASE 
+                    WHEN MAX(sda.SPECTYPE) = 20 THEN 'Initial'
+                    WHEN MAX(sda.SPECTYPE) IN (2, 3, 4) THEN 'Repeat'
+                    WHEN MAX(sda.SPECTYPE) = 5 THEN 'Monitoring'
+                    WHEN MAX(sda.SPECTYPE) = 87 THEN 'Unfit'
+                    ELSE 'Other'
+                END AS SPECTYPE_LABEL,
+
+                MAX(sda.BIRTHHOSP) AS BIRTHHOSP,
+
+                CASE 
+                    WHEN MAX(sda.BIRTHHOSP) = TO_CHAR(MAX(sda.SUBMID)) THEN 'INBORN'
+                    WHEN MAX(sda.BIRTHHOSP) = 'HOME' THEN 'HOMEBIRTH'
+                    WHEN MAX(sda.BIRTHHOSP) = 'UNK' THEN 'UNKNOWN'
+                    WHEN MAX(sda.BIRTHHOSP) NOT IN ('HOME', 'UNK') AND MAX(sda.BIRTHHOSP) <> TO_CHAR(MAX(sda.SUBMID)) THEN 'HOB'
+                    ELSE 'OTHER'
+                END AS BIRTH_CATEGORY,
+
+                MAX(ra.MNEMONIC) AS MNEMONIC,
+                CASE MAX(ra.MNEMONIC)
+                    WHEN 'E100' THEN 'MISSING_INFORMATION'
+                    WHEN 'E102' THEN 'LESS_THAN_24_HOURS'
+                    WHEN 'E108' THEN 'INSUFFICIENT'
+                    WHEN 'E109' THEN 'CONTAMINATED'
+                    WHEN 'DE' THEN 'DATA_ERASURES'
+                    ELSE 'NONE'
+                END AS ISSUE_DESCRIPTION
+
+            FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
+            LEFT JOIN PHMSDS.RESULT_ARCHIVE ra ON sda.LABNO = ra.LABNO
+
+            WHERE sda.SUBMID = :submid
+            AND sda.DTRECV >= TO_DATE(:dateFrom, 'YYYY-MM-DD')
+            AND sda.DTRECV < TO_DATE(:dateTo, 'YYYY-MM-DD') + 1
+            AND sda.LABNO NOT LIKE '_______8%'
+
+            GROUP BY sda.LABNO
+            ORDER BY sda.LABNO
         `;
+
 
         const binds = {
             submid,
@@ -222,11 +219,11 @@ router.get("/nsf-performance-details", async (req, res) => {
         };
 
         const result = await oracleDb.execute(sql, binds, { outFormat: oracleDb.OBJECT });
-        res.json(result.rows);
+        res.status(200).json(result.rows);
 
     } catch (error) {
-        console.error("Error fetching labno details:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("[ERROR] Fetching labno details:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
 

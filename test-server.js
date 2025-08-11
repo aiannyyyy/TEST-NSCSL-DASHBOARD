@@ -231,6 +231,8 @@ app.use("/api", require("./routes/nsf-performance-generation")); // FOR NSF PERF
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use("/api", require("./routes/nsf-crystalRoutes")); // FOR NSF CRYSTAL REPORTS
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Test Server Error:", err.stack || err.message || err);
