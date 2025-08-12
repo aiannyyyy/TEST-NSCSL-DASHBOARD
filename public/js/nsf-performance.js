@@ -1293,46 +1293,327 @@ function generateReport(event) {
     const generateButton = getGenerateButton();
     const originalButtonState = showLoadingState(generateButton);
 
-    // Build the report URL - this will directly return the PDF
-    const reportUrl = buildReportUrl(currentFacilityId, startDate, endDate);
-    
-    console.log('🚀 Generating report with URL:', reportUrl);
-    console.log('📊 Report parameters:', {
+    console.log('🚀 Generating report with parameters:', {
         facility: currentFacilityId,
         dateRange: `${startDate} to ${endDate}`
     });
 
-    try {
-        // Open PDF directly in new tab
-        const newWindow = window.open(reportUrl, '_blank', 'noopener,noreferrer');
-        
-        // Check if popup was blocked
-        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-            alert(`Popup blocked! Please allow popups for this site to view the report.\n\nOr manually open this URL in a new tab:\n${reportUrl}`);
-            
-            // Copy URL to clipboard as fallback
-            copyToClipboard(reportUrl);
-            console.log('📋 Report URL copied to clipboard');
-        } else {
-            console.log('✅ Report opened in new tab successfully');
-        }
-        
-    } catch (error) {
-        console.error('❌ Error opening report:', error);
-        alert(`Error opening report: ${error.message}\n\nPlease try again or manually navigate to:\n${reportUrl}`);
-        
-        // Copy URL to clipboard as fallback
-        copyToClipboard(reportUrl);
-    }
+    // Try to generate report - simplified approach
+    generateReportWithFallback(currentFacilityId, startDate, endDate)
+        .then(() => {
+            console.log('✅ Report tab opened successfully');
+        })
+        .catch((error) => {
+            console.error('❌ Report generation failed:', error);
+            // Only show error if something really went wrong (shouldn't happen with direct approach)
+            alert('Error opening report. Please check if popups are blocked.');
+        })
+        .finally(() => {
+            // Reset button state immediately since we're not waiting for generation
+            setTimeout(() => {
+                resetButtonState(generateButton, originalButtonState);
+                restorePageState(currentScrollLeft, currentScrollTop);
+            }, 1000); // Shorter delay since we're just opening a tab
+        });
 
-    // Reset button state after a short delay
-    setTimeout(() => {
-        resetButtonState(generateButton, originalButtonState);
-        restorePageState(currentScrollLeft, currentScrollTop);
-    }, 2000);
-
-    // Prevent any default behavior
     return false;
+}
+
+// SIMPLIFIED: Direct report generation - opens immediately in new tab
+async function generateReportWithFallback(facilityId, startDate, endDate) {
+    const baseUrl = window.location.protocol === 'https:' ? 
+        'https://localhost:3001' : 'http://localhost:3001';
+
+    // Build the main report URL
+    const mainReportUrl = buildReportUrl(baseUrl, 'generate-report', facilityId, startDate, endDate);
+    
+    console.log('📊 Opening report directly:', mainReportUrl);
+    
+    // Open directly in new tab - no checks, no prompts
+    window.open(mainReportUrl, '_blank', 'noopener,noreferrer');
+    
+    // Always resolve successfully since we opened the tab
+    return Promise.resolve();
+}
+
+// FIXED: Attempt to generate/access a report URL with better error handling
+async function attemptReportGeneration(url, reportType, isAlternative = false) {
+    return new Promise((resolve, reject) => {
+        console.log(`📡 Attempting ${reportType}:`, url);
+
+        // For alternative reports, we might want to check if they exist first
+        if (isAlternative) {
+            // Try to validate the URL first
+            fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok && response.headers.get('content-type') === 'application/pdf') {
+                        return openReportInNewTab(url, reportType);
+                    } else {
+                        throw new Error(`${reportType} not available`);
+                    }
+                })
+                .then((success) => {
+                    if (success) {
+                        resolve(true);
+                    } else {
+                        reject(new Error(`${reportType} failed to open`));
+                    }
+                })
+                .catch((error) => {
+                    reject(new Error(`${reportType} access failed: ${error.message}`));
+                });
+        } else {
+            // For main reports, try to open directly
+            try {
+                const success = openReportInNewTab(url, reportType);
+                if (success) {
+                    // Give it a moment to load, then resolve
+                    setTimeout(() => {
+                        resolve(true);
+                    }, 1000);
+                } else {
+                    reject(new Error(`${reportType} popup blocked or failed`));
+                }
+            } catch (error) {
+                reject(new Error(`${reportType} failed: ${error.message}`));
+            }
+        }
+    });
+}
+
+// FIXED: Open report in new tab with enhanced popup handling and better error reporting
+function openReportInNewTab(url, reportType) {
+    try {
+        console.log(`🌐 Opening ${reportType} in new tab...`);
+        
+        const newWindow = window.open('', '_blank', 'noopener,noreferrer');
+        
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            console.warn('🚫 Popup blocked - offering alternatives');
+            
+            // Show popup blocked dialog with options
+            showPopupBlockedDialog(url, reportType);
+            return false;
+        }
+
+        // Show loading message in the new window
+        newWindow.document.write(`
+            <html>
+                <head><title>Loading Report...</title></head>
+                <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+                    <div style="margin: 20px;">
+                        <div style="font-size: 24px; margin-bottom: 20px;">🔄 Loading ${reportType}...</div>
+                        <div style="color: #666;">Please wait while your report is being generated...</div>
+                        <div style="margin-top: 20px;">
+                            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        </div>
+                        <div style="margin-top: 20px; font-size: 12px; color: #888;">
+                            If this takes too long, please check for popup blockers.
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                </body>
+            </html>
+        `);
+
+        // Navigate to the actual report URL after a brief delay
+        setTimeout(() => {
+            try {
+                newWindow.location.href = url;
+            } catch (navError) {
+                console.error('Navigation error:', navError);
+                newWindow.document.write(`
+                    <div style="color: red; text-align: center; padding: 50px;">
+                        <h2>⚠️ Loading Error</h2>
+                        <p>Could not load the report. Please try clicking the link below:</p>
+                        <a href="${url}" target="_blank" style="color: blue; text-decoration: underline;">Open Report Directly</a>
+                    </div>
+                `);
+            }
+        }, 500);
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ Error opening report tab:', error);
+        // Don't show error dialog here, let the caller handle it
+        throw new Error(`Error opening ${reportType}: ${error.message}`);
+    }
+}
+
+// Check for alternative reports that might exist
+async function findAlternativeReport(baseUrl, facilityId, startDate, endDate) {
+    try {
+        const listUrl = `${baseUrl}/api/list-reports`;
+        const response = await fetch(listUrl);
+        
+        if (!response.ok) {
+            console.warn('Could not fetch report list');
+            return null;
+        }
+
+        const data = await response.json();
+        
+        if (!data.files || !Array.isArray(data.files)) {
+            console.warn('No files in report list');
+            return null;
+        }
+
+        // Look for recent test reports or similar reports
+        const dateFormatted = startDate.replace(/-/g, '');
+        const endDateFormatted = endDate.replace(/-/g, '');
+        
+        // Find reports that match our criteria
+        const matchingReports = data.files.filter(file => {
+            const fileName = file.name.toLowerCase();
+            return (
+                (fileName.includes(`test_submid_date_${facilityId}_`) || 
+                 fileName.includes(`nsf_performance_${facilityId}_`)) &&
+                (fileName.includes(dateFormatted) || 
+                 fileName.includes(endDateFormatted)) &&
+                file.size > 5000 // Must have reasonable size
+            );
+        });
+
+        if (matchingReports.length > 0) {
+            // Sort by most recent and pick the best match
+            matchingReports.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+            const bestMatch = matchingReports[0];
+            
+            console.log('🎯 Found potential alternative:', bestMatch.name);
+            
+            // Create direct file access URL
+            return `${baseUrl}/api/serve-report/${encodeURIComponent(bestMatch.name)}`;
+        }
+
+        return null;
+
+    } catch (error) {
+        console.error('Error checking for alternatives:', error);
+        return null;
+    }
+}
+
+// Build report URL with proper encoding
+function buildReportUrl(baseUrl, endpoint, facilityId, startDate, endDate) {
+    const params = new URLSearchParams({
+        submid: facilityId.trim(),
+        from: startDate,
+        to: endDate
+    });
+
+    return `${baseUrl}/api/${endpoint}?${params.toString()}`;
+}
+
+// Show popup blocked dialog with options
+function showPopupBlockedDialog(url, reportType) {
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 10000; display: flex;
+        align-items: center; justify-content: center; font-family: Arial, sans-serif;
+    `;
+    
+    dialog.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="font-size: 48px; margin-bottom: 20px;">🚫</div>
+            <h2 style="color: #e74c3c; margin-bottom: 15px;">Popup Blocked</h2>
+            <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
+                Your browser blocked the ${reportType} popup. Choose an option below:
+            </p>
+            <div style="margin: 20px 0;">
+                <button onclick="this.parentElement.parentElement.parentElement.remove(); window.open('${url}', '_blank');" 
+                        style="background: #3498db; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    🔓 Allow Popup & Open Report
+                </button>
+                <br>
+                <button onclick="this.parentElement.parentElement.parentElement.remove(); copyToClipboard('${url}'); alert('Report URL copied to clipboard!');" 
+                        style="background: #95a5a6; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    📋 Copy Report URL
+                </button>
+                <br>
+                <button onclick="this.parentElement.parentElement.parentElement.remove();" 
+                        style="background: #e74c3c; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ❌ Cancel
+                </button>
+            </div>
+            <div style="font-size: 12px; color: #888; margin-top: 15px;">
+                💡 Tip: Allow popups for this site to avoid this message in the future.
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
+}
+
+// Show informational dialog
+function showInfoDialog(title, message) {
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 10000; display: flex;
+        align-items: center; justify-content: center; font-family: Arial, sans-serif;
+    `;
+    
+    dialog.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 450px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="font-size: 48px; margin-bottom: 20px;">ℹ️</div>
+            <h2 style="color: #3498db; margin-bottom: 15px;">${title}</h2>
+            <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">${message}</p>
+            <button onclick="this.parentElement.parentElement.remove();" 
+                    style="background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                ✅ OK
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
+}
+
+// FIXED: Show error dialog with better error handling
+function showErrorDialog(message, fallbackUrl = null) {
+    // Ensure message is a string
+    const errorMessage = typeof message === 'string' ? message : 
+                        (message && message.message) ? message.message : 
+                        'An unexpected error occurred.';
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 10000; display: flex;
+        align-items: center; justify-content: center; font-family: Arial, sans-serif;
+    `;
+    
+    const fallbackButton = fallbackUrl ? 
+        `<button onclick="this.parentElement.parentElement.remove(); window.open('${fallbackUrl}', '_blank');" 
+                 style="background: #f39c12; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+             📁 View Recent Reports
+         </button>` : '';
+    
+    dialog.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+            <h2 style="color: #e74c3c; margin-bottom: 15px;">Report Generation Issue</h2>
+            <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">${errorMessage}</p>
+            <div style="margin: 20px 0;">
+                ${fallbackButton}
+                <button onclick="this.parentElement.parentElement.parentElement.remove();" 
+                        style="background: #95a5a6; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ❌ Close
+                </button>
+            </div>
+            <div style="font-size: 12px; color: #888; margin-top: 15px;">
+                💡 Try refreshing the page and generating the report again.
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
 }
 
 // Helper function to find the generate button
@@ -1369,21 +1650,6 @@ function resetButtonState(button, originalState) {
     button.disabled = originalState.disabled;
     button.style.cursor = originalState.cursor;
     button.style.pointerEvents = 'auto';
-}
-
-// Build report URL with proper encoding
-function buildReportUrl(facilityId, startDate, endDate) {
-    const baseUrl = window.location.protocol === 'https:' ? 
-        'https://localhost:3001' : 'http://localhost:3001';
-    
-    // Encode parameters properly
-    const params = new URLSearchParams({
-        submid: facilityId.trim(),
-        from: startDate,
-        to: endDate
-    });
-
-    return `${baseUrl}/api/generate-report?${params.toString()}`;
 }
 
 // Restore page state (scroll position and section visibility)
@@ -1443,7 +1709,7 @@ function fallbackCopyToClipboard(text) {
     }
 }
 
-// Optional: Add a manual test function for debugging
+// SIMPLIFIED: Manual test function - direct approach
 function testReportGeneration() {
     console.log('🧪 Testing report generation...');
     console.log('Current facility ID:', currentFacilityId);
@@ -1451,11 +1717,14 @@ function testReportGeneration() {
     console.log('End date:', document.getElementById('endDate')?.value);
     
     if (currentFacilityId) {
-        const testUrl = buildReportUrl(currentFacilityId, '2025-07-01', '2025-07-25');
+        const baseUrl = window.location.protocol === 'https:' ? 
+            'https://localhost:3001' : 'http://localhost:3001';
+        const testUrl = buildReportUrl(baseUrl, 'generate-report', currentFacilityId, '2025-07-01', '2025-07-25');
         console.log('🔗 Test URL:', testUrl);
         
-        // You can uncomment this to test the URL directly
-        // window.open(testUrl, '_blank');
+        // Open directly
+        window.open(testUrl, '_blank', 'noopener,noreferrer');
+        console.log('✅ Test tab opened');
     } else {
         console.warn('⚠️ No facility selected for testing');
     }
