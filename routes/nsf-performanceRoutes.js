@@ -150,6 +150,7 @@ router.get("/nsf-performance", async (req, res) => {
     }
 });
 
+// BACKEND FIX - Update your nsf-performance-lab-details route
 router.get("/nsf-performance-lab-details", async (req, res) => {
     try {
         const oracleDb = req.app.locals.oracleDb;
@@ -167,19 +168,19 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
 
         const sql = `
             SELECT 
-                sda.LABNO,
-                MAX(sda.FNAME) AS FNAME,
-                MAX(sda.LNAME) AS LNAME,
-                MAX(sda.SPECTYPE) AS SPECTYPE,
+                sda.LABNO AS "labNo",
+                MAX(sda.FNAME) AS "firstName",
+                MAX(sda.LNAME) AS "lastName",
+                MAX(sda.SPECTYPE) AS "specType",
                 CASE 
                     WHEN MAX(sda.SPECTYPE) = 20 THEN 'Initial'
                     WHEN MAX(sda.SPECTYPE) IN (2, 3, 4) THEN 'Repeat'
                     WHEN MAX(sda.SPECTYPE) = 5 THEN 'Monitoring'
                     WHEN MAX(sda.SPECTYPE) = 87 THEN 'Unfit'
                     ELSE 'Other'
-                END AS SPECTYPE_LABEL,
+                END AS "specTypeLabel",
 
-                MAX(sda.BIRTHHOSP) AS BIRTHHOSP,
+                MAX(sda.BIRTHHOSP) AS "birthHosp",
 
                 CASE 
                     WHEN MAX(sda.BIRTHHOSP) = TO_CHAR(MAX(sda.SUBMID)) THEN 'INBORN'
@@ -187,9 +188,9 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
                     WHEN MAX(sda.BIRTHHOSP) = 'UNK' THEN 'UNKNOWN'
                     WHEN MAX(sda.BIRTHHOSP) NOT IN ('HOME', 'UNK') AND MAX(sda.BIRTHHOSP) <> TO_CHAR(MAX(sda.SUBMID)) THEN 'HOB'
                     ELSE 'OTHER'
-                END AS BIRTH_CATEGORY,
+                END AS "birthCategory",
 
-                MAX(ra.MNEMONIC) AS MNEMONIC,
+                MAX(ra.MNEMONIC) AS "mnemonic",
                 CASE MAX(ra.MNEMONIC)
                     WHEN 'E100' THEN 'MISSING_INFORMATION'
                     WHEN 'E102' THEN 'LESS_THAN_24_HOURS'
@@ -197,7 +198,7 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
                     WHEN 'E109' THEN 'CONTAMINATED'
                     WHEN 'DE' THEN 'DATA_ERASURES'
                     ELSE 'NONE'
-                END AS ISSUE_DESCRIPTION
+                END AS "issueDescription"
 
             FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
             LEFT JOIN PHMSDS.RESULT_ARCHIVE ra ON sda.LABNO = ra.LABNO
@@ -211,14 +212,14 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
             ORDER BY sda.LABNO
         `;
 
+        const binds = { submid, dateFrom, dateTo };
 
-        const binds = {
-            submid,
-            dateFrom,
-            dateTo
-        };
-
-        const result = await oracleDb.execute(sql, binds, { outFormat: oracleDb.OBJECT });
+        // FIX: Make sure to use OUT_FORMAT_OBJECT to get objects instead of arrays
+        const result = await oracleDb.execute(sql, binds, { 
+            outFormat: oracleDb.OUT_FORMAT_OBJECT 
+        });
+        
+        console.log(`[LAB DETAILS] Query returned ${result.rows.length} rows`);
         res.status(200).json(result.rows);
 
     } catch (error) {
