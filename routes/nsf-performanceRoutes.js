@@ -165,7 +165,7 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
         if (!submid || !dateFrom || !dateTo) {
             return res.status(400).json({ error: "Missing required parameters: submid, dateFrom, dateTo" });
         }
-
+        /*
         const sql = `
             SELECT 
                 sda.LABNO AS "labNo",
@@ -209,6 +209,61 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
             AND sda.LABNO NOT LIKE '_______8%'
 
             GROUP BY sda.LABNO
+            ORDER BY sda.LABNO
+        `;
+        */
+       const sql = `
+            SELECT 
+                sda.LABNO AS "labNo",
+                sda.FNAME AS "firstName",
+                sda.LNAME AS "lastName",
+                sda.SPECTYPE AS "specType",
+                CASE 
+                    WHEN sda.SPECTYPE = 20 THEN 'Initial'
+                    WHEN sda.SPECTYPE IN (2, 3, 4) THEN 'Repeat'
+                    WHEN sda.SPECTYPE = 5 THEN 'Monitoring'
+                    WHEN sda.SPECTYPE = 87 THEN 'Unfit'
+                    ELSE 'Other'
+                END AS "specTypeLabel",
+
+                sda.BIRTHHOSP AS "birthHosp",
+
+                CASE 
+                    WHEN sda.BIRTHHOSP = TO_CHAR(sda.SUBMID) THEN 'INBORN'
+                    WHEN sda.BIRTHHOSP = 'HOME' THEN 'HOMEBIRTH'
+                    WHEN sda.BIRTHHOSP = 'UNK' THEN 'UNKNOWN'
+                    WHEN sda.BIRTHHOSP NOT IN ('HOME', 'UNK') 
+                        AND sda.BIRTHHOSP <> TO_CHAR(sda.SUBMID) THEN 'HOB'
+                    ELSE 'OTHER'
+                END AS "birthCategory",
+
+                ra.MNEMONIC AS "mnemonic",
+                CASE ra.MNEMONIC
+                    WHEN 'E100' THEN 'MISSING_INFORMATION'
+                    WHEN 'E102' THEN 'LESS_THAN_24_HOURS'
+                    WHEN 'E108' THEN 'INSUFFICIENT'
+                    WHEN 'E109' THEN 'CONTAMINATED'
+                    WHEN 'DE' THEN 'DATA_ERASURES'
+                    ELSE 'NONE'
+                END AS "issueDescription"
+
+            FROM PHMSDS.SAMPLE_DEMOG_ARCHIVE sda
+            LEFT JOIN PHMSDS.RESULT_ARCHIVE ra 
+                ON sda.LABNO = ra.LABNO
+
+            WHERE sda.SUBMID = :submid
+            AND sda.DTRECV >= TO_DATE(:dateFrom, 'YYYY-MM-DD')
+            AND sda.DTRECV < TO_DATE(:dateTo, 'YYYY-MM-DD') + 1
+            AND sda.LABNO NOT LIKE '_______8%'
+
+            GROUP BY 
+                sda.LABNO,
+                sda.FNAME,
+                sda.LNAME,
+                sda.SPECTYPE,
+                sda.BIRTHHOSP,
+                sda.SUBMID,
+                ra.MNEMONIC
             ORDER BY sda.LABNO
         `;
 
