@@ -1087,11 +1087,11 @@ function formatIssueDescription(issue) {
         'LESS_THAN_24_HOURS': '<24 Hours',
         'DATA_ERASURES': 'Data Erasures',
         'MISSING_INFORMATION': 'Missing Info',
-        'NONE': 'Satisfactory',
-        '': 'Satisfactory'
+        'NONE': 'Normal',
+        '': 'Normal'
     };
     
-    return issues[issue] || 'Satisfactory';
+    return issues[issue] || 'Normal';
 }
 
 // Show/hide loading state
