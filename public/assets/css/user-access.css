@@ -1,0 +1,21 @@
+/* Add this to your main CSS file */
+.read-only-mode input,
+.read-only-mode textarea,
+.read-only-mode select,
+.read-only-mode button[type="submit"],
+.read-only-mode .btn-primary,
+.read-only-mode .btn-success,
+.read-only-mode .btn-danger {
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+.read-only-mode .edit-btn,
+.read-only-mode .delete-btn,
+.read-only-mode .add-btn {
+    display: none !important;
+}
+
+#read-only-banner {
+    font-family: Arial, sans-serif;
+}
