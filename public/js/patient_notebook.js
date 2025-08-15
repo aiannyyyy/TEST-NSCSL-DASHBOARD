@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("notebookForm");
   const searchFields = document.querySelectorAll(".search-field");

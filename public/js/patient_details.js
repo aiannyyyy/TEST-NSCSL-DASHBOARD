@@ -1,3 +1,4 @@
+
 // Function to fetch and display patient details
 async function fetchPatientDetails(labno, labid) {
   console.log("🔍 fetchPatientDetails called with:", { labno, labid });
