@@ -621,11 +621,19 @@ style.textContent = `
     }
 `;
 
+/*
  // Global variables for modal functionality
 let currentLabDetailsData = [];
 let filteredLabDetailsData = [];
 let currentModalContext = {};
+*/
+// FIXED: Enhanced modal functionality with proper cleanup
+let currentLabDetailsData = [];
+let filteredLabDetailsData = [];
+let currentModalContext = {};
+let currentModalInstance = null; // Track modal instance
 
+/*
 // FIXED: Enhanced modal functionality with better data handling
 async function showLabDetailsModal(category, facilityId, facilityName, filterValue = null) {
     try {
@@ -712,6 +720,215 @@ async function showLabDetailsModal(category, facilityId, facilityName, filterVal
         showModalError('Failed to load lab details: ' + error.message);
     } finally {
         showModalLoading(false);
+    }
+}
+*/
+// FIXED: Enhanced modal functionality with better cleanup and error handling
+async function showLabDetailsModal(category, facilityId, facilityName, filterValue = null) {
+    try {
+        console.log('=== MODAL DEBUG START ===');
+        console.log('Opening modal for:', { category, facilityId, facilityName });
+
+        // CRITICAL: Properly close any existing modal first
+        await closeExistingModal();
+
+        // Store context for later use
+        currentModalContext = {
+            category,
+            facilityId,
+            facilityName,
+            filterValue
+        };
+
+        // Get date range from filters
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+
+        // Get modal element and create Bootstrap modal instance
+        const modalElement = document.getElementById('labDetailsModal');
+        if (!modalElement) {
+            console.error('Modal element not found');
+            return;
+        }
+
+        // FIXED: Proper modal initialization and cleanup
+        currentModalInstance = new bootstrap.Modal(modalElement, {
+            backdrop: 'static', // Prevent closing by clicking backdrop accidentally
+            keyboard: true,     // Allow ESC to close
+            focus: true         // Focus on modal when shown
+        });
+
+        // Add proper event listeners for cleanup
+        modalElement.addEventListener('hidden.bs.modal', handleModalClosed, { once: true });
+        modalElement.addEventListener('show.bs.modal', handleModalShowing, { once: true });
+
+        // Show modal
+        currentModalInstance.show();
+        
+        showModalLoading(true);
+        hideModalError();
+        hideModalContent();
+
+        // Update modal title
+        document.getElementById('labDetailsModalLabel').innerHTML = `
+            <i class="fas fa-flask me-2"></i>
+            ${getCategoryDisplayName(category)} - Lab Details
+        `;
+
+        // Fetch data from API
+        const url = `http://localhost:3001/api/nsf-performance-lab-details?submid=${encodeURIComponent(facilityId)}&dateFrom=${startDate}&dateTo=${endDate}`;
+        console.log('Fetching lab details from:', url);
+
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error:', response.status, errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const rawData = await response.json();
+        console.log('Raw API Response:', rawData);
+
+        // Normalize the data structure regardless of format
+        const normalizedData = normalizeApiResponse(rawData);
+        console.log('Normalized data:', normalizedData);
+
+        // Store the full dataset
+        currentLabDetailsData = normalizedData;
+
+        if (currentLabDetailsData.length === 0) {
+            console.log('No data found');
+            showModalError('No lab details found for the selected criteria.');
+            return;
+        }
+
+        // Filter data based on category
+        filteredLabDetailsData = filterDataByCategory(currentLabDetailsData, category, filterValue);
+        console.log('Filtered data length:', filteredLabDetailsData.length);
+
+        if (filteredLabDetailsData.length === 0) {
+            showModalError(`No ${getCategoryDisplayName(category)} found for this facility.`);
+            return;
+        }
+
+        // Update modal with data
+        updateModalSummary(facilityName, startDate, endDate, category, filteredLabDetailsData.length);
+        populateModalTable(filteredLabDetailsData);
+        showModalContent();
+
+        console.log('=== MODAL DEBUG END ===');
+
+    } catch (error) {
+        console.error('Error fetching lab details:', error);
+        showModalError('Failed to load lab details: ' + error.message);
+    } finally {
+        showModalLoading(false);
+    }
+}
+
+// FIXED: Proper modal cleanup function
+async function closeExistingModal() {
+    return new Promise((resolve) => {
+        // Check if there's an existing modal instance
+        if (currentModalInstance) {
+            console.log('Closing existing modal instance');
+            
+            // Add one-time listener for when modal is fully hidden
+            const modalElement = document.getElementById('labDetailsModal');
+            if (modalElement) {
+                modalElement.addEventListener('hidden.bs.modal', () => {
+                    console.log('Previous modal fully closed');
+                    resolve();
+                }, { once: true });
+                
+                // Hide the modal
+                currentModalInstance.hide();
+                currentModalInstance = null;
+            } else {
+                resolve();
+            }
+        } else {
+            // Check for any lingering modal elements or backdrops
+            cleanupModalArtifacts();
+            resolve();
+        }
+    });
+}
+
+// FIXED: Clean up any modal artifacts (backdrops, etc.)
+function cleanupModalArtifacts() {
+    console.log('Cleaning up modal artifacts');
+    
+    // Remove any lingering backdrops
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => {
+        console.log('Removing lingering backdrop');
+        backdrop.remove();
+    });
+    
+    // Remove modal-open class from body if it exists
+    if (document.body.classList.contains('modal-open')) {
+        console.log('Removing modal-open class from body');
+        document.body.classList.remove('modal-open');
+    }
+    
+    // Reset body padding/margin that might have been set by Bootstrap
+    document.body.style.paddingRight = '';
+    document.body.style.overflow = '';
+    
+    // Remove any lingering modal states
+    const modalElement = document.getElementById('labDetailsModal');
+    if (modalElement) {
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.removeAttribute('aria-modal');
+    }
+}
+
+// FIXED: Handle modal showing event
+function handleModalShowing(event) {
+    console.log('Modal is showing');
+    // Ensure no other modals are interfering
+    cleanupModalArtifacts();
+}
+
+// FIXED: Handle modal closed event with proper cleanup
+function handleModalClosed(event) {
+    console.log('Modal closed event fired');
+    
+    // Clear the current instance
+    currentModalInstance = null;
+    currentModalContext = {};
+    currentLabDetailsData = [];
+    filteredLabDetailsData = [];
+    
+    // Ensure complete cleanup
+    setTimeout(() => {
+        cleanupModalArtifacts();
+    }, 100);
+}
+
+// FIXED: Manual close modal function
+function closeLabDetailsModal() {
+    if (currentModalInstance) {
+        currentModalInstance.hide();
+    } else {
+        // Fallback cleanup
+        const modalElement = document.getElementById('labDetailsModal');
+        if (modalElement) {
+            const bsModal = bootstrap.Modal.getInstance(modalElement);
+            if (bsModal) {
+                bsModal.hide();
+            }
+        }
+        cleanupModalArtifacts();
     }
 }
 
@@ -861,6 +1078,7 @@ function updateModalSummary(facilityName, startDate, endDate, category, totalRec
     document.getElementById('summaryTotal').textContent = totalRecords.toLocaleString();
 }
 
+/*
 // FIXED: Enhanced table population with better error handling
 function populateModalTable(data) {
     console.log('=== POPULATING TABLE ===');
@@ -882,6 +1100,70 @@ function populateModalTable(data) {
     }
 
     document.getElementById('noResultsMessage')?.classList.add('d-none');
+
+    data.forEach((item, index) => {
+        console.log(`Processing record ${index}:`, item);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="font-monospace">${item.labNo || 'N/A'}</td>
+            <td>${formatPatientName(item.firstName, item.lastName)}</td>
+            <td>
+                <span class="badge badge-${(item.specTypeLabel || '').toLowerCase().replace(/\s+/g, '-')} badge-category">
+                    ${item.specTypeLabel || 'Unknown'}
+                </span>
+            </td>
+            <td>
+                <span class="badge badge-secondary">
+                    ${formatBirthCategory(item.birthCategory)}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${getIssueStatusClass(item.issueDescription)}">
+                    ${formatIssueDescription(item.issueDescription)}
+                </span>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    const footerInfo = document.getElementById('modalFooterInfo');
+    if (footerInfo) {
+        footerInfo.textContent = `Showing ${data.length.toLocaleString()} of ${currentLabDetailsData.length.toLocaleString()} total records`;
+    }
+    
+    console.log('=== TABLE POPULATION COMPLETE ===');
+}
+*/
+// FIXED: Enhanced table population with better error handling
+function populateModalTable(data) {
+    console.log('=== POPULATING TABLE ===');
+    console.log('Data to populate:', data);
+    
+    const tbody = document.getElementById('modalTableBody');
+    if (!tbody) {
+        console.error('Modal table body not found');
+        return;
+    }
+
+    tbody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        const noResultsMsg = document.getElementById('noResultsMessage');
+        if (noResultsMsg) {
+            noResultsMsg.classList.remove('d-none');
+        }
+        const footerInfo = document.getElementById('modalFooterInfo');
+        if (footerInfo) {
+            footerInfo.textContent = '';
+        }
+        return;
+    }
+
+    const noResultsMsg = document.getElementById('noResultsMessage');
+    if (noResultsMsg) {
+        noResultsMsg.classList.add('d-none');
+    }
 
     data.forEach((item, index) => {
         console.log(`Processing record ${index}:`, item);
@@ -1094,6 +1376,7 @@ function formatIssueDescription(issue) {
     return issues[issue] || 'Normal';
 }
 
+/*
 // Show/hide loading state
 function showModalLoading(show) {
     const indicator = document.getElementById('modalLoadingIndicator');
@@ -1103,7 +1386,20 @@ function showModalLoading(show) {
         indicator.classList.add('d-none');
     }
 }
+*/
+// FIXED: Show/hide loading state with better element checking
+function showModalLoading(show) {
+    const indicator = document.getElementById('modalLoadingIndicator');
+    if (indicator) {
+        if (show) {
+            indicator.classList.remove('d-none');
+        } else {
+            indicator.classList.add('d-none');
+        }
+    }
+}
 
+/*
 // Show/hide error message
 function showModalError(message) {
     const errorDiv = document.getElementById('modalErrorMessage');
@@ -1111,26 +1407,110 @@ function showModalError(message) {
     errorText.textContent = message;
     errorDiv.classList.remove('d-none');
 }
+*/
+// FIXED: Show/hide error message with better element checking
+function showModalError(message) {
+    const errorDiv = document.getElementById('modalErrorMessage');
+    const errorText = document.getElementById('errorText');
+    if (errorDiv && errorText) {
+        errorText.textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+}
 
+/*
 function hideModalError() {
     document.getElementById('modalErrorMessage').classList.add('d-none');
 }
+*/
+function hideModalError() {
+    const errorDiv = document.getElementById('modalErrorMessage');
+    if (errorDiv) {
+        errorDiv.classList.add('d-none');
+    }
+}
 
+/*
 // Show/hide modal content
 function showModalContent() {
     document.getElementById('modalSummary').classList.remove('d-none');
     document.getElementById('modalFilters').classList.remove('d-none');
     document.getElementById('modalDataTable').classList.remove('d-none');
 }
+*/
+// FIXED: Show/hide modal content with better element checking
+function showModalContent() {
+    const elements = [
+        'modalSummary',
+        'modalFilters', 
+        'modalDataTable'
+    ];
+    
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.remove('d-none');
+        }
+    });
+}
 
+/*
 function hideModalContent() {
     document.getElementById('modalSummary').classList.add('d-none');
     document.getElementById('modalFilters').classList.add('d-none');
     document.getElementById('modalDataTable').classList.add('d-none');
 }
+*/
+function hideModalContent() {
+    const elements = [
+        'modalSummary',
+        'modalFilters',
+        'modalDataTable'
+    ];
+    
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add('d-none');
+        }
+    });
+}
 
+/*
 // FIXED: Enhanced modal filters with normalized data
 function applyModalFilters() {
+    const labnoFilter = document.getElementById('filterLabno')?.value.toLowerCase().trim() || '';
+    const nameFilter = document.getElementById('filterName')?.value.toLowerCase().trim() || '';
+    const spectypeFilter = document.getElementById('filterSpectype')?.value || '';
+
+    let filtered = [...filteredLabDetailsData]; // Create a copy
+
+    if (labnoFilter) {
+        filtered = filtered.filter(item => 
+            (item.labNo || '').toLowerCase().includes(labnoFilter)
+        );
+    }
+
+    if (nameFilter) {
+        filtered = filtered.filter(item => {
+            const fullName = `${item.firstName || ''} ${item.lastName || ''}`.toLowerCase();
+            return fullName.includes(nameFilter);
+        });
+    }
+
+    if (spectypeFilter && spectypeFilter !== '') {
+        filtered = filtered.filter(item => item.specTypeLabel === spectypeFilter);
+    }
+
+    populateModalTable(filtered);
+}
+*/
+// FIXED: Enhanced modal filters with better event handling
+function applyModalFilters() {
+    if (!filteredLabDetailsData || filteredLabDetailsData.length === 0) {
+        return;
+    }
+
     const labnoFilter = document.getElementById('filterLabno')?.value.toLowerCase().trim() || '';
     const nameFilter = document.getElementById('filterName')?.value.toLowerCase().trim() || '';
     const spectypeFilter = document.getElementById('filterSpectype')?.value || '';
@@ -1333,6 +1713,7 @@ async function testApiResponse(facilityId) {
     }
 }
 
+/*
 // Event listeners for modal filters
 document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for filter inputs
@@ -1369,6 +1750,51 @@ function addClickHandlersToMetrics() {
         });
     });
 }
+*/
+// FIXED: Improved event listeners with proper cleanup
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Setting up modal event listeners');
+    
+    // Add event listeners for filter inputs with debouncing
+    const setupFilterListener = (elementId, eventType = 'input') => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            let timeout;
+            element.addEventListener(eventType, () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(applyModalFilters, 300); // Debounce for better performance
+            });
+        }
+    };
+
+    setupFilterListener('filterLabno', 'input');
+    setupFilterListener('filterName', 'input');
+    setupFilterListener('filterSpectype', 'change');
+    
+    // Export CSV button
+    const exportBtn = document.getElementById('exportCsvBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportModalDataToCsv);
+    }
+
+    // Add close button event listeners
+    const modalElement = document.getElementById('labDetailsModal');
+    if (modalElement) {
+        // Close button in header
+        const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeLabDetailsModal);
+        });
+
+        // ESC key handling
+        modalElement.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLabDetailsModal();
+            }
+        });
+    }
+});
+
 
 // Updated showFacilityPerformance function (replace your existing one)
 function showFacilityPerformance(facilityId, facilityName, province) {
@@ -1449,6 +1875,120 @@ function showFacilityPerformance(facilityId, facilityName, province) {
         addClickHandlersToMetrics();
     }, 100);
 }
+
+// FIXED: Enhanced click handlers for performance metrics
+function addClickHandlersToMetrics() {
+    // Add click handlers to all clickable metrics
+    const clickableMetrics = document.querySelectorAll('.clickable-metric');
+    clickableMetrics.forEach(metric => {
+        // Remove existing listeners to prevent duplicates
+        const newMetric = metric.cloneNode(true);
+        metric.parentNode.replaceChild(newMetric, metric);
+        
+        // Add new listener
+        newMetric.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (!currentFacilityId) {
+                alert('Please select a facility first.');
+                return;
+            }
+
+            const facilityName = document.getElementById('facilityName')?.textContent || 'Unknown Facility';
+            const metricId = this.id;
+            const metricValue = this.textContent.trim();
+
+            // Only show modal if there are samples to display
+            if (metricValue === '0' || metricValue === '-' || metricValue === '0.0%') {
+                alert('No data available for this metric.');
+                return;
+            }
+
+            // Small delay to ensure any existing modal is fully closed
+            setTimeout(() => {
+                showLabDetailsModal(metricId, currentFacilityId, facilityName);
+            }, 100);
+        });
+    });
+}
+
+// Add emergency cleanup function that can be called manually
+window.forceCleanupModals = function() {
+    console.log('🚨 Emergency modal cleanup initiated');
+    
+    // Dispose all modal instances
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        const instance = bootstrap.Modal.getInstance(modal);
+        if (instance) {
+            instance.dispose();
+        }
+    });
+    
+    // Reset global variables
+    currentModalInstance = null;
+    currentModalContext = {};
+    currentLabDetailsData = [];
+    filteredLabDetailsData = [];
+    
+    // Complete cleanup
+    cleanupModalArtifacts();
+    
+    console.log('✅ Emergency cleanup completed');
+};
+
+// Add CSS to ensure proper modal behavior
+const modalFixStyles = `
+    /* Ensure modal backdrop is properly handled */
+    .modal-backdrop {
+        z-index: 1040;
+    }
+    
+    .modal {
+        z-index: 1050;
+    }
+    
+    /* Prevent modal content from scrolling issues */
+    .modal-dialog {
+        margin: 1.75rem auto;
+        max-height: calc(100vh - 3.5rem);
+    }
+    
+    .modal-content {
+        max-height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-body {
+        overflow-y: auto;
+        flex: 1 1 auto;
+    }
+    
+    /* Ensure table is scrollable within modal */
+    .table-responsive {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    /* Loading state */
+    .modal-loading {
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    /* Error state */
+    .modal-error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #721c24;
+    }
+`;
 
 // ADD THIS CSS for the badges
 const additionalStyles = `
@@ -1958,6 +2498,16 @@ function testReportGeneration() {
     }
 }
 //end generating report
+
+// Add the styles to the page
+const existingStyle = document.querySelector('style');
+if (existingStyle) {
+    existingStyle.textContent += modalFixStyles;
+} else {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = modalFixStyles;
+    document.head.appendChild(styleElement);
+}
 
 
 document.head.appendChild(style);
