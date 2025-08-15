@@ -1,9 +1,16 @@
+// ===== COMPLETE REFINED FRONTEND SCRIPT WITH MODAL MANAGER INTEGRATION =====
+// This script integrates all functionality with the global Modal Manager system
 
-// Function to fetch and display patient details
+// ===== PATIENT DETAILS FUNCTIONS =====
 async function fetchPatientDetails(labno, labid) {
   console.log("🔍 fetchPatientDetails called with:", { labno, labid });
   
   const detailsBody = document.querySelector("#detailsModal .modal-body");
+  if (!detailsBody) {
+    console.error("❌ Details modal body not found");
+    return;
+  }
+
   const originalContent = detailsBody.innerHTML;
 
   detailsBody.innerHTML = `
@@ -40,86 +47,111 @@ async function fetchPatientDetails(labno, labid) {
     
     detailsBody.innerHTML = originalContent;
 
-    // Basic Info
-    document.getElementById("detailLabNo").textContent = patientInfo.LABNO || "";
-    document.getElementById("detailFormNo").textContent = patientInfo.LABID || "";
-    document.getElementById("detailLName").textContent = patientInfo.LNAME || "";
-    document.getElementById("detailFName").textContent = patientInfo.FNAME || "";
-
-    const birthDate = patientInfo.BIRTHDT ? new Date(patientInfo.BIRTHDT).toLocaleDateString() : "";
-    const birthTime = patientInfo.BIRTHTM || "";
-    document.getElementById("detailDOB").textContent = birthTime ? `${birthDate} ${birthTime}` : birthDate;
-
-    const collectionDate = patientInfo.DTCOLL ? new Date(patientInfo.DTCOLL).toLocaleDateString() : "";
-    const collectionTime = patientInfo.TMCOLL || "";
-    document.getElementById("detailDOC").textContent = collectionTime ? `${collectionDate} ${collectionTime}` : collectionDate;
-
-    document.getElementById("detailSpectype").textContent = {
-      "1": "NBS-5 test", "2": "Repeat Unsat", "3": "Repeat Abnormal", "4": "Repeat Normal",
-      "5": "Monitoring", "6": "ARCHIVED", "8": "QC (G6PD)", "9": "PT Samples (CDC)",
-      "18": "NBS 5 +LEU", "20": "ENBS", "21": "Other Disorders", "22": "Rpt-ENBS",
-      "87": "Unfit", "96": "Serum"
-    }[patientInfo.SPECTYPE] || "";
-
-    document.getElementById("detailMilkType").textContent = patientInfo.MILKTYPE || "";
-    document.getElementById("detailSex").textContent = patientInfo.SEX === "1" ? "Male" : patientInfo.SEX === "2" ? "Female" : "";
-    document.getElementById("detailBirthWt").textContent = patientInfo.BIRTHWT || "";
-    document.getElementById("detailBirthOrder").textContent = patientInfo.BIRTHORDER || "";
-    document.getElementById("detailBloodTransfused").textContent = patientInfo.TRANSFUS ? "Yes" : "No";
-    document.getElementById("detailTransfusedDate").textContent = patientInfo.TRANSFUSDT ? new Date(patientInfo.TRANSFUSDT).toLocaleDateString() : "";
-    document.getElementById("detailGestationAge").textContent = patientInfo.GESTAGE || "";
-
-    let specimenAge = "";
-    if (patientInfo.DTRECV && patientInfo.DTCOLL) {
-      const receivedDate = new Date(patientInfo.DTRECV);
-      const collectionDate = new Date(patientInfo.DTCOLL);
-      const diffTime = Math.abs(receivedDate - collectionDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      specimenAge = `${diffDays} days`;
-    }
-    document.getElementById("detailSpecimenAge").textContent = specimenAge;
-
-    document.getElementById("detailAgeAtCollection").textContent = patientInfo.AGECOLL || "";
-    document.getElementById("detailDateReceived").textContent = patientInfo.DTRECV ? new Date(patientInfo.DTRECV).toLocaleDateString() : "";
-    document.getElementById("detailDateReported").textContent = patientInfo.DTRPTD ? new Date(patientInfo.DTRPTD).toLocaleDateString() : "";
-    document.getElementById("detailClinicalStatus").textContent = patientInfo.CLINSTAT || "";
-    document.getElementById("detailPhysicianId").textContent = patientInfo.PHYSID || "";
-    document.getElementById("detailBirthHospId").textContent = patientInfo.BIRTHHOSP || "";
-    document.getElementById("detailBirthHospName").textContent = patientInfo.PROVIDER_DESCR1 || "";
-    document.getElementById("detailSubmId").textContent = patientInfo.SUBMID || "";
-
+    // Basic Info Population
+    populateBasicInfo(patientInfo);
+    
     // Populate results table
-    const resultTableBody = document.querySelector("#resultsDetailsTable tbody");
-    if (resultTableBody) {
-      resultTableBody.innerHTML = "";
+    populateResultsTable(data);
 
-      data.forEach((item) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.GROUP_NAME || ""}</td>
-          <td>${item.DISORDER_NAME || ""}</td>
-          <td>${item.MNEMONIC || ""}</td>
-          <td>${item.DESCR1 || ""}</td>
-          <td>${item.DISORDERRESULTTEXT || ""}</td>
-        `;
-        resultTableBody.appendChild(row);
-      });
-    }
-
-    // Fetch Notebook details with a small delay to ensure modal is fully rendered
+    // Fetch Notebook details with delay for modal rendering
     console.log("📔 About to fetch notebook details...");
     setTimeout(async () => {
       await fetchNotebookDetails(patientInfo.FNAME, patientInfo.LNAME);
-      await fetchAddedNotebookDetails(patientInfo.FNAME, patientInfo.LNAME); // 👈 Add this line
+      await fetchAddedNotebookDetails(patientInfo.FNAME, patientInfo.LNAME);
     }, 200);
 
   } catch (error) {
     console.error("❌ Error fetching patient details:", error);
     detailsBody.innerHTML = originalContent;
-    alert(`Error: ${error.message || "Failed to load patient details"}`);
+    showErrorAlert(`Error: ${error.message || "Failed to load patient details"}`);
   }
 }
 
+function populateBasicInfo(patientInfo) {
+  // Helper function to safely set text content
+  const setElementText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value || "";
+  };
+
+  // Basic Information
+  setElementText("detailLabNo", patientInfo.LABNO);
+  setElementText("detailFormNo", patientInfo.LABID);
+  setElementText("detailLName", patientInfo.LNAME);
+  setElementText("detailFName", patientInfo.FNAME);
+
+  // Date formatting
+  const birthDate = patientInfo.BIRTHDT ? new Date(patientInfo.BIRTHDT).toLocaleDateString() : "";
+  const birthTime = patientInfo.BIRTHTM || "";
+  setElementText("detailDOB", birthTime ? `${birthDate} ${birthTime}` : birthDate);
+
+  const collectionDate = patientInfo.DTCOLL ? new Date(patientInfo.DTCOLL).toLocaleDateString() : "";
+  const collectionTime = patientInfo.TMCOLL || "";
+  setElementText("detailDOC", collectionTime ? `${collectionDate} ${collectionTime}` : collectionDate);
+
+  // Specimen type mapping
+  const specTypes = {
+    "1": "NBS-5 test", "2": "Repeat Unsat", "3": "Repeat Abnormal", "4": "Repeat Normal",
+    "5": "Monitoring", "6": "ARCHIVED", "8": "QC (G6PD)", "9": "PT Samples (CDC)",
+    "18": "NBS 5 +LEU", "20": "ENBS", "21": "Other Disorders", "22": "Rpt-ENBS",
+    "87": "Unfit", "96": "Serum"
+  };
+  setElementText("detailSpectype", specTypes[patientInfo.SPECTYPE] || "");
+
+  // Other fields
+  setElementText("detailMilkType", patientInfo.MILKTYPE);
+  setElementText("detailSex", patientInfo.SEX === "1" ? "Male" : patientInfo.SEX === "2" ? "Female" : "");
+  setElementText("detailBirthWt", patientInfo.BIRTHWT);
+  setElementText("detailBirthOrder", patientInfo.BIRTHORDER);
+  setElementText("detailBloodTransfused", patientInfo.TRANSFUS ? "Yes" : "No");
+  setElementText("detailTransfusedDate", patientInfo.TRANSFUSDT ? new Date(patientInfo.TRANSFUSDT).toLocaleDateString() : "");
+  setElementText("detailGestationAge", patientInfo.GESTAGE);
+
+  // Calculate specimen age
+  let specimenAge = "";
+  if (patientInfo.DTRECV && patientInfo.DTCOLL) {
+    const receivedDate = new Date(patientInfo.DTRECV);
+    const collectionDate = new Date(patientInfo.DTCOLL);
+    const diffTime = Math.abs(receivedDate - collectionDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    specimenAge = `${diffDays} days`;
+  }
+  setElementText("detailSpecimenAge", specimenAge);
+
+  // Additional fields
+  setElementText("detailAgeAtCollection", patientInfo.AGECOLL);
+  setElementText("detailDateReceived", patientInfo.DTRECV ? new Date(patientInfo.DTRECV).toLocaleDateString() : "");
+  setElementText("detailDateReported", patientInfo.DTRPTD ? new Date(patientInfo.DTRPTD).toLocaleDateString() : "");
+  setElementText("detailClinicalStatus", patientInfo.CLINSTAT);
+  setElementText("detailPhysicianId", patientInfo.PHYSID);
+  setElementText("detailBirthHospId", patientInfo.BIRTHHOSP);
+  setElementText("detailBirthHospName", patientInfo.PROVIDER_DESCR1);
+  setElementText("detailSubmId", patientInfo.SUBMID);
+}
+
+function populateResultsTable(data) {
+  const resultTableBody = document.querySelector("#resultsDetailsTable tbody");
+  if (!resultTableBody) {
+    console.warn("⚠️ Results table body not found");
+    return;
+  }
+
+  resultTableBody.innerHTML = "";
+
+  data.forEach((item) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${item.GROUP_NAME || ""}</td>
+      <td>${item.DISORDER_NAME || ""}</td>
+      <td>${item.MNEMONIC || ""}</td>
+      <td>${item.DESCR1 || ""}</td>
+      <td>${item.DISORDERRESULTTEXT || ""}</td>
+    `;
+    resultTableBody.appendChild(row);
+  });
+}
+
+// ===== NOTEBOOK DETAILS FUNCTIONS =====
 async function fetchNotebookDetails(fname, lname) {
   console.log("=== NOTEBOOK FETCH START ===");
   console.log("1. Function called with:", { fname, lname });
@@ -130,14 +162,7 @@ async function fetchNotebookDetails(fname, lname) {
     return;
   }
 
-  notebookContainer.innerHTML = `
-    <div class="d-flex justify-content-center align-items-center py-3">
-      <div class="spinner-border spinner-border-sm text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <div class="ms-2">Loading notebook entries...</div>
-    </div>
-  `;
+  showLoadingSpinner(notebookContainer, "Loading notebook entries...");
 
   try {
     const encodedFname = encodeURIComponent(fname || '');
@@ -146,28 +171,126 @@ async function fetchNotebookDetails(fname, lname) {
 
     const response = await fetch(url);
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}: ${response.statusText}` }));
+      const errorData = await response.json().catch(() => ({ 
+        error: `HTTP ${response.status}: ${response.statusText}` 
+      }));
       throw new Error(errorData.error || `Failed to fetch notebook details (${response.status})`);
     }
 
     const responseData = await response.json();
+    let data = Array.isArray(responseData?.data) ? responseData.data : 
+               (Array.isArray(responseData) ? responseData : []);
 
-    let data = Array.isArray(responseData?.data) ? responseData.data : (Array.isArray(responseData) ? responseData : []);
     if (data.length === 0) {
-      notebookContainer.innerHTML = `
-        <div class="text-center py-4 text-muted">
-          <i class="fas fa-book-open fa-2x mb-2"></i>
-          <p class="mb-0">No notebook entries found for <strong>${fname} ${lname}</strong></p>
-        </div>
-      `;
+      showEmptyState(notebookContainer, `No notebook entries found for <strong>${fname} ${lname}</strong>`);
       return;
     }
 
-        let entriesHTML = `
-      <div class="list-group">
-    `;
+    displayNotebookEntries(notebookContainer, data, "notebook");
+    console.log("✅ Notebook table loaded");
 
-    data.forEach((entry, index) => {
+  } catch (error) {
+    console.error("❌ Error in fetchNotebookDetails:", error);
+    showErrorInContainer(notebookContainer, "Error Loading Notebook", error);
+  }
+}
+
+async function fetchAddedNotebookDetails(fname, lname) {
+  console.log("=== ADDED NOTEBOOK FETCH START ===");
+  console.log("Function called with:", { fname, lname });
+
+  const notebookContainer = document.getElementById("addednotebookContainer");
+  if (!notebookContainer) {
+    console.error("ERROR: addednotebookContainer element not found!");
+    return;
+  }
+
+  showLoadingSpinner(notebookContainer, "Loading additional notebook entries...");
+
+  try {
+    const encodedFname = encodeURIComponent(fname || '');
+    const encodedLname = encodeURIComponent(lname || '');
+    const url = `http://localhost:3001/api/notebook-query?fname=${encodedFname}&lname=${encodedLname}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ 
+        error: `HTTP ${response.status}: ${response.statusText}` 
+      }));
+      throw new Error(errorData.error || `Failed to fetch added notebook details (${response.status})`);
+    }
+
+    const responseData = await response.json();
+    let data = Array.isArray(responseData?.data) ? responseData.data : 
+               (Array.isArray(responseData) ? responseData : []);
+
+    if (data.length === 0) {
+      showEmptyState(notebookContainer, `No additional notebook entries found for <strong>${fname} ${lname}</strong>`);
+      return;
+    }
+
+    displayNotebookEntries(notebookContainer, data, "added", fname, lname);
+    console.log("✅ Added notebook entries loaded");
+
+  } catch (error) {
+    console.error("❌ Error in fetchAddedNotebookDetails:", error);
+    showErrorInContainer(notebookContainer, "Error Loading Added Notebook", error);
+  }
+}
+
+// ===== UI HELPER FUNCTIONS =====
+function showLoadingSpinner(container, message) {
+  container.innerHTML = `
+    <div class="d-flex justify-content-center align-items-center py-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="ms-2">${message}</div>
+    </div>
+  `;
+}
+
+function showEmptyState(container, message) {
+  container.innerHTML = `
+    <div class="text-center py-4 text-muted">
+      <i class="fas fa-book-open fa-2x mb-2"></i>
+      <p class="mb-0">${message}</p>
+    </div>
+  `;
+}
+
+function showErrorInContainer(container, title, error) {
+  container.innerHTML = `
+    <div class="alert alert-danger mb-0">
+      <i class="fas fa-exclamation-triangle"></i>
+      <strong>${title}:</strong> ${error.message}
+      <details class="mt-2">
+        <summary style="cursor: pointer;">Technical Details</summary>
+        <pre style="font-size: 11px; margin-top: 10px;">${error.stack || error.toString()}</pre>
+      </details>
+    </div>
+  `;
+}
+
+function showErrorAlert(message) {
+  // Could be replaced with a nicer modal or toast notification
+  alert(message);
+}
+
+function displayNotebookEntries(container, data, type, fname, lname) {
+  const techMapping = {
+    "222": "AAMORFE", "202": "ABBRUTAS", "223": "ATDELEON", "148": "GEYEDRA",
+    "87": "MCDIMAILIG", "145": "KGSTAROSA", "210": "MRGOMEZ", 
+    "86": "VMWAGAN", "129": "JMAPELADO"
+  };
+
+  let entriesHTML = `<div class="list-group">`;
+
+  data.forEach((entry) => {
+    let entryHTML = `<div class="list-group-item mb-2 shadow-sm rounded border">`;
+    
+    if (type === "notebook") {
+      // Original notebook format
       let createdDate = "N/A", createdTime = "N/A", modifiedDateTime = "N/A";
 
       if (entry.CREATE_DT) {
@@ -184,109 +307,17 @@ async function fetchNotebookDetails(fname, lname) {
 
       let remarks = entry.NOTES || 'No remarks recorded';
       if (remarks.length > 300) remarks = remarks.substring(0, 300) + '...';
-      remarks = remarks.replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&#39;');
+      remarks = escapeHtml(remarks);
 
-      entriesHTML += `
-        <div class="list-group-item mb-2 shadow-sm rounded border">
-          <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.LABNO || 'N/A'}</p>
-          <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
-          <p class="mb-1"><strong>👤 Tech:</strong> ${
-            (() => {
-              const techs = {
-                "222": "AAMORFE",
-                "202": "ABBRUTAS",
-                "223": "ATDELEON",
-                "148": "GEYEDRA",
-                "87":  "MCDIMAILIG",
-                "145": "KGSTAROSA",
-                "210": "MRGOMEZ",
-                "86":  "VMWAGAN",
-                "129": "JMAPELADO"
-              };
-              return techs[entry.USER_ID] || 'N/A';
-            })()
-          }</p>
-          <p class="mb-1"><strong>✏️ Last Modified:</strong> ${modifiedDateTime}</p>
-          <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
-        </div>
+      entryHTML += `
+        <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.LABNO || 'N/A'}</p>
+        <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
+        <p class="mb-1"><strong>👤 Tech:</strong> ${techMapping[entry.USER_ID] || 'N/A'}</p>
+        <p class="mb-1"><strong>✏️ Last Modified:</strong> ${modifiedDateTime}</p>
+        <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
       `;
-    });
-
-    entriesHTML += `
-      <div class="text-end mt-3">
-        <small class="text-muted">Total entries: ${data.length}</small>
-      </div>
-    </div>`;
-
-    notebookContainer.innerHTML = entriesHTML;
-    console.log("✅ Notebook table loaded");
-
-  } catch (error) {
-    console.error("❌ Error in fetchNotebookDetails:", error);
-    notebookContainer.innerHTML = `
-      <div class="alert alert-danger mb-0">
-        <i class="fas fa-exclamation-triangle"></i>
-        <strong>Error Loading Notebook:</strong> ${error.message}
-        <details class="mt-2">
-          <summary style="cursor: pointer;">Technical Details</summary>
-          <pre style="font-size: 11px; margin-top: 10px;">${error.stack || error.toString()}</pre>
-        </details>
-      </div>
-    `;
-  }
-}
-
-async function fetchAddedNotebookDetails(fname, lname) {
-  console.log("=== ADDED NOTEBOOK FETCH START ===");
-  console.log("Function called with:", { fname, lname });
-
-  const notebookContainer = document.getElementById("addednotebookContainer");
-  if (!notebookContainer) {
-    console.error("ERROR: addednotebookContainer element not found!");
-    return;
-  }
-
-  notebookContainer.innerHTML = `
-    <div class="d-flex justify-content-center align-items-center py-3">
-      <div class="spinner-border spinner-border-sm text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <div class="ms-2">Loading additional notebook entries...</div>
-    </div>
-  `;
-
-  try {
-    const encodedFname = encodeURIComponent(fname || '');
-    const encodedLname = encodeURIComponent(lname || '');
-    const url = `http://localhost:3001/api/notebook-query?fname=${encodedFname}&lname=${encodedLname}`;
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}: ${response.statusText}` }));
-      throw new Error(errorData.error || `Failed to fetch added notebook details (${response.status})`);
-    }
-
-    const responseData = await response.json();
-    let data = Array.isArray(responseData?.data) ? responseData.data : (Array.isArray(responseData) ? responseData : []);
-
-    if (data.length === 0) {
-      notebookContainer.innerHTML = `
-        <div class="text-center py-4 text-muted">
-          <i class="fas fa-book-open fa-2x mb-2"></i>
-          <p class="mb-0">No additional notebook entries found for <strong>${fname} ${lname}</strong></p>
-        </div>
-      `;
-      return;
-    }
-
-    let entriesHTML = `<div class="list-group">`;
-
-    data.forEach((entry) => {
-      // Format created date/time
+    } else {
+      // Added notebook format
       let createdDate = "N/A", createdTime = "N/A";
       if (entry.createDate) {
         const dt = new Date(entry.createDate);
@@ -294,7 +325,6 @@ async function fetchAddedNotebookDetails(fname, lname) {
         createdTime = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
       }
 
-      // Format modified date/time
       let modifiedDate = "N/A", modifiedTime = "N/A";
       if (entry.modDate) {
         const dtMod = new Date(entry.modDate);
@@ -302,219 +332,50 @@ async function fetchAddedNotebookDetails(fname, lname) {
         modifiedTime = dtMod.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
       }
 
-      // Format and escape remarks
       let remarks = entry.notes || 'No remarks recorded';
       if (remarks.length > 300) remarks = remarks.substring(0, 300) + '...';
-      remarks = remarks.replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&#39;');
+      remarks = escapeHtml(remarks);
 
-      entriesHTML += `
-        <div class="list-group-item mb-2 shadow-sm rounded border">
-          <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.labno || 'N/A'}</p>
-          <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
-          <p class="mb-1"><strong>👤 Created By:</strong> ${entry.techCreate || 'N/A'}</p>
-          <p class="mb-1"><strong>📆 Date Modified:</strong> ${modifiedDate} - ${modifiedTime}</p>
-          <p class="mb-1"><strong>👤 Modified By:</strong> ${entry.techMod || 'N/A'}</p>
-          <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
-        </div>
+      entryHTML += `
+        <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.labno || 'N/A'}</p>
+        <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
+        <p class="mb-1"><strong>👤 Created By:</strong> ${entry.techCreate || 'N/A'}</p>
+        <p class="mb-1"><strong>📆 Date Modified:</strong> ${modifiedDate} - ${modifiedTime}</p>
+        <p class="mb-1"><strong>👤 Modified By:</strong> ${entry.techMod || 'N/A'}</p>
+        <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
       `;
-    });
-
-    entriesHTML += `</div>`;
-
-
-    entriesHTML += `
-      <div class="text-end mt-3">
-        <small class="text-muted">Total added entries: ${data.length}</small>
-      </div>
-    </div>`;
-
-    notebookContainer.innerHTML = entriesHTML;
-    console.log("✅ Added notebook entries loaded");
-
-  } catch (error) {
-    console.error("❌ Error in fetchAddedNotebookDetails:", error);
-    notebookContainer.innerHTML = `
-      <div class="alert alert-danger mb-0">
-        <i class="fas fa-exclamation-triangle"></i>
-        <strong>Error Loading Added Notebook:</strong> ${error.message}
-        <details class="mt-2">
-          <summary style="cursor: pointer;">Technical Details</summary>
-          <pre style="font-size: 11px; margin-top: 10px;">${error.stack || error.toString()}</pre>
-        </details>
-      </div>
-    `;
-  }
-}
-
-// Test functions for debugging
-function testNotebookContainer() {
-  console.log("🧪 Testing notebook container...");
-  const container = document.getElementById("notebookContainer");
-  
-  if (container) {
-    container.innerHTML = `
-      <div class="alert alert-success mb-0">
-        <i class="fas fa-check-circle"></i> 
-        <strong>Container Test Successful!</strong><br>
-        <small>Time: ${new Date().toLocaleTimeString()}</small>
-      </div>
-    `;
-    console.log("✅ Notebook container test PASSED");
-    return true;
-  } else {
-    console.error("❌ Notebook container test FAILED - Element not found");
-    alert("❌ Notebook container not found in DOM!");
-    return false;
-  }
-}
-
-async function testNotebookAPI(fname = "TEST", lname = "USER") {
-  console.log("🧪 Testing notebook API...");
-  
-  try {
-    const url = `http://localhost:3001/api/notebook-details?fname=${fname}&lname=${lname}`;
-    console.log("Testing URL:", url);
-    
-    const response = await fetch(url);
-    const responseData = {
-      status: response.status,
-      ok: response.ok,
-      statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries())
-    };
-    
-    console.log("API Response Info:", responseData);
-    
-    if (!response.ok) {
-      console.error("❌ API test FAILED - Response not OK");
-      return null;
     }
-    
-    const data = await response.json();
-    console.log("API Response Data:", data);
-    console.log("✅ API test PASSED");
-    
-    return data;
-  } catch (error) {
-    console.error("❌ API test FAILED:", error);
-    return null;
-  }
-}
 
-// Enhanced table row click handler with better debugging
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 DOM Content Loaded - Initializing event listeners");
-  
-  const tableBody = document.querySelector("#notebookTable tbody");
-  const resultsModalEl = document.getElementById("resultsModal");
-  const detailsModalEl = document.getElementById("detailsModal");
-  
-  if (!tableBody) {
-    console.error("❌ Table body not found (#notebookTable tbody)");
-    return;
-  }
-  
-  if (!resultsModalEl || !detailsModalEl) {
-    console.error("❌ Modal elements not found", { 
-      resultsModal: !!resultsModalEl, 
-      detailsModal: !!detailsModalEl 
-    });
-    return;
-  }
-  
-  // Bootstrap modal instances
-  let resultsModal = bootstrap.Modal.getInstance(resultsModalEl) || new bootstrap.Modal(resultsModalEl);
-  let detailsModal = bootstrap.Modal.getInstance(detailsModalEl) || new bootstrap.Modal(detailsModalEl);
-  
-  console.log("✅ Modal instances created");
-  
-  // Table row click handler with event delegation
-  tableBody.addEventListener("click", (event) => {
-    console.log("🖱️ Table click detected");
-    
-    // Find the closest row
-    const row = event.target.closest("tr");
-    if (!row) {
-      console.log("No row found for click event");
-      return;
-    }
-    
-    // Extract data from row cells
-    const labno = row.cells[0]?.textContent?.trim();
-    const labid = row.cells[1]?.textContent?.trim();
-    
-    console.log("Row data extracted:", { labno, labid });
-    
-    if (!labno || !labid) {
-      console.error("❌ Missing required data from row");
-      alert("Missing required information to fetch details");
-      return;
-    }
-    
-    console.log("🔄 Hiding results modal and showing details modal");
-    
-    // Hide results modal and show details modal
-    resultsModal.hide();
-    
-    // Small delay to ensure modal transition is smooth
-    setTimeout(() => {
-      detailsModal.show();
-      
-      // Fetch patient details after modal is shown
-      setTimeout(() => {
-        fetchPatientDetails(labno, labid);
-      }, 100);
-    }, 300);
+    entryHTML += `</div>`;
+    entriesHTML += entryHTML;
   });
-  
-  // Back button handlers
-  const backToTableBtn = document.getElementById("backToTableBtn");
-  const backToSearchFromDetailsBtn = document.getElementById("backToSearchFromDetailsBtn");
-  const searchModalEl = document.getElementById("addEventModal");
-  
-  if (searchModalEl) {
-    let searchModal = bootstrap.Modal.getInstance(searchModalEl) || new bootstrap.Modal(searchModalEl);
-    
-    if (backToTableBtn) {
-      backToTableBtn.addEventListener("click", () => {
-        console.log("🔄 Back to table clicked");
-        detailsModal.hide();
-        setTimeout(() => {
-          resultsModal.show();
-        }, 300);
-      });
-    }
-    
-    if (backToSearchFromDetailsBtn) {
-      backToSearchFromDetailsBtn.addEventListener("click", () => {
-        console.log("🔄 Back to search clicked");
-        detailsModal.hide();
-        setTimeout(() => {
-          searchModal.show();
-        }, 300);
-      });
-    }
-  }
-  
-  console.log("✅ All event handlers initialized successfully");
-});
 
-// Global functions for manual testing (accessible from console)
-window.testNotebookContainer = testNotebookContainer;
-window.testNotebookAPI = testNotebookAPI;
-window.fetchNotebookDetails = fetchNotebookDetails;
-window.fetchAddedNotebookDetails = fetchAddedNotebookDetails;
+  entriesHTML += `
+    <div class="text-end mt-3">
+      <small class="text-muted">Total ${type === 'added' ? 'added ' : ''}entries: ${data.length}</small>
+    </div>
+  </div>`;
 
+  container.innerHTML = entriesHTML;
+}
 
-// Function to edit patient notebooks
-// Function to populate the patient notebooks table
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;')
+             .replace(/</g, '&lt;')
+             .replace(/>/g, '&gt;')
+             .replace(/"/g, '&quot;')
+             .replace(/'/g, '&#39;');
+}
+
+// ===== PATIENT NOTEBOOKS TABLE FUNCTIONS =====
 function populatePatientNotebooksTable(notebooks) {
   const tbody = document.getElementById('patientNotebooksTableBody');
   
+  if (!tbody) {
+    console.error("❌ Patient notebooks table body not found");
+    return;
+  }
+
   if (!notebooks || notebooks.length === 0) {
     tbody.innerHTML = `
       <tr>
@@ -559,8 +420,7 @@ function populatePatientNotebooksTable(notebooks) {
         </td>
         <td>
           <div class="action-buttons">
-            <button class="btn btn-action btn-view" onclick="viewNotebookEntries('${patient.fname}', '${patient.lname}', '${patient.labid}', '${patient.labno}')"
-" title="View Entries">
+            <button class="btn btn-action btn-view" onclick="viewNotebookEntries('${patient.fname}', '${patient.lname}', '${patient.labid}', '${patient.labno}')" title="View Entries">
               <i class="fas fa-eye me-1"></i>View
             </button>
           </div>
@@ -573,82 +433,290 @@ function populatePatientNotebooksTable(notebooks) {
 }
 
 function viewNotebookEntries(fname, lname, labid, labno) {
-  console.log(`Viewing notebooks for: ${fname} ${lname}`);
+  console.log(`📖 Viewing notebooks for: ${fname} ${lname} using Modal Manager`);
   
-  if (typeof loadNotebookEntries === 'function') {
-    const detailFName = document.getElementById('detailFName');
-    const detailLName = document.getElementById('detailLName');
-    const detailLabNo = document.getElementById('detailLabNo');
-    const detailFormNo = document.getElementById('detailFormNo');
+  // Update detail fields
+  const fieldMappings = {
+    'detailFName': fname,
+    'detailLName': lname,
+    'detailLabNo': labno,
+    'detailFormNo': labid
+  };
 
-    if (detailFName) detailFName.textContent = fname;
-    if (detailLName) detailLName.textContent = lname;
-    if (detailLabNo) detailLabNo.textContent = labno;
-    if (detailFormNo) detailFormNo.textContent = labid;
+  Object.entries(fieldMappings).forEach(([elementId, value]) => {
+    const element = document.getElementById(elementId);
+    if (element) element.textContent = value || '';
+  });
 
-    const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-    detailsModal.show();
+  // Use Modal Manager to show details modal
+  showModal('detailsModal');
 
-    loadNotebookEntries(fname, lname);
+  // Load data after modal is shown with proper delay
+  setTimeout(() => {
     fetchPatientDetails(labno, labid);
     fetchNotebookDetails(fname, lname);
     fetchAddedNotebookDetails(fname, lname);
+  }, 350); // Increased delay to ensure modal transition completes
+}
+
+function refreshPatientNotebooksTable() {
+  console.log("🔄 Refreshing patient notebooks table...");
+  
+  fetch('http://localhost:3001/api/notebook-query')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(notebooks => {
+      populatePatientNotebooksTable(notebooks);
+      console.log("✅ Patient notebooks table refreshed");
+    })
+    .catch(error => {
+      console.error('❌ Error fetching notebooks:', error);
+      showTableError('patientNotebooksTableBody', "Error loading notebook entries");
+    });
+}
+
+function loadInitialNotebooksData() {
+  console.log("📊 Loading initial notebooks data...");
+  
+  fetch('http://localhost:3001/api/notebook-query')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(notebooks => {
+      populatePatientNotebooksTable(notebooks);
+      console.log("✅ Initial notebook data loaded");
+    })
+    .catch(error => {
+      console.error('❌ Error loading initial notebook data:', error);
+      showTableError('patientNotebooksTableBody', "Error loading notebook entries");
+    });
+}
+
+function showTableError(tbodyId, message) {
+  const tbody = document.getElementById(tbodyId);
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="3" class="text-center text-muted py-4">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          ${message}
+        </td>
+      </tr>
+    `;
   }
 }
 
-// Remove sample data - now using real data from server
+// ===== EVENT HANDLERS AND MODAL MANAGER INTEGRATION =====
+function initializeEventHandlers() {
+  console.log("🚀 Initializing event handlers with Modal Manager integration");
+  
+  const tableBody = document.querySelector("#notebookTable tbody");
+  
+  if (!tableBody) {
+    console.error("❌ Table body not found (#notebookTable tbody)");
+    return;
+  }
+  
+  console.log("✅ Table body found, setting up event delegation");
+  
+  // Table row click handler using Modal Manager
+  tableBody.addEventListener("click", handleTableRowClick);
+  
+  // Back button handlers using Modal Manager
+  setupBackButtonHandlers();
+  
+  console.log("✅ All event handlers initialized with Modal Manager integration");
+}
 
-// Initialize table with real data from server
-document.addEventListener('DOMContentLoaded', function() {
-  loadInitialNotebooksData();
+function handleTableRowClick(event) {
+  console.log("🖱️ Table click detected");
+  
+  const row = event.target.closest("tr");
+  if (!row) {
+    console.log("No row found for click event");
+    return;
+  }
+  
+  const labno = row.cells[0]?.textContent?.trim();
+  const labid = row.cells[1]?.textContent?.trim();
+  
+  console.log("Row data extracted:", { labno, labid });
+  
+  if (!labno || !labid) {
+    console.error("❌ Missing required data from row");
+    showErrorAlert("Missing required information to fetch details");
+    return;
+  }
+  
+  console.log("🔄 Using Modal Manager: Showing details modal");
+  
+  // Use Modal Manager to handle modal transitions
+  showModal('detailsModal');
+  
+  // Fetch patient details after modal transition
+  setTimeout(() => {
+    fetchPatientDetails(labno, labid);
+  }, 350);
+}
+
+function setupBackButtonHandlers() {
+  const backToTableBtn = document.getElementById("backToTableBtn");
+  const backToSearchFromDetailsBtn = document.getElementById("backToSearchFromDetailsBtn");
+  
+  if (backToTableBtn) {
+    backToTableBtn.addEventListener("click", () => {
+      console.log("🔄 Back to table clicked - Using Modal Manager");
+      showModal('resultsModal');
+    });
+  }
+  
+  if (backToSearchFromDetailsBtn) {
+    backToSearchFromDetailsBtn.addEventListener("click", () => {
+      console.log("🔄 Back to search clicked - Using Modal Manager");
+      showModal('addEventModal');
+    });
+  }
+}
+
+// ===== INITIALIZATION =====
+function initializeApplication() {
+  console.log("🚀 Initializing application with Modal Manager integration");
+  
+  // Wait for Modal Manager to be ready
+  const waitForModalManager = () => {
+    if (window.modalManager && window.modalManager.isInitialized) {
+      console.log("✅ Modal Manager detected and initialized");
+      initializeEventHandlers();
+      loadInitialNotebooksData();
+    } else {
+      console.log("⏳ Waiting for Modal Manager initialization...");
+      setTimeout(waitForModalManager, 100);
+    }
+  };
+  
+  waitForModalManager();
+}
+
+// Enhanced DOMContentLoaded handler
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 DOM Content Loaded - Starting application initialization");
+  initializeApplication();
 });
 
-// Function to refresh the patient notebooks table (call this after adding new notebooks)
-function refreshPatientNotebooksTable() {
-  // Fetch all notebook entries from server (without filters to get all patients)
-  fetch('http://localhost:3001/api/notebook-query')
-    .then(response => response.json())
-    .then(notebooks => {
-      populatePatientNotebooksTable(notebooks);
-    })
-    .catch(error => {
-      console.error('Error fetching notebooks:', error);
-      // Show empty state on error
-      const tbody = document.getElementById('patientNotebooksTableBody');
-      if (tbody) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="3" class="text-center text-muted py-4">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              Error loading notebook entries
-            </td>
-          </tr>
-        `;
-      }
-    });
+// ===== UTILITY FUNCTIONS =====
+function openAddNotebookModal() {
+  console.log("📝 Opening add notebook modal using Modal Manager");
+  showModal('addNotebookModal');
 }
 
-// Function to load notebook entries on page load
-function loadInitialNotebooksData() {
-  // Load all notebook entries when page loads
-  fetch('http://localhost:3001/api/notebook-query')
-    .then(response => response.json())
-    .then(notebooks => {
-      populatePatientNotebooksTable(notebooks);
-    })
-    .catch(error => {
-      console.error('Error loading initial notebook data:', error);
-      // Show empty state on error
-      const tbody = document.getElementById('patientNotebooksTableBody');
-      if (tbody) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="3" class="text-center text-muted py-4">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              Error loading notebook entries
-            </td>
-          </tr>
-        `;
-      }
-    });
+function closeCurrentModal() {
+  console.log("❌ Closing current modal using Modal Manager");
+  const currentModal = window.modalManager?.getCurrentModal();
+  if (currentModal) {
+    hideModal(currentModal);
+  } else {
+    console.warn("⚠️ No current modal to close");
+  }
 }
+
+function emergencyCleanupAndRefresh() {
+  console.log("🚨 Emergency cleanup and refresh");
+  if (window.emergencyModalCleanup) {
+    window.emergencyModalCleanup();
+  }
+  setTimeout(() => {
+    location.reload();
+  }, 1000);
+}
+
+// ===== TEST FUNCTIONS =====
+function testNotebookContainer() {
+  console.log("🧪 Testing notebook container...");
+  const container = document.getElementById("notebookContainer");
+  
+  if (container) {
+    container.innerHTML = `
+      <div class="alert alert-success mb-0">
+        <i class="fas fa-check-circle"></i> 
+        <strong>Container Test Successful!</strong><br>
+        <small>Time: ${new Date().toLocaleTimeString()}</small>
+      </div>
+    `;
+    console.log("✅ Notebook container test PASSED");
+    return true;
+  } else {
+    console.error("❌ Notebook container test FAILED - Element not found");
+    showErrorAlert("❌ Notebook container not found in DOM!");
+    return false;
+  }
+}
+
+async function testNotebookAPI(fname = "TEST", lname = "USER") {
+  console.log("🧪 Testing notebook API...");
+  
+  try {
+    const url = `http://localhost:3001/api/notebook-details?fname=${fname}&lname=${lname}`;
+    console.log("Testing URL:", url);
+    
+    const response = await fetch(url);
+    const responseData = {
+      status: response.status,
+      ok: response.ok,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    };
+    
+    console.log("API Response Info:", responseData);
+    
+    if (!response.ok) {
+      console.error("❌ API test FAILED - Response not OK");
+      return null;
+    }
+    
+    const data = await response.json();
+    console.log("API Response Data:", data);
+    console.log("✅ API test PASSED");
+    
+    return data;
+  } catch (error) {
+    console.error("❌ API test FAILED:", error);
+    return null;
+  }
+}
+
+function checkIntegrationStatus() {
+  console.log("📊 Integration Status Check:");
+  console.log("- Modal Manager Available:", !!window.modalManager);
+  console.log("- Modal Manager Initialized:", window.modalManager?.isInitialized);
+  console.log("- Current Modal:", window.modalManager?.getCurrentModal());
+  console.log("- Available Global Functions:", {
+    showModal: typeof showModal,
+    hideModal: typeof hideModal,
+    closeAllModals: typeof closeAllModals
+  });
+}
+
+// ===== GLOBAL EXPORTS =====
+// Export functions to global scope for external access
+window.fetchPatientDetails = fetchPatientDetails;
+window.fetchNotebookDetails = fetchNotebookDetails;
+window.fetchAddedNotebookDetails = fetchAddedNotebookDetails;
+window.viewNotebookEntries = viewNotebookEntries;
+window.refreshPatientNotebooksTable = refreshPatientNotebooksTable;
+window.openAddNotebookModal = openAddNotebookModal;
+window.closeCurrentModal = closeCurrentModal;
+window.emergencyCleanupAndRefresh = emergencyCleanupAndRefresh;
+
+// Test functions
+window.testNotebookContainer = testNotebookContainer;
+window.testNotebookAPI = testNotebookAPI;
+window.checkIntegrationStatus = checkIntegrationStatus;
+
+console.log("✅ Complete refined frontend script with Modal Manager integration loaded successfully");

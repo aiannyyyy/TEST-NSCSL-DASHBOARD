@@ -1,3 +1,4 @@
+/*
 //addNotebook.js
 document.addEventListener('DOMContentLoaded', function () {
     const saveBtn = document.getElementById('saveNotebookBtn');
@@ -296,3 +297,327 @@ function showSuccessNotification(message) {
     }, 4000);
 }
 
+*/
+
+// addnotebook.js - Updated to use Modal Manager
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('🚀 Add notebook script loading with Modal Manager support');
+    
+    const saveBtn = document.getElementById('saveNotebookBtn');
+    const closeBtn = document.getElementById('closeAddNotebookBtn');
+    const cancelBtn = document.getElementById('cancelAddNotebookBtn');
+    const modalElement = document.getElementById('addNotebookModal');
+    const saveButtonText = document.getElementById('saveButtonText');
+    const saveButtonSpinner = document.getElementById('saveButtonSpinner');
+
+    if (!saveBtn || !modalElement) {
+        console.warn('⚠️ Add notebook elements not found');
+        return;
+    }
+
+    function setLoading(loading) {
+        saveBtn.disabled = loading;
+        if (saveButtonText) saveButtonText.textContent = loading ? 'Saving...' : 'Save Changes';
+        if (saveButtonSpinner) saveButtonSpinner.style.display = loading ? 'inline-block' : 'none';
+    }
+
+    function getText(id) {
+        const el = document.getElementById(id);
+        return el ? (el.textContent || el.innerText || '') : '';
+    }
+
+    function showNotification(message, type = 'success') {
+        const notif = document.createElement('div');
+        notif.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notif.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+        notif.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notif);
+        setTimeout(() => {
+            if (notif.parentNode) {
+                notif.remove();
+            }
+        }, 4000);
+    }
+
+    // Function to close the addNotebookModal and return to detailsModal using Modal Manager
+    function closeAddNotebookModal() {
+        console.log('🔄 Closing add notebook modal and returning to details');
+        window.modalManager.show('detailsModal');
+    }
+
+    // Attach event listeners for close and cancel buttons
+    closeBtn.addEventListener('click', closeAddNotebookModal);
+    cancelBtn.addEventListener('click', closeAddNotebookModal);
+
+    function getManilaDateTime() {
+        const now = new Date();
+        const options = {
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+
+        const [
+            { value: month },,
+            { value: day },,
+            { value: year },,
+            { value: hour },,
+            { value: minute },,
+            { value: second }
+        ] = new Intl.DateTimeFormat('en-PH', options).formatToParts(now);
+
+        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    }
+
+    // Function to load notebook entries for a specific patient by fname and lname
+    async function loadNotebookEntries(fname, lname) {
+        try {
+            const response = await fetch(`http://localhost:3001/api/notebook-query?fname=${encodeURIComponent(fname)}&lname=${encodeURIComponent(lname)}`);
+            if (response.ok) {
+                const entries = await response.json();
+                renderNotebookEntries(entries);
+            } else {
+                console.error('Failed to load notebook entries');
+            }
+        } catch (error) {
+            console.error('Error loading notebook entries:', error);
+        }
+    }
+
+    // Function to render notebook entries in the container
+    function renderNotebookEntries(entries) {
+        const container = document.getElementById('addednotebookContainer');
+        if (!container) return;
+
+        if (!entries || entries.length === 0) {
+            container.innerHTML = `
+                <h5 class="mb-3 border-bottom pb-2">PDO Notebook</h5>
+                <p class="text-muted mb-0">No notebook entries found.</p>
+            `;
+            return;
+        }
+
+        let entriesHTML = `
+            <h5 class="mb-3 border-bottom pb-2">PDO Notebook</h5>
+            <div class="list-group">
+        `;
+
+        entries.forEach((entry) => {
+            // Format created date/time
+            let createdDate = "N/A", createdTime = "N/A";
+            if (entry.createDate) {
+                const dt = new Date(entry.createDate);
+                createdDate = dt.toLocaleDateString('en-US');
+                createdTime = dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+
+            // Format modified date/time
+            let modifiedDate = "N/A", modifiedTime = "N/A";
+            if (entry.modDate) {
+                const dtMod = new Date(entry.modDate);
+                modifiedDate = dtMod.toLocaleDateString('en-US');
+                modifiedTime = dtMod.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+
+            // Format and escape remarks
+            let remarks = entry.notes || 'No remarks recorded';
+            if (remarks.length > 300) remarks = remarks.substring(0, 300) + '...';
+            remarks = remarks.replace(/&/g, '&amp;')
+                           .replace(/</g, '&lt;')
+                           .replace(/>/g, '&gt;')
+                           .replace(/"/g, '&quot;')
+                           .replace(/'/g, '&#39;');
+
+            entriesHTML += `
+                <div class="list-group-item mb-2 shadow-sm rounded border">
+                    <p class="mb-1"><strong>📄 Specimen No.:</strong> ${entry.labno || 'N/A'}</p>
+                    <p class="mb-1"><strong>🕒 Date Created:</strong> ${createdDate} - ${createdTime}</p>
+                    <p class="mb-1"><strong>👤 Created By:</strong> ${entry.techCreate || 'N/A'}</p>
+                    <p class="mb-1"><strong>📆 Date Modified:</strong> ${modifiedDate} - ${modifiedTime}</p>
+                    <p class="mb-1"><strong>👤 Modified By:</strong> ${entry.techMod || 'N/A'}</p>
+                    <p class="mb-1"><strong>💬 Remarks:</strong> <span style="white-space: pre-line">${remarks}</span></p>
+                </div>
+            `;
+        });
+
+        entriesHTML += `</div>`; // close the list-group
+        container.innerHTML = entriesHTML;
+    }
+
+    // Save button click handler
+    saveBtn.addEventListener('click', async () => {
+        console.log('💾 Save notebook button clicked');
+        
+        const notes = document.getElementById('notebookNotes').value.trim();
+        if (!notes) {
+            showNotification('Please enter some notes before saving.', 'warning');
+            return;
+        }
+
+        const data = {
+            labno: getText('detailLabNo'),
+            labid: getText('detailFormNo'),
+            fname: getText('detailFName'),
+            lname: getText('detailLName'),
+            code: getText('detailSubmId'),
+            facility_name: getText('detailBirthHospName'),
+            notes,
+            createDate: getManilaDateTime(),
+            techCreate: getText('user-name') || 'Current User',
+            modDate: getManilaDateTime(),
+            techMod: getText('user-name') || 'Current User'
+        };
+
+        console.log('📝 Notebook data to save:', data);
+
+        if (!data.labno || !data.fname || !data.lname) {
+            showNotification('Missing patient information. Please load the details modal properly.', 'danger');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch('http://localhost:3001/api/notebook-query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log('✅ Notebook saved successfully');
+                
+                // Reset form
+                document.getElementById('addNotebookForm').reset();
+                
+                // Show success notification
+                showNotification('Notebook entry added successfully!');
+
+                // Use Modal Manager to return to details modal
+                window.modalManager.show('detailsModal');
+
+                // Refresh notebook entries after a short delay
+                setTimeout(() => {
+                    console.log('🔄 Refreshing notebook entries');
+                    if (typeof fetchAddedNotebookDetails === 'function') {
+                        fetchAddedNotebookDetails(data.fname, data.lname);
+                    }
+                    // Also refresh the loadNotebookEntries function
+                    loadNotebookEntries(data.fname, data.lname);
+                }, 300);
+
+            } else {
+                console.error('❌ Failed to save notebook:', result);
+                showNotification('Error: ' + (result.error || 'Unknown error occurred'), 'danger');
+            }
+        } catch (err) {
+            console.error('❌ Notebook save failed:', err);
+            showNotification('Failed to save notebook entry.', 'danger');
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // Modal event listeners
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        console.log('🔄 Add notebook modal hidden');
+        const form = document.getElementById('addNotebookForm');
+        if (form) form.reset();
+        setLoading(false);
+    });
+
+    modalElement.addEventListener('shown.bs.modal', () => {
+        console.log('🔄 Add notebook modal shown');
+        
+        const patientInfo = {
+            labno: getText('detailLabNo'),
+            fname: getText('detailFName'),
+            lname: getText('detailLName')
+        };
+
+        console.log('👤 Patient info for notebook:', patientInfo);
+
+        if (!patientInfo.labno || !patientInfo.fname || !patientInfo.lname) {
+            showNotification('Patient information is not available. Please load the details modal first.', 'warning');
+            // Use Modal Manager to return to details modal
+            window.modalManager.show('detailsModal');
+        } else {
+            const notesField = document.getElementById('notebookNotes');
+            if (notesField) {
+                setTimeout(() => {
+                    notesField.focus();
+                }, 300);
+            }
+        }
+    });
+
+    // Make loadNotebookEntries globally available
+    window.loadNotebookEntries = loadNotebookEntries;
+    
+    console.log('✅ Add notebook script initialized with Modal Manager');
+});
+
+// Global delete function (keep existing functionality)
+async function deleteNotebookEntry(noteID) {
+    if (!confirm('Are you sure you want to delete this notebook entry?')) return;
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/notebook/${noteID}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            const element = document.querySelector(`[data-entry-id="${noteID}"]`);
+            if (element) element.remove();
+
+            // Check if there are any remaining entries
+            const container = document.getElementById('addednotebookContainer');
+            const listGroup = container.querySelector('.list-group');
+            if (container && (!listGroup || listGroup.children.length === 0)) {
+                container.innerHTML = `
+                    <h5 class="mb-3 border-bottom pb-2">PDO Notebook</h5>
+                    <p class="text-muted mb-0">No notebook entries found.</p>
+                `;
+            }
+
+            showSuccessNotification('Notebook entry deleted successfully!');
+        } else {
+            const result = await response.json();
+            alert('Error deleting entry: ' + (result.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete notebook entry.');
+    }
+}
+
+// Helper function for success notifications (keep existing)
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 4000);
+}
