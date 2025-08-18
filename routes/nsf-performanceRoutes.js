@@ -183,7 +183,7 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
                 sda.BIRTHHOSP AS "birthHosp",
 
                 CASE 
-                    WHEN sda.BIRTHHOSP = TO_CHAR(sda.SUBMID) THEN 'INBORN'
+                    WHEN sda.BIRTHHOSP = TO_CHAR(sda.SUBMID) THEN 'INBORN'2
                     WHEN sda.BIRTHHOSP = 'HOME' THEN 'HOMEBIRTH'
                     WHEN sda.BIRTHHOSP = 'UNK' THEN 'UNKNOWN'
                     WHEN sda.BIRTHHOSP NOT IN ('HOME', 'UNK') 
@@ -220,6 +220,7 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
                 ra.MNEMONIC
             ORDER BY sda.LABNO
         `;
+        
         const binds = { submid, dateFrom, dateTo };
 
         // FIX: Make sure to use OUT_FORMAT_OBJECT to get objects instead of arrays
@@ -235,7 +236,6 @@ router.get("/nsf-performance-lab-details", async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
-
 
 module.exports = router;
 
