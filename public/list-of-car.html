@@ -947,6 +947,36 @@
                 </div>
             </div>
         </div>
+
+        <!--Modal for Changing Status -->
+        <!-- Status Change Modal -->
+        <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Change status for case: <strong id="statusCaseNo">-</strong></p>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success btn-lg" onclick="updateStatus('open')">
+                                <i class="bi bi-unlock"></i> Open
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg" onclick="updateStatus('closed')">
+                                <i class="bi bi-lock"></i> Closed
+                            </button>
+                            <button type="button" class="btn btn-warning btn-lg" onclick="updateStatus('pending')">
+                                <i class="bi bi-clock"></i> Pending
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary text-black" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 <!-- plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>

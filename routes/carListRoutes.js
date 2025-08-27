@@ -408,4 +408,139 @@ router.get("/test-db", (req, res) => {
         });
 });
 
+// =================== SERVER SIDE (Backend) ===================
+
+router.post("/update-status", (req, res) => {
+    try {
+        console.log('Update status endpoint hit with body:', req.body);
+        
+        const { id, status } = req.body;
+        
+        // Enhanced validation
+        if (!id) {
+            console.error('Missing ID in request');
+            return res.status(400).json({
+                success: false,
+                error: "Missing required fields",
+                message: "ID is required"
+            });
+        }
+
+        if (!status) {
+            console.error('Missing status in request');
+            return res.status(400).json({
+                success: false,
+                error: "Missing required fields", 
+                message: "Status is required"
+            });
+        }
+
+        const validStatuses = ['open', 'closed', 'pending'];
+        if (!validStatuses.includes(status.toLowerCase())) {
+            console.error('Invalid status provided:', status);
+            return res.status(400).json({
+                success: false,
+                error: "Invalid status",
+                message: "Status must be: open, closed, or pending"
+            });
+        }
+
+        console.log('Updating record ID:', id, 'to status:', status);
+
+        // Check if record exists first
+        const checkSql = "SELECT id, status FROM test_list_car WHERE id = ?";
+        db.query(checkSql, [id], (checkErr, checkResult) => {
+            if (checkErr) {
+                console.error("Error checking record existence:", checkErr);
+                return res.status(500).json({
+                    success: false,
+                    error: "Database Error",
+                    message: checkErr.message
+                });
+            }
+
+            if (!checkResult || checkResult.length === 0) {
+                console.error('Record not found with ID:', id);
+                return res.status(404).json({
+                    success: false,
+                    error: "Record not found",
+                    message: "No record found with the provided ID"
+                });
+            }
+
+            console.log('Record exists, current status:', checkResult[0].status);
+
+            // Determine what to update based on status
+            let sql, values;
+            
+            if (status.toLowerCase() === 'closed') {
+                sql = "UPDATE test_list_car SET status = ?, closed_on = NOW() WHERE id = ?";
+                values = [status.toLowerCase(), id];
+                console.log('Setting status to closed and updating closed_on timestamp');
+            } else {
+                sql = "UPDATE test_list_car SET status = ?, closed_on = NULL WHERE id = ?";
+                values = [status.toLowerCase(), id];
+                console.log('Setting status to', status, 'and clearing closed_on timestamp');
+            }
+
+            console.log('Executing SQL:', sql, 'with values:', values);
+
+            db.query(sql, values, (err, result) => {
+                if (err) {
+                    console.error("Status update error:", err);
+                    return res.status(500).json({
+                        success: false,
+                        error: "Database Update Error",
+                        message: err.message
+                    });
+                }
+
+                console.log('Update result:', result);
+
+                if (result.affectedRows === 0) {
+                    console.error('No rows affected by update');
+                    return res.status(404).json({
+                        success: false,
+                        error: "Update failed",
+                        message: "No record was updated"
+                    });
+                }
+
+                // Get the updated record to confirm the change
+                const selectSql = "SELECT id, status, closed_on FROM test_list_car WHERE id = ?";
+                db.query(selectSql, [id], (selectErr, selectResult) => {
+                    if (selectErr) {
+                        console.error("Error fetching updated record:", selectErr);
+                        // Still return success since the update worked
+                        return res.json({
+                            success: true,
+                            message: `Status updated to ${status}`,
+                            affectedRows: result.affectedRows
+                        });
+                    }
+                    
+                    const updatedRecord = selectResult && selectResult[0] ? selectResult[0] : null;
+                    console.log('Updated record:', updatedRecord);
+                    
+                    res.json({
+                        success: true,
+                        message: `Status updated to ${status}`,
+                        affectedRows: result.affectedRows,
+                        updatedRecord: updatedRecord
+                    });
+                });
+            });
+        });
+
+    } catch (error) {
+        console.error("Update status route error:", error);
+        res.status(500).json({
+            success: false,
+            error: "Internal Server Error",
+            message: error.message
+        });
+    }
+});
+
+
 module.exports = router;
