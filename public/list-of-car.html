@@ -355,6 +355,109 @@
     .table-responsive {
         max-height: 450px;
     }
+
+     .sticky-col {
+            position: sticky !important;
+            right: 0 !important;
+            background-color: white !important;
+            z-index: 10 !important;
+            border-left: 2px solid #dee2e6 !important;
+            box-shadow: -2px 0 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Special styling for header sticky column */
+        thead th.sticky-col {
+            background-color: #212529 !important;
+            color: white !important;
+            z-index: 15 !important;
+        }
+        
+        .table-responsive {
+            max-height: 500px;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background-color: #212529;
+        }
+        
+        .loading { text-align: center; padding: 20px; }
+        .error-message { color: #dc3545; text-align: center; padding: 20px; }
+        
+        /* Expandable text functionality */
+        .expandable-text {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        .expandable-text:hover {
+            background-color: #f8f9fa;
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin: -2px -4px;
+        }
+        
+        .expandable-text:after {
+            content: " 🔍";
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 0.8em;
+        }
+        
+        .expandable-text:hover:after {
+            opacity: 0.5;
+        }
+        
+        td.expanded {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .expanded-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 300px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Case No column - fit content width */
+        .table td.case-no-col,
+        .table th.case-no-col {
+            width: 1%;
+            white-space: nowrap !important;
+            min-width: max-content;
+            max-width: none !important;
+            overflow: visible !important;
+        }
+        
+        .table td {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        .table td.expanded {
+            max-width: none !important;
+            white-space: normal !important;
+            overflow: visible !important;
+        }
+        
+        .badge-open { background-color: #28a745; }
+        .badge-closed { background-color: #6c757d; }
+        .badge-pending { background-color: #ffc107; color: #212529; }
 </style>
 <body class="with-welcome-text">
 
@@ -379,7 +482,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item fw-semibold d-none d-lg-block ms-0">
                 <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
-                <h3 class="welcome-sub-text fw-semibold">Welcome to Endorsements Dashboard </h3>
+                <h3 class="welcome-sub-text fw-semibold">Welcome to List of CAR Reports </h3>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
@@ -501,8 +604,349 @@
             </ul>
         </nav>
 
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="card card-rounded">
+                    <div class="card-body">
+                        <!-- Add Document Button -->
+                        <div class="d-flex justify-content-between mb-3">
+                            <h4 class="card-title">Car List Management</h4>
+                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
+                                <i class="bi bi-plus-circle"></i> Add Document
+                            </button>
+                        </div>
 
+                        <!-- Loading and Error Messages -->
+                        <div id="loadingMessage" class="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p>Loading car list data...</p>
+                        </div>
 
+                        <div id="errorMessage" class="error-message d-none">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <p>Error loading data. Please try again.</p>
+                            <button class="btn btn-outline-primary btn-sm" onclick="loadCarList()">
+                                <i class="bi bi-arrow-clockwise"></i> Retry
+                            </button>
+                        </div>
+
+                        <!-- Scrollable container -->
+                        <div id="tableContainer" class="table-responsive d-none" style="overflow-x:auto; max-height:500px;">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" class="case-no-col">Case No.</th>
+                                        <th scope="col">Endorsed</th>
+                                        <th scope="col">Facility</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Laboratory Number</th>
+                                        <th scope="col">Repeat</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Number of Sample</th>
+                                        <th scope="col">Case Code</th>
+                                        <th scope="col">Sub Code 1</th>
+                                        <th scope="col">Sub Code 2</th>
+                                        <th scope="col">Sub Code 3</th>
+                                        <th scope="col">Sub Code 4</th>
+                                        <th scope="col">Remarks</th>
+                                        <th scope="col">FRC</th>
+                                        <th scope="col">WRC</th>
+                                        <th scope="col">Prepared By</th>
+                                        <th scope="col">Followup On</th>
+                                        <th scope="col">Reviewed On</th>
+                                        <th scope="col">Closed On</th>
+                                        <th scope="col" class="sticky-col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carTableBody">
+                                    <!-- Dynamic content will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Empty state -->
+                        <div id="emptyState" class="text-center py-5 d-none">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+                            <h5 class="mt-3 text-muted">No records found</h5>
+                            <p class="text-muted">Start by adding your first car record.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Modal for adding car list-->
+        <!-- Modal -->
+        <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="alertContainer"></div>
+                        <form id="documentForm">
+                            <div class="row g-3">
+
+                                <!-- Case No -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Case No.</label>
+                                    <input type="text" class="form-control text-black" name="caseNo" required>
+                                </div>
+
+                                <!-- Endorsed -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Date Endorsed</label>
+                                    <input type="datetime-local" class="form-control" name="endorsedDate">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Endorsed By</label>
+                                    <select class="form-select text-black" name="endorsedBy">
+                                        <option value=""> -- Select -- </option>
+                                        <option>Abigail Morfe</option>
+                                        <option>Angelica B. Brutas</option>
+                                        <option>Gretel E. Yedra</option>
+                                        <option>Jay Arr M. Apelado</option>
+                                        <option>Dra. Kresnerfe Sta. Rosa-Abueg</option>
+                                        <option>Marc Kevin U. Estolas</option>
+                                        <option>Mary Rose R. Gomez</option>
+                                        <option>Mia Carla Garcia, RN</option>
+                                        <option>Shirleen O. Micosa, RN, LPT </option>
+                                        <option>Vivien Marie M. Wagan</option>
+                                    </select>
+                                </div>
+
+                                <!-- Facility -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Facility Code</label>
+                                    <input type="text" class="form-control text-black" name="facilityCode" id="facilityCode">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Facility Name</label>
+                                    <input type="text" class="form-control text-black" name="facilityName" id="facilityName" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control text-black" name="city" id="city" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Province</label>
+                                    <input type="text" class="form-control text-black" name="province" id="province" readonly>
+                                </div>
+
+                                <!-- Lab No -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Laboratory Number</label>
+                                    <input type="text" class="form-control text-black" name="labNo">
+                                </div>
+
+                                <!-- Repeat -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Repeat</label>
+                                    <input type="text" class="form-control text-black" name="repeat">
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select text-black" name="status">
+                                        <option value=""> -- Select -- </option>
+                                        <option>Open</option>
+                                        <option>Closed</option>
+                                        <option>Pending</option>
+                                    </select>
+                                </div>
+
+                                <!-- Number of Samples -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Number of Samples</label>
+                                    <select class="form-select text-black" name="numSamples">
+                                        <option value=""> -- Select -- </option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                </div>
+
+                                <!-- Sub Codes -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Sub Code 1</label>
+                                    <select class="form-select text-black" name="subCode1">
+                                        <option value=""> -- Select -- </option>
+                                        <option>BORROWING OF FILTER CARDS</option>
+                                        <option>CONTAMINATED CLOTTED</option>
+                                        <option>CONTAMINATED FUNGAL GROWTH</option>
+                                        <option>CONTAMINATED INSECT BITES</option>
+                                        <option>CONTAMINATED LAYERING</option>
+                                        <option>CONTAMINATED NO ELUATE</option>
+                                        <option>CONTAMINATED SAMPLES 2X</option>
+                                        <option>CONTAMINATED SATURATED</option>
+                                        <option>CONTAMINATED SERUM RINGS</option>
+                                        <option>CONTAMINATED WET</option>
+                                        <option>CONTAMINATED WHITE PATCHES</option>
+                                        <option>DATA ERASURE</option>
+                                        <option>DELAYED INITIAL COLLECTION</option>
+                                        <option>DELAYED TRANSIT TIME</option>
+                                        <option>INSUFFICIENT</option>
+                                        <option>LATE SAMPLE</option>
+                                        <option>MISSING SAMPLE</option>
+                                        <option>NO DATA</option>
+                                        <option>OTHERS (PLEASE SPECIFY AT REMARKS)</option>
+                                        <option>WRONG INFORMATION</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sub Code 2</label>
+                                    <select class="form-select text-black" name="subCode2">
+                                        <option value=""> -- Select -- </option>
+                                        <option>BORROWING OF FILTER CARDS</option>
+                                        <option>CONTAMINATED CLOTTED</option>
+                                        <option>CONTAMINATED FUNGAL GROWTH</option>
+                                        <option>CONTAMINATED INSECT BITES</option>
+                                        <option>CONTAMINATED LAYERING</option>
+                                        <option>CONTAMINATED NO ELUATE</option>
+                                        <option>CONTAMINATED SAMPLES 2X</option>
+                                        <option>CONTAMINATED SATURATED</option>
+                                        <option>CONTAMINATED SERUM RINGS</option>
+                                        <option>CONTAMINATED WET</option>
+                                        <option>CONTAMINATED WHITE PATCHES</option>
+                                        <option>DATA ERASURE</option>
+                                        <option>DELAYED INITIAL COLLECTION</option>
+                                        <option>DELAYED TRANSIT TIME</option>
+                                        <option>INSUFFICIENT</option>
+                                        <option>LATE SAMPLE</option>
+                                        <option>MISSING SAMPLE</option>
+                                        <option>NO DATA</option>
+                                        <option>OTHERS (PLEASE SPECIFY AT REMARKS)</option>
+                                        <option>WRONG INFORMATION</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sub Code 3</label>
+                                    <select class="form-select text-black" name="subCode3">
+                                        <option value=""> -- Select -- </option>
+                                        <option>BORROWING OF FILTER CARDS</option>
+                                        <option>CONTAMINATED CLOTTED</option>
+                                        <option>CONTAMINATED FUNGAL GROWTH</option>
+                                        <option>CONTAMINATED INSECT BITES</option>
+                                        <option>CONTAMINATED LAYERING</option>
+                                        <option>CONTAMINATED NO ELUATE</option>
+                                        <option>CONTAMINATED SAMPLES 2X</option>
+                                        <option>CONTAMINATED SATURATED</option>
+                                        <option>CONTAMINATED SERUM RINGS</option>
+                                        <option>CONTAMINATED WET</option>
+                                        <option>CONTAMINATED WHITE PATCHES</option>
+                                        <option>DATA ERASURE</option>
+                                        <option>DELAYED INITIAL COLLECTION</option>
+                                        <option>DELAYED TRANSIT TIME</option>
+                                        <option>INSUFFICIENT</option>
+                                        <option>LATE SAMPLE</option>
+                                        <option>MISSING SAMPLE</option>
+                                        <option>NO DATA</option>
+                                        <option>OTHERS (PLEASE SPECIFY AT REMARKS)</option>
+                                        <option>WRONG INFORMATION</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sub Code 4</label>
+                                    <select class="form-select text-black" name="subCode4">
+                                        <option value=""> -- Select -- </option>
+                                        <option>BORROWING OF FILTER CARDS</option>
+                                        <option>CONTAMINATED CLOTTED</option>
+                                        <option>CONTAMINATED FUNGAL GROWTH</option>
+                                        <option>CONTAMINATED INSECT BITES</option>
+                                        <option>CONTAMINATED LAYERING</option>
+                                        <option>CONTAMINATED NO ELUATE</option>
+                                        <option>CONTAMINATED SAMPLES 2X</option>
+                                        <option>CONTAMINATED SATURATED</option>
+                                        <option>CONTAMINATED SERUM RINGS</option>
+                                        <option>CONTAMINATED WET</option>
+                                        <option>CONTAMINATED WHITE PATCHES</option>
+                                        <option>DATA ERASURE</option>
+                                        <option>DELAYED INITIAL COLLECTION</option>
+                                        <option>DELAYED TRANSIT TIME</option>
+                                        <option>INSUFFICIENT</option>
+                                        <option>LATE SAMPLE</option>
+                                        <option>MISSING SAMPLE</option>
+                                        <option>NO DATA</option>
+                                        <option>OTHERS (PLEASE SPECIFY AT REMARKS)</option>
+                                        <option>WRONG INFORMATION</option>
+                                    </select>
+                                </div>
+
+                                <!-- Remarks -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Remarks</label>
+                                    <textarea class="form-control text-black" name="remarks"></textarea>
+                                </div>
+
+                                <!-- Number of Samples -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Case Code</label>
+                                    <select class="form-select text-black" name="caseCode">
+                                        <option value=""> -- Select -- </option>
+                                        <option>UNSAT</option>
+                                        <option>OTHERS</option>
+                                    </select>
+                                </div>
+
+                                <!-- FRC / WRC -->
+                                <div class="col-md-4">
+                                    <label class="form-label">FRC</label>
+                                    <input type="text" class="form-control text-black" name="frc">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">WRC</label>
+                                    <input type="text" class="form-control text-black" name="wrc">
+                                </div>
+
+                                <!-- Prepared By -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Prepared By</label>
+                                    <select class="form-select text-black" name="preparedBy">
+                                        <option value=""> -- Select -- </option>
+                                        <option>Erika Jane U. Tarray, RPM </option>
+                                        <option>Mancy F. Barrago, RN</option>
+                                        <option>Marc Kevin U, Estolas, RMT</option>
+                                        <option>Patrick Charls O. Reyes </option>
+                                        <option>Shirleen O. Micosa, RN, LPT</option>
+                                    </select>
+                                </div>
+
+                                <!-- Dates -->
+                                <div class="col-md-2">
+                                    <label class="form-label">Followup On</label>
+                                    <input type="datetime-local" class="form-control text-black" name="followupOn">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Reviewed On</label>
+                                    <input type="datetime-local" class="form-control text-black" name="reviewedOn">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Closed On</label>
+                                    <input type="datetime-local" class="form-control text-black" name="closedOn">
+                                </div>
+
+                                <!-- Attachment -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Attachment</label>
+                                    <input type="file" class="form-control" id="attachment" name="attachment" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton" form="documentForm">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 <!-- plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
@@ -541,6 +985,7 @@
 
     <script src="js/pdo-notification.js"></script>
     <script src="js/pdo-endorsement.js"></script>
+    <script src="js/car-list.js"></script>
 
     <script src="js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

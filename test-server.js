@@ -233,6 +233,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api", require("./routes/nsf-crystalRoutes")); // FOR NSF CRYSTAL REPORTS
 
+app.use("/api", require("./routes/carListRoutes")); // For CAR LISTS
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Test Server Error:", err.stack || err.message || err);
