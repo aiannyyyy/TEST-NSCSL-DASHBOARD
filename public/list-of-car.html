@@ -608,12 +608,94 @@
             <div class="content-wrapper">
                 <div class="card card-rounded">
                     <div class="card-body">
-                        <!-- Add Document Button -->
-                        <div class="d-flex justify-content-between mb-3">
-                            <h4 class="card-title">Car List Management</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <!-- Add Document Button -->
                             <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
                                 <i class="bi bi-plus-circle"></i> Add Document
                             </button>
+
+                            <!-- Filter Dropdown -->
+                            <div class="dropdown ms-auto">
+                                <img src="/public/assets/images/funnel.png" 
+                                    alt="filter" 
+                                    style="width: 35px; height: 35px; cursor: pointer;" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false">
+
+                                <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 350px; max-height: 400px; overflow-y: auto;">
+                                    <h6 class="dropdown-header">Filter Options</h6>
+
+                                    <!-- Filter by Status -->
+                                    <div class="mb-2">
+                                        <label class="form-label">Filter by Status</label>
+                                        <select id="filterStatus" class="form-select form-select-sm text-black">
+                                            <option value="">-- Select Status --</option>
+                                            <option>Open</option>
+                                            <option>Close</option>
+                                            <option>Pending</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filter by Sub Code 1 -->
+                                    <div class="mb-2">
+                                        <label class="form-label">Filter by Sub Code 1</label>
+                                        <select id="filterSubCode" class="form-select form-select-sm text-black">
+                                            <option value="">-- Select Sub Code --</option>
+                                            <option>BORROWING OF FILTER CARDS</option>
+                                            <option>CONTAMINATED CLOTTED</option>
+                                            <option>CONTAMINATED FUNGAL GROWTH</option>
+                                            <option>CONTAMINATED INSECT BITES</option>
+                                            <option>CONTAMINATED LAYERING</option>
+                                            <option>CONTAMINATED NO ELUATE</option>
+                                            <option>CONTAMINATED SAMPLES 2X</option>
+                                            <option>CONTAMINATED SATURATED</option>
+                                            <option>CONTAMINATED SERUM RINGS</option>
+                                            <option>CONTAMINATED WET</option>
+                                            <option>CONTAMINATED WHITE PATCHES</option>
+                                            <option>DATA ERASURE</option>
+                                            <option>DELAYED INITIAL COLLECTION</option>
+                                            <option>DELAYED TRANSIT TIME</option>
+                                            <option>INSUFFICIENT</option>
+                                            <option>LATE SAMPLE</option>
+                                            <option>MISSING SAMPLE</option>
+                                            <option>NO DATA</option>
+                                            <option>OTHERS</option>
+                                            <option>WRONG INFORMATION</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Filter by Date Endorsed -->
+                                    <div class="mb-2">
+                                        <label class="form-label">Filter by Date Endorsed</label>
+                                        <input type="date" id="filterDateStart" class="form-control form-control-sm mb-1 text-black">
+                                        <input type="date" id="filterDateEnd" class="form-control form-control-sm text-black">
+                                    </div>
+
+                                    <!-- Filter by Facility Code -->
+                                    <div class="mb-2">
+                                        <label class="form-label">Filter by Facility Code</label>
+                                        <input type="text" id="filterFacility" class="form-control form-control-sm text-black" placeholder="Enter facility code">
+                                    </div>
+
+                                    <!-- Filter by Province -->
+                                    <div class="mb-2">
+                                        <label class="form-label">Filter by Province</label>
+                                        <select id="filterProvince" class="form-select form-select-sm text-black">
+                                            <option value="">-- Select Province --</option>
+                                            <option>Cavite</option>
+                                            <option>Laguna</option>
+                                            <option>Rizal</option>
+                                            <option>Batangas</option>
+                                            <option>Quezon</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Buttons -->
+                                    <div class="d-flex justify-content-end">
+                                        <button id="resetFilters" class="btn btn-sm btn-secondary me-2 text-black">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Loading and Error Messages -->

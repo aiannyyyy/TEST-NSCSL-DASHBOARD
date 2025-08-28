@@ -1424,3 +1424,60 @@ function updateStatus(newStatus) {
         currentStatusRecordId = null;
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const filters = {
+        status: document.getElementById("filterStatus"),
+        subCode: document.getElementById("filterSubCode"),
+        dateStart: document.getElementById("filterDateStart"),
+        dateEnd: document.getElementById("filterDateEnd"),
+        facility: document.getElementById("filterFacility"),
+        province: document.getElementById("filterProvince")
+    };
+
+    // Apply filters on change/input
+    Object.values(filters).forEach(el => {
+        el.addEventListener("change", applyFilters);
+        el.addEventListener("input", applyFilters);
+    });
+
+    // Reset button
+    document.getElementById("resetFilters").addEventListener("click", function () {
+        for (let key in filters) {
+            filters[key].value = "";
+        }
+        applyFilters();
+    });
+
+    function applyFilters() {
+        const filterValues = {
+            status: filters.status.value,
+            subCode: filters.subCode.value,
+            dateStart: filters.dateStart.value,
+            dateEnd: filters.dateEnd.value,
+            facility: filters.facility.value,
+            province: filters.province.value
+        };
+
+        console.log("Filters applied:", filterValues);
+
+        // 👉 Example: call server or filter local table
+        filterTable(filterValues);
+    }
+
+    // Example frontend filtering (replace with AJAX if needed)
+    function filterTable(filters) {
+        const rows = document.querySelectorAll("#myTable tbody tr");
+        rows.forEach(row => {
+            let show = true;
+
+            // Example: match Status column (assume it's 2nd column index=1)
+            if (filters.status && !row.cells[1].innerText.includes(filters.status)) show = false;
+
+            // Example: Facility code match (assume it's 3rd column index=2)
+            if (filters.facility && !row.cells[2].innerText.includes(filters.facility)) show = false;
+
+            row.style.display = show ? "" : "none";
+        });
+    }
+});
