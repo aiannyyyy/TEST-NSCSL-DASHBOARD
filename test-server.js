@@ -235,6 +235,8 @@ app.use("/api", require("./routes/nsf-crystalRoutes")); // FOR NSF CRYSTAL REPOR
 
 app.use("/api", require("./routes/carListRoutes")); // For CAR LISTS
 
+app.use("/api", require("./routes/it-job-order-route")); // For IT Job Orders
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Test Server Error:", err.stack || err.message || err);

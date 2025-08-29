@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Job Order</title>
+    
+     <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/feather/feather.css">
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">                 
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <!-- endinject -->
+    <link rel="stylesheet" type="text/css" href="assets/js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/notification.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
+</head>
+<style>
+    .button-custom {
+        background-color: #0d6efd; /* Blue background */
+        color: white !important; /* White text */
+        border: 2px solid #0d6efd; /* Blue border */
+        padding: 8px 16px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .button-custom:hover {
+        background-color: white; /* White background on hover */
+        color: #0d6efd !important; /* Blue text on hover */
+        border: 2px solid #0d6efd; /* Keep the blue border */
+    }
+
+
+    .table-container {
+        overflow-x: auto;  /* Enable horizontal scrolling */
+        overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
+        border: 1px solid #ddd;
+        white-space: nowrap;
+        display: block;
+        max-height: none; /* Remove max-height to prevent extra space */
+    }
+
+    .custom-table {
+        min-width: 10px; /* Ensure table doesn't shrink */
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .custom-table thead {
+        position: sticky;
+        top: 0;
+        background: #004085; /* Dark blue header */
+        color: white;
+        z-index: 2;
+    }
+
+    .custom-table th, .custom-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .nav .nav-item {
+    padding: 10px 0; /* Adds vertical spacing */
+    }
+
+    .nav .nav-link {
+    padding: 12px 15px; /* Adjust link padding for better spacing */
+    border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
+    }
+
+    /* design for job order table */
+      /* Enhanced scrollable table with fixed attachment column */
+    .table-wrapper {
+        position: relative;
+        max-height: 500px;
+        overflow: auto;
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollable-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Fixed header */
+    .scrollable-table thead th {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        color: white;
+        z-index: 10;
+        border: 1px solid #003d82;
+        padding: 15px 10px;
+        text-align: center;
+        font-weight: 600;
+        white-space: nowrap;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Fixed attachment column */
+    .scrollable-table .fixed-column {
+        position: sticky;
+        right: 0;
+        z-index: 5;
+        background: white;
+        border-left: 3px solid #004085;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollable-table thead .fixed-column {
+        z-index: 15;
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        border-left: 3px solid #ffffff;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Table body styling */
+    .scrollable-table tbody td {
+        border: 1px solid #dee2e6;
+        padding: 12px 10px;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .scrollable-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .scrollable-table tbody tr:nth-child(even) .fixed-column {
+        background-color: #f8f9fa;
+    }
+
+    .scrollable-table tbody tr:hover {
+        background-color: #e3f2fd;
+        transform: scale(1.001);
+        transition: all 0.2s ease;
+    }
+
+    .scrollable-table tbody tr:hover .fixed-column {
+        background-color: #e3f2fd;
+    }
+
+    /* Column width settings */
+    .col-work-order { min-width: 130px; }
+    .col-title { min-width: 180px; }
+    .col-description { min-width: 250px; max-width: 300px; }
+    .col-requested { min-width: 120px; }
+    .col-department { min-width: 130px; }
+    .col-status { min-width: 110px; }
+    .col-type { min-width: 100px; }
+    .col-priority { min-width: 100px; }
+    .col-resolved { min-width: 120px; }
+    .col-reason { min-width: 180px; max-width: 200px; }
+    .col-approved { min-width: 120px; }
+    .col-action { min-width: 200px; max-width: 250px; }
+    .col-attachment { width: 140px; min-width: 140px; }
+
+    /* Description and reason text wrapping */
+    .text-wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 250px;
+        line-height: 1.4;
+    }
+
+    /* Status badges */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
+
+    .status-pending { 
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
+        color: #856404; 
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-completed { 
+        background: linear-gradient(135deg, #d1edff 0%, #74b9ff 100%); 
+        color: #0c63e4; 
+        border: 1px solid #74b9ff;
+    }
+    
+    .status-in-progress { 
+        background: linear-gradient(135deg, #d4edda 0%, #00b894 100%); 
+        color: #155724; 
+        border: 1px solid #00b894;
+    }
+
+    /* Priority badges */
+    .priority-badge {
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .priority-high { 
+        background: linear-gradient(135deg, #f8d7da 0%, #e17055 100%); 
+        color: #721c24; 
+        border: 1px solid #e17055;
+    }
+    
+    .priority-medium { 
+        background: linear-gradient(135deg, #fff3cd 0%, #fdcb6e 100%); 
+        color: #856404; 
+        border: 1px solid #fdcb6e;
+    }
+    
+    .priority-low { 
+        background: linear-gradient(135deg, #d1ecf1 0%, #81ecec 100%); 
+        color: #0c5460; 
+        border: 1px solid #81ecec;
+    }
+
+    /* Attachment button */
+    .btn-attachment {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-attachment:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-attachment i {
+        margin-right: 4px;
+    }
+
+    /* Scrollbar styling */
+    .table-wrapper::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        border-radius: 10px;
+        border: 2px solid #f1f1f1;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #003d82 0%, #004085 100%);
+    }
+
+    /* Table title */
+    .table-title {
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        color: white;
+        padding: 15px 20px;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        font-size: 18px;
+        text-align: center;
+    }
+    /* end */
+</style>
+<body class="with-welcome-text">
+<!-- partial:partials/_navbar.html -->
+      <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+          <div class="me-3">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+              <span class="icon-menu"></span>
+            </button>
+          </div>
+          <div>
+            <a class="navbar-brand brand-logo" href="index.html">
+              <img src="assets/images/nscsl.PNG" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="index.html">
+              <img src="assets/images/nscsl logo copy.png" alt="logo" />
+            </a>
+          </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-top">
+          <ul class="navbar-nav">
+            <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+              <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to IT Job Order Dashboard </h3>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <!-- Notification Dropdown -->
+              <li class="nav-item notification-dropdown">
+                <button class="notification-bell" id="notificationBell">
+                  <i class="mdi mdi-bell-outline"></i>
+                  <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                <div class="notification-dropdown-menu" id="notificationDropdown">
+                  <div class="notification-header">
+                    <h6>Notifications 
+                      <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                    </h6>
+                </div>
+                <div id="notificationList">
+                  <!-- Notifications will be populated here -->
+                  </div>
+                    <div class="notification-footer">
+                      <a href="#" class="view-all-link">View All Notifications</a>
+                    </div>
+                  </div>
+                </li>   
+
+            <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+              <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="img-xs rounded-circle" src="assets/images/faces/user.png" alt="Profile image"> </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+                  <div class="dropdown-header text-center">
+                    <img class="img-md rounded-circle" src="assets/images/faces/user.png" alt="Profile image">
+                    <p class="mb-1 mt-3 fw-semibold" id="user-name1">Loading...</p>  <!-- Name will be inserted here -->
+                    <p class="fw-light text-muted mb-0" id="user-email">Loading...</p>  <!-- Email will be inserted here -->
+                </div>
+                <!--
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
+                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a>
+                -->
+                <a class="dropdown-item" id="logout">
+                  <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out
+                </a>              
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+       <!-- partial:partials/_sidebar.html -->
+     <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-admin" aria-expanded="false" aria-controls="nscsl-admin">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">ADMIN</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-admin">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Accounting</a></li>
+                <li class="nav-item"> <a class="nav-link" href="admin.html">Supply & Purchasing</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-pdo" aria-expanded="false" aria-controls="nscsl-pdo">
+              <i class="mdi mdi-office-building menu-icon"></i>
+              <span class="menu-title"> PDO </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-pdo">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="index.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sample_receive.html">Sample Received</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sample_screened.html">Sample Screened</a></li>
+                <li class="nav-item"> <a class="nav-link" href="pdo_endorsements.html">Endorsements</a></li>
+                <li class="nav-item"> <a class="nav-link" href="nsfperformance.html">NSF Performance</a></li>
+                <li class="nav-item"> <a class="nav-link" href="list-of-car.html">List of Car</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">Lopez Quezon</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/public/nsfperformance.html">NSF Performance</a></li>
+                -->
+              </ul>
+            </div>
+          </li> 
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-lab" aria-expanded="false" aria-controls="nscsl-lab">
+              <i class="mdi mdi-flask-outline menu-icon"></i>
+              <span class="menu-title">LABORATORY</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-lab">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="labindex.html">Overview</a></li>
+                <li class="nav-item"> <a class="nav-link" href="demographics.html">Demo & Unsat</a></li>
+                <!--
+                <li class="nav-item"> <a class="nav-link" href="buttons.html">QAO</a></li>
+                -->
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-followup" aria-expanded="false" aria-controls="nscsl-followup">
+              <i class="mdi mdi-stethoscope menu-icon"></i>
+              <span class="menu-title">FOLLOWUP</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-followup">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="followup.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nscsl-it-job-order" aria-expanded="false" aria-controls="nscsl-it-job-order">
+              <i class="mdi mdi-clipboard-text menu-icon"></i>
+              <span class="menu-title">IT JOB ORDER</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nscsl-it-job-order">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="it-job-order.html">Overview</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+     <div class="main-panel">
+      <div class="content-wrapper">
+        
+        <!-- First Card -->
+        <div class="card card-rounded">
+          <div class="card-body">
+            <div class="container-fluid">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5> Pending & Queued </h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
+                    <i class="bi bi-plus-circle"></i> Add Job Order
+                </button>
+              </div>
+              <br>
+              <div class="table-wrapper">
+                <table class="scrollable-table">
+                  <thead>
+                    <tr>
+                      <th class="col-work-order">Work Order</th>
+                      <th class="col-title">Title</th>
+                      <th class="col-description">Description</th>
+                      <th class="col-requested">Requested</th>
+                      <th class="col-department">Department</th>
+                      <th class="col-status">Status</th>
+                      <th class="col-type">Type</th>
+                      <th class="col-priority">Priority</th>
+                      <th class="col-resolved">Resolved</th>
+                      <th class="col-reason">Reason</th>
+                      <th class="col-approved">Approved</th>
+                      <th class="col-action">Action Taken</th>
+                      <th class="col-attachment fixed-column">Attachment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>WO-2024-001</strong></td>
+                      <td>Computer Repair</td>
+                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                      <td>2024-01-15</td>
+                      <td>Accounting</td>
+                      <td><span class="status-badge status-pending">Pending</span></td>
+                      <td>Hardware</td>
+                      <td><span class="priority-badge priority-high">High</span></td>
+                      <td>2024-01-16</td>
+                      <td class="text-wrap">Hardware failure detected in display connection</td>
+                      <td>✅ Yes</td>
+                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                      <td class="fixed-column">
+                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                          <i class="mdi mdi-paperclip"></i> View
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Card -->
+        <div class="card card-rounded mt-4">
+          <div class="card-body">
+            <div class="container-fluid">
+              <h5> Closed </h5>
+              <br>
+              <div class="table-wrapper">
+                <table class="scrollable-table">
+                  <thead>
+                    <tr>
+                      <th class="col-work-order">Work Order</th>
+                      <th class="col-title">Title</th>
+                      <th class="col-description">Description</th>
+                      <th class="col-requested">Requested</th>
+                      <th class="col-department">Department</th>
+                      <th class="col-status">Status</th>
+                      <th class="col-type">Type</th>
+                      <th class="col-priority">Priority</th>
+                      <th class="col-resolved">Resolved</th>
+                      <th class="col-reason">Reason</th>
+                      <th class="col-approved">Approved</th>
+                      <th class="col-action">Action Taken</th>
+                      <th class="col-attachment fixed-column">Attachment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>WO-2024-001</strong></td>
+                      <td>Computer Repair</td>
+                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                      <td>2024-01-15</td>
+                      <td>Accounting</td>
+                      <td><span class="status-badge status-pending">Pending</span></td>
+                      <td>Hardware</td>
+                      <td><span class="priority-badge priority-high">High</span></td>
+                      <td>2024-01-16</td>
+                      <td class="text-wrap">Hardware failure detected in display connection</td>
+                      <td>✅ Yes</td>
+                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                      <td class="fixed-column">
+                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                          <i class="mdi mdi-paperclip"></i> View
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><div class="main-panel">
+      <div class="content-wrapper">
+        
+        <!-- First Card -->
+        <div class="card card-rounded">
+          <div class="card-body">
+            <div class="container-fluid">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5> Pending & Queued </h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
+                    <i class="bi bi-plus-circle"></i> Add Job Order
+                </button>
+              </div>
+              <br>
+              <div class="table-wrapper">
+                <table class="scrollable-table">
+                  <thead>
+                    <tr>
+                      <th class="col-work-order">Work Order</th>
+                      <th class="col-title">Title</th>
+                      <th class="col-description">Description</th>
+                      <th class="col-requested">Requested</th>
+                      <th class="col-department">Department</th>
+                      <th class="col-status">Status</th>
+                      <th class="col-type">Type</th>
+                      <th class="col-priority">Priority</th>
+                      <th class="col-resolved">Resolved</th>
+                      <th class="col-reason">Reason</th>
+                      <th class="col-approved">Approved</th>
+                      <th class="col-action">Action Taken</th>
+                      <th class="col-attachment fixed-column">Attachment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>WO-2024-001</strong></td>
+                      <td>Computer Repair</td>
+                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                      <td>2024-01-15</td>
+                      <td>Accounting</td>
+                      <td><span class="status-badge status-pending">Pending</span></td>
+                      <td>Hardware</td>
+                      <td><span class="priority-badge priority-high">High</span></td>
+                      <td>2024-01-16</td>
+                      <td class="text-wrap">Hardware failure detected in display connection</td>
+                      <td>✅ Yes</td>
+                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                      <td class="fixed-column">
+                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                          <i class="mdi mdi-paperclip"></i> View
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Card -->
+        <div class="card card-rounded mt-4">
+          <div class="card-body">
+            <div class="container-fluid">
+              <h5> Closed </h5>
+              <br>
+              <div class="table-wrapper">
+                <table class="scrollable-table">
+                  <thead>
+                    <tr>
+                      <th class="col-work-order">Work Order</th>
+                      <th class="col-title">Title</th>
+                      <th class="col-description">Description</th>
+                      <th class="col-requested">Requested</th>
+                      <th class="col-department">Department</th>
+                      <th class="col-status">Status</th>
+                      <th class="col-type">Type</th>
+                      <th class="col-priority">Priority</th>
+                      <th class="col-resolved">Resolved</th>
+                      <th class="col-reason">Reason</th>
+                      <th class="col-approved">Approved</th>
+                      <th class="col-action">Action Taken</th>
+                      <th class="col-attachment fixed-column">Attachment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>WO-2024-001</strong></td>
+                      <td>Computer Repair</td>
+                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                      <td>2024-01-15</td>
+                      <td>Accounting</td>
+                      <td><span class="status-badge status-pending">Pending</span></td>
+                      <td>Hardware</td>
+                      <td><span class="priority-badge priority-high">High</span></td>
+                      <td>2024-01-16</td>
+                      <td class="text-wrap">Hardware failure detected in display connection</td>
+                      <td>✅ Yes</td>
+                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                      <td class="fixed-column">
+                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                          <i class="mdi mdi-paperclip"></i> View
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+      <!-- Add Job Order Modal (Medium Width + Taller Description) -->
+      <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+          <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h6 class="modal-title" id="addDocumentModalLabel">Add Job Order</h6>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body with Form -->
+            <div class="modal-body">
+              <form id="jobOrderForm">
+                <div class="mb-2">
+                  <label for="workOrderNo" class="form-label">Work Order No.</label>
+                  <input type="text" class="form-control form-control-sm text-black" id="workOrderNo" value="" readonly>
+                </div>
+
+                <div class="mb-2">
+                  <label for="title" class="form-label">Title</label>
+                  <input type="text" class="form-control form-control-sm text-black" id="title" placeholder="Enter job title">
+                </div>
+
+                <div class="mb-2">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control form-control-sm text-black" id="description" rows="6" style="height: 150px;" placeholder="Enter job description"></textarea>
+                </div>
+
+                <div class="mb-2">
+                  <label for="type" class="form-label">Type</label>
+                  <select class="form-select form-select-sm text-black" id="department">
+                    <option value="">-- Select Type --</option>
+                    <option value="PRINTER">PRINTER</option>
+                    <option value="DATABASE UPDATE">DATABASE UPDATE</option>
+                    <option value="REPORT GENERATION">REPORT GENERATION</option>
+                    <option value="ACCESS AND SECURITY">ACCESS AND SECURITY</option>
+                    <option value="LAN AND NETWORKS">LAN AND NETWORKS</option>
+                    <option value="HARDWARE">HARDWARE</option>
+                    <option value="SOFTWARE">SOFTWARE</option>
+                    <option value="OTHERS">OTHERS</option>
+                  </select>
+                </div>
+
+                <div class="mb-2">
+                  <label for="priority" class="form-label">Priority</label>
+                  <select class="form-select form-select-sm text-black" id="priority">
+                    <option value="Low">LOW</option>
+                    <option value="Mid">MID</option>
+                    <option value="High">HIGH</option>
+                  </select>
+                </div>
+
+                <div class="mb-2">
+                  <label for="attachment" class="form-label">Attachment</label>
+                  <input class="form-control form-control-sm" type="file" id="attachment">
+                </div>
+              </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" form="jobOrderForm" class="btn btn-sm btn-primary">Save</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    
+
+
+
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="seets/js/template.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <script src="assets/js/event.js"></script>
+    <!-- endinject -->
+
+
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    Latest Chart.js Data Labels Plugin
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    -->
+    <!--GRAPH JS-->
+
+    <script src="js/pdo-job-order.js"></script>
+
+    <script src="js/auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    
+    <!-- Include SheetJS library for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+            <!-- Latest Chart.js v4 -->
+
+    <!--end inject-->
+
+    <!-- Custom js for this page-->
+    <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
+
+    <!--SCRIPT FOR LOGOUT-->
+    <script>
+        document.getElementById("logout").addEventListener("click", function () {
+            localStorage.removeItem("username"); // Clear stored user data
+            window.location.href = "login.html"; // Redirect to login page
+        });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPLAY USERNAME BASE ON THE USER-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Get stored username from localStorage
+            const username = localStorage.getItem("username");
+ 
+            if (username) {
+                document.getElementById("user-name").textContent = username;
+            }
+        });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const userName = localStorage.getItem("username"); // Get the stored name
+
+        if (userName) {
+            document.getElementById("user-name").textContent = userName; // Set Name in Header
+            document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
+        } else {
+            document.getElementById("user-name").textContent = "Guest";
+            document.getElementById("dropdown-name").textContent = "Guest";
+        }
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--DISPALYING NAME ALSO-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const userName = localStorage.getItem("username") || "Guest"; 
+        const userEmail = localStorage.getItem("email") || "No Email"; 
+
+        // Set the username and email in the dropdown
+        document.getElementById("user-name1").textContent = userName;
+        document.getElementById("user-email").textContent = userEmail;
+    });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--SCRIPT FOR DATE PICKER-->
+    <script>
+        $(document).ready(function () {
+            $('#dateTimeFrom').datepicker({
+                format: 'yyyy-mm-dd HH:ii',
+                autoclose: true,
+                todayHighlight: true
+            });
+            $('#dateTimeTo').datepicker({
+                format: 'yyyy-mm-dd HH:ii',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+    <!--END SCRIPT-->
+
+    <!--Attachemt crud script-->
+    <script>
+        const attachmentsInput = document.getElementById("attachments");
+        const fileList = document.getElementById("fileList");
+
+        attachmentsInput.addEventListener("change", function () {
+            fileList.innerHTML = ""; // Clear previous list
+            for (let i = 0; i < this.files.length; i++) {
+            const li = document.createElement("li");
+            li.textContent = this.files[i].name;
+            fileList.appendChild(li);
+            }
+        });
+    </script>
+</body>
+
+</html>

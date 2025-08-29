@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Receive</title>
+    <title>IT Job Order</title>
     
      <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/feather/feather.css">
@@ -84,6 +84,224 @@
     padding: 12px 15px; /* Adjust link padding for better spacing */
     border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
     }
+    
+    /* design for job order table */
+      /* Enhanced scrollable table with fixed attachment column */
+    .table-wrapper {
+        position: relative;
+        max-height: 500px;
+        overflow: auto;
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollable-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Fixed header */
+    .scrollable-table thead th {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        color: white;
+        z-index: 10;
+        border: 1px solid #003d82;
+        padding: 15px 10px;
+        text-align: center;
+        font-weight: 600;
+        white-space: nowrap;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Fixed attachment column */
+    .scrollable-table .fixed-column {
+        position: sticky;
+        right: 0;
+        z-index: 5;
+        background: white;
+        border-left: 3px solid #004085;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollable-table thead .fixed-column {
+        z-index: 15;
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        border-left: 3px solid #ffffff;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Table body styling */
+    .scrollable-table tbody td {
+        border: 1px solid #dee2e6;
+        padding: 12px 10px;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .scrollable-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .scrollable-table tbody tr:nth-child(even) .fixed-column {
+        background-color: #f8f9fa;
+    }
+
+    .scrollable-table tbody tr:hover {
+        background-color: #e3f2fd;
+        transform: scale(1.001);
+        transition: all 0.2s ease;
+    }
+
+    .scrollable-table tbody tr:hover .fixed-column {
+        background-color: #e3f2fd;
+    }
+
+    /* Column width settings */
+    .col-work-order { min-width: 130px; }
+    .col-title { min-width: 180px; }
+    .col-description { min-width: 250px; max-width: 300px; }
+    .col-requested { min-width: 120px; }
+    .col-department { min-width: 130px; }
+    .col-status { min-width: 110px; }
+    .col-type { min-width: 100px; }
+    .col-priority { min-width: 100px; }
+    .col-resolved { min-width: 120px; }
+    .col-reason { min-width: 180px; max-width: 200px; }
+    .col-approved { min-width: 120px; }
+    .col-action { min-width: 200px; max-width: 250px; }
+    .col-attachment { width: 140px; min-width: 140px; }
+
+    /* Description and reason text wrapping */
+    .text-wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 250px;
+        line-height: 1.4;
+    }
+
+    /* Status badges */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
+
+    .status-pending { 
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
+        color: #856404; 
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-completed { 
+        background: linear-gradient(135deg, #d1edff 0%, #74b9ff 100%); 
+        color: #0c63e4; 
+        border: 1px solid #74b9ff;
+    }
+    
+    .status-in-progress { 
+        background: linear-gradient(135deg, #d4edda 0%, #00b894 100%); 
+        color: #155724; 
+        border: 1px solid #00b894;
+    }
+
+    /* Priority badges */
+    .priority-badge {
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .priority-high { 
+        background: linear-gradient(135deg, #f8d7da 0%, #e17055 100%); 
+        color: #721c24; 
+        border: 1px solid #e17055;
+    }
+    
+    .priority-medium { 
+        background: linear-gradient(135deg, #fff3cd 0%, #fdcb6e 100%); 
+        color: #856404; 
+        border: 1px solid #fdcb6e;
+    }
+    
+    .priority-low { 
+        background: linear-gradient(135deg, #d1ecf1 0%, #81ecec 100%); 
+        color: #0c5460; 
+        border: 1px solid #81ecec;
+    }
+
+    /* Attachment button */
+    .btn-attachment {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-attachment:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-attachment i {
+        margin-right: 4px;
+    }
+
+    /* Scrollbar styling */
+    .table-wrapper::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        border-radius: 10px;
+        border: 2px solid #f1f1f1;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #003d82 0%, #004085 100%);
+    }
+
+    /* Table title */
+    .table-title {
+        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
+        color: white;
+        padding: 15px 20px;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        font-size: 18px;
+        text-align: center;
+    }
+    /* end */
 </style>
 <body class="with-welcome-text">
 <!-- partial:partials/_navbar.html -->
@@ -107,7 +325,7 @@
           <ul class="navbar-nav">
             <li class="nav-item fw-semibold d-none d-lg-block ms-0">
               <h1 class="welcome-text">Hello, <span id="user-name" class="text-black fw-bold">User</span></h1>
-              <h3 class="welcome-sub-text fw-semibold">Welcome to PDO Dashboard </h3>
+              <h3 class="welcome-sub-text fw-semibold">Welcome to IT Job Order Dashboard </h3>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
@@ -243,12 +461,63 @@
               </ul>
             </div>
           </li>
+
         </ul>
       </nav>
+
+       <!--Table for showing the job orders-->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <!-- Enhanced Scrollable Table Container -->
+                    <div class="table-wrapper">
+                        <table class="scrollable-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-work-order">Work Order</th>
+                                    <th class="col-title">Title</th>
+                                    <th class="col-description">Description</th>
+                                    <th class="col-requested">Requested</th> <!--requester + date_issued-->
+                                    <th class="col-department">Department</th>
+                                    <th class="col-status">Status</th>
+                                    <th class="col-type">Type</th>
+                                    <th class="col-priority">Priority</th>
+                                    <th class="col-resolved">Resolved</th> <!--tech + date_resolved-->
+                                    <th class="col-reason">Reason</th>
+                                    <th class="col-approved">Approved</th> <!--approved_by + approved_date-->
+                                    <th class="col-action">Action Taken</th>
+                                    <th class="col-attachment fixed-column">Attachment</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobOrdersTableBody">
+                                <tr>
+                                    <td><strong>WO-2024-001</strong></td>
+                                    <td>Computer Repair</td>
+                                    <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                                    <td>2024-01-15</td>
+                                    <td>Accounting</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td>Hardware</td>
+                                    <td><span class="priority-badge priority-high">High</span></td>
+                                    <td>2024-01-16</td>
+                                    <td class="text-wrap">Hardware failure detected in display connection</td>
+                                    <td>✅ Yes</td>
+                                    <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                                    <td class="fixed-column">
+                                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                                            <i class="mdi mdi-paperclip"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-
+   
 
 
 
@@ -263,7 +532,7 @@
     <!-- End plugin js for this page -->
     <!-- inject:js -->
     <script src="assets/js/off-canvas.js"></script>
-    <script src="seets/js/template.js"></script>
+    <script src="assets/js/template.js"></script>
     <script src="assets/js/settings.js"></script>
     <script src="assets/js/hoverable-collapse.js"></script>
     <script src="assets/js/todolist.js"></script>
@@ -278,7 +547,7 @@
     -->
     <!--GRAPH JS-->
 
-
+    <script src="assets/js/it-job-order.js"></script>
     <script src="js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
