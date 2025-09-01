@@ -465,62 +465,129 @@
         </ul>
       </nav>
 
-       <!--Table for showing the job orders-->
-        <div class="main-panel">
-            <div class="content-wrapper">
-                <div class="container-fluid">
-                    <!-- Enhanced Scrollable Table Container -->
-                    <div class="table-wrapper">
-                        <table class="scrollable-table">
-                            <thead>
-                                <tr>
-                                    <th class="col-work-order">Work Order</th>
-                                    <th class="col-title">Title</th>
-                                    <th class="col-description">Description</th>
-                                    <th class="col-requested">Requested</th> <!--requester + date_issued-->
-                                    <th class="col-department">Department</th>
-                                    <th class="col-status">Status</th>
-                                    <th class="col-type">Type</th>
-                                    <th class="col-priority">Priority</th>
-                                    <th class="col-resolved">Resolved</th> <!--tech + date_resolved-->
-                                    <th class="col-reason">Reason</th>
-                                    <th class="col-approved">Approved</th> <!--approved_by + approved_date-->
-                                    <th class="col-action">Action Taken</th>
-                                    <th class="col-attachment fixed-column">Attachment</th>
-                                </tr>
-                            </thead>
-                            <tbody id="jobOrdersTableBody">
-                                <tr>
-                                    <td><strong>WO-2024-001</strong></td>
-                                    <td>Computer Repair</td>
-                                    <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
-                                    <td>2024-01-15</td>
-                                    <td>Accounting</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                    <td>Hardware</td>
-                                    <td><span class="priority-badge priority-high">High</span></td>
-                                    <td>2024-01-16</td>
-                                    <td class="text-wrap">Hardware failure detected in display connection</td>
-                                    <td>✅ Yes</td>
-                                    <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
-                                    <td class="fixed-column">
-                                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
-                                            <i class="mdi mdi-paperclip"></i> View
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <!-- Enhanced Scrollable Table Container -->
+     <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="container-fluid">
+                <div class="table-wrapper" style="height: 500px;">
+                    <table class="scrollable-table table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-work-order">Work Order</th>
+                                <th class="col-title">Title</th>
+                                <th class="col-description">Description</th>
+                                <th class="col-requested">Requested</th>
+                                <th class="col-department">Department</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-type">Type</th>
+                                <th class="col-priority">Priority</th>
+                                <th class="col-resolved">Resolved</th>
+                                <th class="col-reason">Reason</th>
+                                <th class="col-approved">Approved</th>
+                                <th class="col-action">Action Taken</th>
+                                <th class="col-done">Actions</th>
+                                <th class="col-attachment fixed-column">Attachment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobOrdersTableBody">
+                            <!-- Sample rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+  </div>
+</div>
 
-   
+<!-- Action Modal -->
+<div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="actionModalLabel">
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    <span id="modalActionTitle">Complete Work Order</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="actionForm">
+                    <!-- Work Order Info -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Work Order Number</label>
+                            <input type="text" class="form-control" id="modalWorkOrder" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Action</label>
+                            <input type="text" class="form-control" id="modalActionType" readonly>
+                        </div>
+                    </div>
 
+                    <!-- Reason Input -->
+                    <div class="mb-3">
+                        <label for="reasonInput" class="form-label">
+                            Reason <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="reasonInput" 
+                            rows="3" 
+                            placeholder="Enter the reason for this action..."
+                            required
+                        ></textarea>
+                        <div class="invalid-feedback">
+                            Please provide a reason for this action.
+                        </div>
+                    </div>
 
+                    <!-- Action Taken Input -->
+                    <div class="mb-3">
+                        <label for="actionTakenInput" class="form-label">
+                            Action Taken <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="actionTakenInput" 
+                            rows="4" 
+                            placeholder="Describe the specific actions taken to resolve this work order..."
+                            required
+                        ></textarea>
+                        <div class="invalid-feedback">
+                            Please describe the action taken.
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn" id="confirmActionBtn" onclick="confirmAction()">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span id="confirmButtonText">Mark as Done</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Success Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            Action completed successfully!
+        </div>
+    </div>
+</div>
+
+  
     <!-- plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
@@ -547,7 +614,7 @@
     -->
     <!--GRAPH JS-->
 
-    <script src="assets/js/it-job-order.js"></script>
+    <script src="js/it-job-order-main.js"></script>
     <script src="js/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

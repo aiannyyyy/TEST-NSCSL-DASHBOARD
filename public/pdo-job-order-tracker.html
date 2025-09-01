@@ -25,58 +25,51 @@
     <link rel="shortcut icon" href="assets/images/ncslogo.ico" />
 </head>
 <style>
-    .button-custom {
-        background-color: #0d6efd; /* Blue background */
-        color: white !important; /* White text */
-        border: 2px solid #0d6efd; /* Blue border */
-        padding: 8px 16px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-    }
+  .main-panel {
+      padding: 20px;
+  }
 
-    .button-custom:hover {
-        background-color: white; /* White background on hover */
-        color: #0d6efd !important; /* Blue text on hover */
-        border: 2px solid #0d6efd; /* Keep the blue border */
-    }
+  .content-wrapper {
+      background-color: #f8f9fa;
+  }
 
+  /* Tab Navigation */
+  .nav-tabs {
+      border-bottom: none;
+      margin-bottom: 20px;
+  }
 
-    .table-container {
-        overflow-x: auto;  /* Enable horizontal scrolling */
-        overflow-y: hidden;  /* Remove vertical scrolling to avoid extra space */
-        border: 1px solid #ddd;
-        white-space: nowrap;
-        display: block;
-        max-height: none; /* Remove max-height to prevent extra space */
-    }
+  .nav-tabs .nav-link {
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 8px;
+      margin-right: 10px;
+      position: relative;
+      transition: all 0.3s ease;
+      background-color: #6c757d;
+  }
 
-    .custom-table {
-        min-width: 10px; /* Ensure table doesn't shrink */
-        border-collapse: collapse;
-        text-align: center;
-    }
+  .nav-tabs .nav-link:hover {
+      color: white;
+      border-color: transparent;
+      background-color: #5a6268;
+      transform: translateY(-1px);
+  }
 
-    .custom-table thead {
-        position: sticky;
-        top: 0;
-        background: #004085; /* Dark blue header */
-        color: white;
-        z-index: 2;
-    }
+  .nav-tabs .nav-link.active {
+      color: white;
+      background-color: #007bff;
+      border-color: transparent;
+  }
 
-    .custom-table th, .custom-table td {
-        border: 1px solid #ddd;
-        padding: 10px;
-    }
+  .nav-tabs .nav-link.active:hover {
+      background-color: #0056b3;
+  }
 
-    .custom-table tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .nav .nav-item {
+  .nav .nav-item {
     padding: 10px 0; /* Adds vertical spacing */
     }
 
@@ -84,224 +77,278 @@
     padding: 12px 15px; /* Adjust link padding for better spacing */
     border-radius: 8px; /* Optional: Adds rounded corners for a modern look */
     }
-
-    /* design for job order table */
-      /* Enhanced scrollable table with fixed attachment column */
-    .table-wrapper {
-        position: relative;
-        max-height: 500px;
-        overflow: auto;
-        border: 2px solid #dee2e6;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .scrollable-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        font-size: 14px;
-        margin: 0;
-    }
-
-    /* Fixed header */
-    .scrollable-table thead th {
-        position: sticky;
-        top: 0;
-        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
-        color: white;
-        z-index: 10;
-        border: 1px solid #003d82;
-        padding: 15px 10px;
-        text-align: center;
-        font-weight: 600;
-        white-space: nowrap;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    /* Fixed attachment column */
-    .scrollable-table .fixed-column {
-        position: sticky;
-        right: 0;
-        z-index: 5;
-        background: white;
-        border-left: 3px solid #004085;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .scrollable-table thead .fixed-column {
-        z-index: 15;
-        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
-        border-left: 3px solid #ffffff;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Table body styling */
-    .scrollable-table tbody td {
-        border: 1px solid #dee2e6;
-        padding: 12px 10px;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: middle;
-    }
-
-    .scrollable-table tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    .scrollable-table tbody tr:nth-child(even) .fixed-column {
-        background-color: #f8f9fa;
-    }
-
-    .scrollable-table tbody tr:hover {
-        background-color: #e3f2fd;
-        transform: scale(1.001);
-        transition: all 0.2s ease;
-    }
-
-    .scrollable-table tbody tr:hover .fixed-column {
-        background-color: #e3f2fd;
-    }
-
-    /* Column width settings */
-    .col-work-order { min-width: 130px; }
-    .col-title { min-width: 180px; }
-    .col-description { min-width: 250px; max-width: 300px; }
-    .col-requested { min-width: 120px; }
-    .col-department { min-width: 130px; }
-    .col-status { min-width: 110px; }
-    .col-type { min-width: 100px; }
-    .col-priority { min-width: 100px; }
-    .col-resolved { min-width: 120px; }
-    .col-reason { min-width: 180px; max-width: 200px; }
-    .col-approved { min-width: 120px; }
-    .col-action { min-width: 200px; max-width: 250px; }
-    .col-attachment { width: 140px; min-width: 140px; }
-
-    /* Description and reason text wrapping */
-    .text-wrap {
-        white-space: normal;
-        word-wrap: break-word;
-        max-width: 250px;
-        line-height: 1.4;
-    }
-
-    /* Status badges */
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: inline-block;
-    }
-
-    .status-pending { 
-        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
-        color: #856404; 
-        border: 1px solid #ffeaa7;
-    }
     
-    .status-completed { 
-        background: linear-gradient(135deg, #d1edff 0%, #74b9ff 100%); 
-        color: #0c63e4; 
-        border: 1px solid #74b9ff;
-    }
-    
-    .status-in-progress { 
-        background: linear-gradient(135deg, #d4edda 0%, #00b894 100%); 
-        color: #155724; 
-        border: 1px solid #00b894;
-    }
+  /* Tab badges */
+  .tab-badge {
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 8px;
+      min-width: 20px;
+      text-align: center;
+      display: inline-block;
+  }
 
-    /* Priority badges */
-    .priority-badge {
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
+  /* Card Styling */
+  .card {
+      border: 1px solid #dee2e6;
+      border-radius: 0;
+      box-shadow: none;
+      background: white;
+      margin-top: 0;
+  }
 
-    .priority-high { 
-        background: linear-gradient(135deg, #f8d7da 0%, #e17055 100%); 
-        color: #721c24; 
-        border: 1px solid #e17055;
-    }
-    
-    .priority-medium { 
-        background: linear-gradient(135deg, #fff3cd 0%, #fdcb6e 100%); 
-        color: #856404; 
-        border: 1px solid #fdcb6e;
-    }
-    
-    .priority-low { 
-        background: linear-gradient(135deg, #d1ecf1 0%, #81ecec 100%); 
-        color: #0c5460; 
-        border: 1px solid #81ecec;
-    }
+  .card-header {
+      background-color: #f8f9fa;
+      color: #212529;
+      border-radius: 0;
+      padding: 20px;
+      border-bottom: 1px solid #dee2e6;
+      border-top: none;
+  }
 
-    /* Attachment button */
-    .btn-attachment {
-        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
-    }
+  .card-header h5 {
+      margin: 0;
+      font-weight: 600;
+  }
 
-    .btn-attachment:hover {
-        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
-    }
+  /* Button Styling */
+  .btn-primary {
+      background-color: #212529;
+      border-color: #212529;
+      padding: 10px 20px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+  }
 
-    .btn-attachment i {
-        margin-right: 4px;
-    }
+  .btn-primary:hover {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+      transform: translateY(-1px);
+  }
 
-    /* Scrollbar styling */
-    .table-wrapper::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-    }
+  /* Table Wrapper */
+  .table-wrapper {
+      position: relative;
+      max-height: 500px;
+      overflow: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 0;
+      background: white;
+      box-shadow: none;
+  }
 
-    .table-wrapper::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
+  .scrollable-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 14px;
+      margin: 0;
+  }
 
-    .table-wrapper::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
-        border-radius: 10px;
-        border: 2px solid #f1f1f1;
-    }
+  /* Fixed header */
+  .scrollable-table thead th {
+      position: sticky;
+      top: 0;
+      background: #212529;
+      color: white;
+      z-index: 10;
+      border: 1px solid #1a1e21;
+      padding: 15px 10px;
+      text-align: center;
+      font-weight: 600;
+      white-space: nowrap;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+  }
 
-    .table-wrapper::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #003d82 0%, #004085 100%);
-    }
+  /* Fixed attachment column */
+  .scrollable-table .fixed-column {
+      position: sticky;
+      right: 0;
+      z-index: 5;
+      background: white;
+      border-left: 3px solid #212529;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  }
 
-    /* Table title */
-    .table-title {
-        background: linear-gradient(135deg, #004085 0%, #0056b3 100%);
-        color: white;
-        padding: 15px 20px;
-        margin: 0;
-        border-radius: 12px 12px 0 0;
-        font-weight: 600;
-        font-size: 18px;
-        text-align: center;
-    }
-    /* end */
+  .scrollable-table thead .fixed-column {
+      z-index: 15;
+      background: #212529;
+      border-left: 3px solid #ffffff;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Table body styling */
+  .scrollable-table tbody td {
+      border: 1px solid #dee2e6;
+      padding: 12px 10px;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+  }
+
+  .scrollable-table tbody tr:nth-child(even) {
+      background-color: #f8f9fa;
+  }
+
+  .scrollable-table tbody tr:nth-child(even) .fixed-column {
+      background-color: #f8f9fa;
+  }
+
+  .scrollable-table tbody tr:hover {
+      background-color: #e3f2fd;
+      transform: scale(1.001);
+      transition: all 0.2s ease;
+  }
+
+  .scrollable-table tbody tr:hover .fixed-column {
+      background-color: #e3f2fd;
+  }
+
+  /* Column width settings */
+  .col-work-order { min-width: 130px; }
+  .col-title { min-width: 180px; }
+  .col-description { min-width: 250px; max-width: 300px; }
+  .col-requested { min-width: 120px; }
+  .col-department { min-width: 130px; }
+  .col-status { min-width: 110px; }
+  .col-type { min-width: 100px; }
+  .col-priority { min-width: 100px; }
+  .col-resolved { min-width: 120px; }
+  .col-reason { min-width: 180px; max-width: 200px; }
+  .col-approved { min-width: 120px; }
+  .col-action { min-width: 200px; max-width: 250px; }
+  .col-attachment { width: 140px; min-width: 140px; }
+
+  /* Description and reason text wrapping */
+  .text-wrap {
+      white-space: normal;
+      word-wrap: break-word;
+      max-width: 250px;
+      line-height: 1.4;
+  }
+
+  /* Status badges */
+  .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+  }
+
+  .status-pending { 
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
+      color: #856404; 
+      border: 1px solid #ffeaa7;
+  }
+  
+  .status-completed { 
+      background: linear-gradient(135deg, #d1edff 0%, #74b9ff 100%); 
+      color: #0c63e4; 
+      border: 1px solid #74b9ff;
+  }
+  
+  .status-approved { 
+      background: linear-gradient(135deg, #d4edda 0%, #00b894 100%); 
+      color: #155724; 
+      border: 1px solid #00b894;
+  }
+
+  .status-closed { 
+      background: linear-gradient(135deg, #e2e3e5 0%, #6c757d 100%); 
+      color: #495057; 
+      border: 1px solid #6c757d;
+  }
+
+  /* Priority badges */
+  .priority-badge {
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+  }
+
+  .priority-high { 
+      background: linear-gradient(135deg, #f8d7da 0%, #e17055 100%); 
+      color: #721c24; 
+      border: 1px solid #e17055;
+  }
+  
+  .priority-medium { 
+      background: linear-gradient(135deg, #fff3cd 0%, #fdcb6e 100%); 
+      color: #856404; 
+      border: 1px solid #fdcb6e;
+  }
+  
+  .priority-low { 
+      background: linear-gradient(135deg, #d1ecf1 0%, #81ecec 100%); 
+      color: #0c5460; 
+      border: 1px solid #81ecec;
+  }
+
+  /* Attachment button */
+  .btn-attachment {
+      background: #212529;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+
+  .btn-attachment:hover {
+      background: #0d6efd;
+      transform: translateY(-1px);
+  }
+
+  .btn-attachment i {
+      margin-right: 4px;
+  }
+
+  /* Scrollbar styling */
+  .table-wrapper::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb {
+      background: #212529;
+      border-radius: 10px;
+      border: 2px solid #f1f1f1;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #0d6efd;
+  }
+
+  /* Tab Content */
+  .tab-content {
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+  }
+
+  .tab-pane {
+      padding: 0;
+  }
 </style>
 <body class="with-welcome-text">
 <!-- partial:partials/_navbar.html -->
@@ -464,440 +511,460 @@
         </ul>
       </nav>
 
-     <div class="main-panel">
+<div class="main-panel">
       <div class="content-wrapper">
-        
-        <!-- First Card -->
-        <div class="card card-rounded">
-          <div class="card-body">
-            <div class="container-fluid">
-              <div class="d-flex justify-content-between align-items-center">
-                <h5> Pending & Queued </h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
-                    <i class="bi bi-plus-circle"></i> Add Job Order
-                </button>
-              </div>
-              <br>
-              <div class="table-wrapper">
-                <table class="scrollable-table">
-                  <thead>
-                    <tr>
-                      <th class="col-work-order">Work Order</th>
-                      <th class="col-title">Title</th>
-                      <th class="col-description">Description</th>
-                      <th class="col-requested">Requested</th>
-                      <th class="col-department">Department</th>
-                      <th class="col-status">Status</th>
-                      <th class="col-type">Type</th>
-                      <th class="col-priority">Priority</th>
-                      <th class="col-resolved">Resolved</th>
-                      <th class="col-reason">Reason</th>
-                      <th class="col-approved">Approved</th>
-                      <th class="col-action">Action Taken</th>
-                      <th class="col-attachment fixed-column">Attachment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>WO-2024-001</strong></td>
-                      <td>Computer Repair</td>
-                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
-                      <td>2024-01-15</td>
-                      <td>Accounting</td>
-                      <td><span class="status-badge status-pending">Pending</span></td>
-                      <td>Hardware</td>
-                      <td><span class="priority-badge priority-high">High</span></td>
-                      <td>2024-01-16</td>
-                      <td class="text-wrap">Hardware failure detected in display connection</td>
-                      <td>✅ Yes</td>
-                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
-                      <td class="fixed-column">
-                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
-                          <i class="mdi mdi-paperclip"></i> View
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+          <!-- Tab Navigation -->
+          <ul class="nav nav-tabs" id="jobOrderTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
+                      Pending<span class="tab-badge">2</span>
+                  </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab" aria-controls="approved" aria-selected="false">
+                      Approval<span class="tab-badge">1</span>
+                  </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="closed-tab" data-bs-toggle="tab" data-bs-target="#closed" type="button" role="tab" aria-controls="closed" aria-selected="false">
+                      Closed<span class="tab-badge">3</span>
+                  </button>
+              </li>
+          </ul>
 
-        <!-- Second Card -->
-        <div class="card card-rounded mt-4">
-          <div class="card-body">
-            <div class="container-fluid">
-              <h5> Closed </h5>
-              <br>
-              <div class="table-wrapper">
-                <table class="scrollable-table">
-                  <thead>
-                    <tr>
-                      <th class="col-work-order">Work Order</th>
-                      <th class="col-title">Title</th>
-                      <th class="col-description">Description</th>
-                      <th class="col-requested">Requested</th>
-                      <th class="col-department">Department</th>
-                      <th class="col-status">Status</th>
-                      <th class="col-type">Type</th>
-                      <th class="col-priority">Priority</th>
-                      <th class="col-resolved">Resolved</th>
-                      <th class="col-reason">Reason</th>
-                      <th class="col-approved">Approved</th>
-                      <th class="col-action">Action Taken</th>
-                      <th class="col-attachment fixed-column">Attachment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>WO-2024-001</strong></td>
-                      <td>Computer Repair</td>
-                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
-                      <td>2024-01-15</td>
-                      <td>Accounting</td>
-                      <td><span class="status-badge status-pending">Pending</span></td>
-                      <td>Hardware</td>
-                      <td><span class="priority-badge priority-high">High</span></td>
-                      <td>2024-01-16</td>
-                      <td class="text-wrap">Hardware failure detected in display connection</td>
-                      <td>✅ Yes</td>
-                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
-                      <td class="fixed-column">
-                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
-                          <i class="mdi mdi-paperclip"></i> View
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          <!-- Tab Content -->
+          <div class="tab-content" id="jobOrderTabContent">
+              <!-- Pending Tab -->
+              <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                  <div class="card">
+                      <div class="card-header">
+                          <div class="d-flex justify-content-between align-items-center">
+                              <h5><i class="bi bi-clock-history me-2"></i>Pending & Queued Orders</h5>
+                              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
+                                  <i class="bi bi-plus-circle"></i> Add Job Order
+                              </button>
+                          </div>
+                      </div>
+                      <div class="card-body p-0">
+                          <div class="table-wrapper">
+                              <table class="scrollable-table">
+                                  <thead>
+                                      <tr>
+                                          <th class="col-work-order">Work Order</th>
+                                          <th class="col-title">Title</th>
+                                          <th class="col-description">Description</th>
+                                          <th class="col-requested">Requested</th>
+                                          <th class="col-department">Department</th>
+                                          <th class="col-status">Status</th>
+                                          <th class="col-type">Type</th>
+                                          <th class="col-priority">Priority</th>
+                                          <th class="col-resolved">Resolved</th>
+                                          <th class="col-approved">Approved</th>
+                                          <th class="col-action">Action Taken</th>
+                                          <th class="col-attachment fixed-column">Attachment</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td><strong>WO-2024-001</strong></td>
+                                          <td>Computer Repair</td>
+                                          <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                                          <td>2024-01-15</td>
+                                          <td>Accounting</td>
+                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td>Hardware</td>
+                                          <td><span class="priority-badge priority-high">High</span></td>
+                                          <td>-</td>
+                                          <td>❌ No</td>
+                                          <td class="text-wrap">-</td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><strong>WO-2024-002</strong></td>
+                                          <td>Network Issue</td>
+                                          <td class="text-wrap">Slow internet connection in marketing department</td>
+                                          <td>2024-01-16</td>
+                                          <td>Marketing</td>
+                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td>Network</td>
+                                          <td><span class="priority-badge priority-medium">Medium</span></td>
+                                          <td>-</td>
+                                          <td>❌ No</td>
+                                          <td class="text-wrap">-</td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-002')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
               </div>
-            </div>
-          </div>
-        </div>
 
+              <!-- Approved Tab -->
+              <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+                  <div class="card">
+                      <div class="card-header">
+                          <div class="d-flex justify-content-between align-items-center">
+                              <h5><i class="bi bi-check-circle me-2"></i>Approved Orders</h5>
+                          </div>
+                      </div>
+                      <div class="card-body p-0">
+                          <div class="table-wrapper">
+                              <table class="scrollable-table">
+                                  <thead>
+                                      <tr>
+                                          <th class="col-work-order">Work Order</th>
+                                          <th class="col-title">Title</th>
+                                          <th class="col-description">Description</th>
+                                          <th class="col-requested">Requested</th>
+                                          <th class="col-department">Department</th>
+                                          <th class="col-status">Status</th>
+                                          <th class="col-type">Type</th>
+                                          <th class="col-priority">Priority</th>
+                                          <th class="col-approved"> </th>
+                                          <th class="col-attachment fixed-column">Attachment</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td><strong>WO-2024-003</strong></td>
+                                          <td>Software Installation</td>
+                                          <td class="text-wrap">Install new accounting software on 5 computers</td>
+                                          <td>2024-01-14</td>
+                                          <td>IT</td>
+                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td>Software</td>
+                                          <td><span class="priority-badge priority-high">High</span></td>
+                                          <td>
+                                              <div class="btn-group" role="group">
+                                                  <button class="btn btn-sm btn-success" title="Approve" onclick="setApproval('WO-2024-003', true)">
+                                                      <i class="bi bi-check-circle"></i> Approve
+                                                  </button>
+                                                  <button class="btn btn-sm btn-danger" title="Reject" onclick="setApproval('WO-2024-003', false)">
+                                                      <i class="bi bi-x-circle"></i> Reject
+                                                  </button>
+                                              </div>
+                                          </td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-003')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><strong>WO-2024-004</strong></td>
+                                          <td>Printer Maintenance</td>
+                                          <td class="text-wrap">Regular maintenance for office printers</td>
+                                          <td>2024-01-13</td>
+                                          <td>Admin</td>
+                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td>Hardware</td>
+                                          <td><span class="priority-badge priority-low">Low</span></td>
+                                          <td>
+                                              <div class="btn-group" role="group">
+                                                  <button class="btn btn-sm btn-success" title="Approve" onclick="setApproval('WO-2024-003', true)">
+                                                      <i class="bi bi-check-circle"></i> Approve
+                                                  </button>
+                                                  <button class="btn btn-sm btn-danger" title="Reject" onclick="setApproval('WO-2024-003', false)">
+                                                      <i class="bi bi-x-circle"></i> Reject
+                                                  </button>
+                                              </div>
+                                          </td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-004')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Closed Tab -->
+              <div class="tab-pane fade" id="closed" role="tabpanel" aria-labelledby="closed-tab">
+                  <div class="card">
+                      <div class="card-header">
+                          <div class="d-flex justify-content-between align-items-center">
+                              <h5><i class="bi bi-x-circle me-2"></i>Closed Orders</h5>
+                          </div>
+                      </div>
+                      <div class="card-body p-0">
+                          <div class="table-wrapper">
+                              <table class="scrollable-table">
+                                  <thead>
+                                      <tr>
+                                          <th class="col-work-order">Work Order</th>
+                                          <th class="col-title">Title</th>
+                                          <th class="col-description">Description</th>
+                                          <th class="col-requested">Requested</th>
+                                          <th class="col-department">Department</th>
+                                          <th class="col-status">Status</th>
+                                          <th class="col-type">Type</th>
+                                          <th class="col-priority">Priority</th>
+                                          <th class="col-resolved">Resolved</th>
+                                          <th class="col-approved">Approved</th>
+                                          <th class="col-action">Action Taken</th>
+                                          <th class="col-attachment fixed-column">Attachment</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td><strong>WO-2024-005</strong></td>
+                                          <td>Computer Repair</td>
+                                          <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
+                                          <td>2024-01-15</td>
+                                          <td>Accounting</td>
+                                          <td><span class="status-badge status-closed">Closed</span></td>
+                                          <td>Hardware</td>
+                                          <td><span class="priority-badge priority-high">High</span></td>
+                                          <td>2024-01-16</td>
+                                          <td>✅ Yes</td>
+                                          <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-005')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><strong>WO-2024-006</strong></td>
+                                          <td>Email Configuration</td>
+                                          <td class="text-wrap">Setup email account for new employee</td>
+                                          <td>2024-01-12</td>
+                                          <td>HR</td>
+                                          <td><span class="status-badge status-closed">Closed</span></td>
+                                          <td>Software</td>
+                                          <td><span class="priority-badge priority-medium">Medium</span></td>
+                                          <td>2024-01-12</td>
+                                          <td>✅ Yes</td>
+                                          <td class="text-wrap">Created email account and provided access credentials</td>
+                                          <td class="fixed-column">
+                                              <button class="btn-attachment" onclick="viewAttachment('WO-2024-006')">
+                                                  <i class="mdi mdi-paperclip"></i> View
+                                              </button>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
-    </div><div class="main-panel">
-      <div class="content-wrapper">
-        
-        <!-- First Card -->
-        <div class="card card-rounded">
-          <div class="card-body">
-            <div class="container-fluid">
-              <div class="d-flex justify-content-between align-items-center">
-                <h5> Pending & Queued </h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
-                    <i class="bi bi-plus-circle"></i> Add Job Order
-                </button>
-              </div>
-              <br>
-              <div class="table-wrapper">
-                <table class="scrollable-table">
-                  <thead>
-                    <tr>
-                      <th class="col-work-order">Work Order</th>
-                      <th class="col-title">Title</th>
-                      <th class="col-description">Description</th>
-                      <th class="col-requested">Requested</th>
-                      <th class="col-department">Department</th>
-                      <th class="col-status">Status</th>
-                      <th class="col-type">Type</th>
-                      <th class="col-priority">Priority</th>
-                      <th class="col-resolved">Resolved</th>
-                      <th class="col-reason">Reason</th>
-                      <th class="col-approved">Approved</th>
-                      <th class="col-action">Action Taken</th>
-                      <th class="col-attachment fixed-column">Attachment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>WO-2024-001</strong></td>
-                      <td>Computer Repair</td>
-                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
-                      <td>2024-01-15</td>
-                      <td>Accounting</td>
-                      <td><span class="status-badge status-pending">Pending</span></td>
-                      <td>Hardware</td>
-                      <td><span class="priority-badge priority-high">High</span></td>
-                      <td>2024-01-16</td>
-                      <td class="text-wrap">Hardware failure detected in display connection</td>
-                      <td>✅ Yes</td>
-                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
-                      <td class="fixed-column">
-                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
-                          <i class="mdi mdi-paperclip"></i> View
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+  </div>
+
+  <!-- Add Job Order Modal (Medium Width + Taller Description) -->
+  <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h6 class="modal-title" id="addDocumentModalLabel">Add Job Order</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <!-- Second Card -->
-        <div class="card card-rounded mt-4">
-          <div class="card-body">
-            <div class="container-fluid">
-              <h5> Closed </h5>
-              <br>
-              <div class="table-wrapper">
-                <table class="scrollable-table">
-                  <thead>
-                    <tr>
-                      <th class="col-work-order">Work Order</th>
-                      <th class="col-title">Title</th>
-                      <th class="col-description">Description</th>
-                      <th class="col-requested">Requested</th>
-                      <th class="col-department">Department</th>
-                      <th class="col-status">Status</th>
-                      <th class="col-type">Type</th>
-                      <th class="col-priority">Priority</th>
-                      <th class="col-resolved">Resolved</th>
-                      <th class="col-reason">Reason</th>
-                      <th class="col-approved">Approved</th>
-                      <th class="col-action">Action Taken</th>
-                      <th class="col-attachment fixed-column">Attachment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>WO-2024-001</strong></td>
-                      <td>Computer Repair</td>
-                      <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
-                      <td>2024-01-15</td>
-                      <td>Accounting</td>
-                      <td><span class="status-badge status-pending">Pending</span></td>
-                      <td>Hardware</td>
-                      <td><span class="priority-badge priority-high">High</span></td>
-                      <td>2024-01-16</td>
-                      <td class="text-wrap">Hardware failure detected in display connection</td>
-                      <td>✅ Yes</td>
-                      <td class="text-wrap">Replaced monitor cable and updated display drivers</td>
-                      <td class="fixed-column">
-                        <button class="btn-attachment" onclick="viewAttachment('WO-2024-001')">
-                          <i class="mdi mdi-paperclip"></i> View
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        <!-- Modal Body with Form -->
+        <div class="modal-body">
+          <form id="jobOrderForm">
+            <div class="mb-2">
+              <label for="workOrderNo" class="form-label">Work Order No.</label>
+              <input type="text" class="form-control form-control-sm text-black" id="workOrderNo" value="" readonly>
             </div>
-          </div>
+
+            <div class="mb-2">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control form-control-sm text-black" id="title" placeholder="Enter job title">
+            </div>
+
+            <div class="mb-2">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control form-control-sm text-black" id="description" rows="6" style="height: 150px;" placeholder="Enter job description"></textarea>
+            </div>
+
+            <div class="mb-2">
+              <label for="type" class="form-label">Type</label>
+              <select class="form-select form-select-sm text-black" id="type">
+                <option value="">-- Select Type --</option>
+                <option value="PRINTER">PRINTER</option>
+                <option value="DATABASE UPDATE">DATABASE UPDATE</option>
+                <option value="REPORT GENERATION">REPORT GENERATION</option>
+                <option value="ACCESS AND SECURITY">ACCESS AND SECURITY</option>
+                <option value="LAN AND NETWORKS">LAN AND NETWORKS</option>
+                <option value="HARDWARE">HARDWARE</option>
+                <option value="SOFTWARE">SOFTWARE</option>
+                <option value="OTHERS">OTHERS</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label for="priority" class="form-label">Priority</label>
+              <select class="form-select form-select-sm text-black" id="priority">
+                <option value="Low">LOW</option>
+                <option value="Mid">MID</option>
+                <option value="High">HIGH</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label for="attachment" class="form-label">Attachment</label>
+              <input class="form-control form-control-sm" type="file" id="attachment">
+            </div>
+          </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="jobOrderForm" class="btn btn-sm btn-primary">Save</button>
         </div>
 
       </div>
     </div>
+  </div>
+</div>
 
-      <!-- Add Job Order Modal (Medium Width + Taller Description) -->
-      <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-          <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-              <h6 class="modal-title" id="addDocumentModalLabel">Add Job Order</h6>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <!-- Modal Body with Form -->
-            <div class="modal-body">
-              <form id="jobOrderForm">
-                <div class="mb-2">
-                  <label for="workOrderNo" class="form-label">Work Order No.</label>
-                  <input type="text" class="form-control form-control-sm text-black" id="workOrderNo" value="" readonly>
-                </div>
-
-                <div class="mb-2">
-                  <label for="title" class="form-label">Title</label>
-                  <input type="text" class="form-control form-control-sm text-black" id="title" placeholder="Enter job title">
-                </div>
-
-                <div class="mb-2">
-                  <label for="description" class="form-label">Description</label>
-                  <textarea class="form-control form-control-sm text-black" id="description" rows="6" style="height: 150px;" placeholder="Enter job description"></textarea>
-                </div>
-
-                <div class="mb-2">
-                  <label for="type" class="form-label">Type</label>
-                  <select class="form-select form-select-sm text-black" id="department">
-                    <option value="">-- Select Type --</option>
-                    <option value="PRINTER">PRINTER</option>
-                    <option value="DATABASE UPDATE">DATABASE UPDATE</option>
-                    <option value="REPORT GENERATION">REPORT GENERATION</option>
-                    <option value="ACCESS AND SECURITY">ACCESS AND SECURITY</option>
-                    <option value="LAN AND NETWORKS">LAN AND NETWORKS</option>
-                    <option value="HARDWARE">HARDWARE</option>
-                    <option value="SOFTWARE">SOFTWARE</option>
-                    <option value="OTHERS">OTHERS</option>
-                  </select>
-                </div>
-
-                <div class="mb-2">
-                  <label for="priority" class="form-label">Priority</label>
-                  <select class="form-select form-select-sm text-black" id="priority">
-                    <option value="Low">LOW</option>
-                    <option value="Mid">MID</option>
-                    <option value="High">HIGH</option>
-                  </select>
-                </div>
-
-                <div class="mb-2">
-                  <label for="attachment" class="form-label">Attachment</label>
-                  <input class="form-control form-control-sm" type="file" id="attachment">
-                </div>
-              </form>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" form="jobOrderForm" class="btn btn-sm btn-primary">Save</button>
-            </div>
-
-          </div>
-        </div>
-      </div>
+<!-- plugins:js -->
+<script src="assets/vendors/js/vendor.bundle.base.js"></script>
+<script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="assets/vendors/chart.js/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="assets/js/off-canvas.js"></script>
+<script src="seets/js/template.js"></script>
+<script src="assets/js/settings.js"></script>
+<script src="assets/js/hoverable-collapse.js"></script>
+<script src="assets/js/todolist.js"></script>
+<script src="assets/js/event.js"></script>
+<!-- endinject -->
 
 
-    </div>
+<!--
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+Latest Chart.js Data Labels Plugin
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+-->
+<!--GRAPH JS-->
 
-    
+<script src="js/pdo-job-order.js"></script>
 
-
-
-    <!-- plugins:js -->
-    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
-    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <script src="assets/vendors/chart.js/chart.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="assets/js/off-canvas.js"></script>
-    <script src="seets/js/template.js"></script>
-    <script src="assets/js/settings.js"></script>
-    <script src="assets/js/hoverable-collapse.js"></script>
-    <script src="assets/js/todolist.js"></script>
-    <script src="assets/js/event.js"></script>
-    <!-- endinject -->
+<script src="js/auth.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
-    Latest Chart.js Data Labels Plugin
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-    -->
-    <!--GRAPH JS-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-    <script src="js/pdo-job-order.js"></script>
+<!-- Include SheetJS library for Excel export -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <!-- Latest Chart.js v4 -->
 
-    <script src="js/auth.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--end inject-->
 
+<!-- Custom js for this page-->
+<script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+<script src="assets/js/dashboard.js"></script>
+<!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    
-    <!-- Include SheetJS library for Excel export -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-            <!-- Latest Chart.js v4 -->
+<!--SCRIPT FOR LOGOUT-->
+<script>
+    document.getElementById("logout").addEventListener("click", function () {
+        localStorage.removeItem("username"); // Clear stored user data
+        window.location.href = "login.html"; // Redirect to login page
+    });
+</script>
+<!--END SCRIPT-->
 
-    <!--end inject-->
+<!--DISPLAY USERNAME BASE ON THE USER-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Get stored username from localStorage
+        const username = localStorage.getItem("username");
 
-    <!-- Custom js for this page-->
-    <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
-    <script src="assets/js/dashboard.js"></script>
-    <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
-
-    <!--SCRIPT FOR LOGOUT-->
-    <script>
-        document.getElementById("logout").addEventListener("click", function () {
-            localStorage.removeItem("username"); // Clear stored user data
-            window.location.href = "login.html"; // Redirect to login page
-        });
-    </script>
-    <!--END SCRIPT-->
-
-    <!--DISPLAY USERNAME BASE ON THE USER-->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          // Get stored username from localStorage
-            const username = localStorage.getItem("username");
- 
-            if (username) {
-                document.getElementById("user-name").textContent = username;
-            }
-        });
-    </script>
-    <!--END SCRIPT-->
-
-    <!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        const userName = localStorage.getItem("username"); // Get the stored name
-
-        if (userName) {
-            document.getElementById("user-name").textContent = userName; // Set Name in Header
-            document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
-        } else {
-            document.getElementById("user-name").textContent = "Guest";
-            document.getElementById("dropdown-name").textContent = "Guest";
+        if (username) {
+            document.getElementById("user-name").textContent = username;
         }
     });
-    </script>
-    <!--END SCRIPT-->
+</script>
+<!--END SCRIPT-->
 
-    <!--DISPALYING NAME ALSO-->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        const userName = localStorage.getItem("username") || "Guest"; 
-        const userEmail = localStorage.getItem("email") || "No Email"; 
+<!--SCRIPT FOR DISPLAY USRENAME IN THE USERNAME TAB-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("username"); // Get the stored name
 
-        // Set the username and email in the dropdown
-        document.getElementById("user-name1").textContent = userName;
-        document.getElementById("user-email").textContent = userEmail;
+    if (userName) {
+        document.getElementById("user-name").textContent = userName; // Set Name in Header
+        document.getElementById("dropdown-name").textContent = userName; // Set Name in Dropdown
+    } else {
+        document.getElementById("user-name").textContent = "Guest";
+        document.getElementById("dropdown-name").textContent = "Guest";
+    }
+});
+</script>
+<!--END SCRIPT-->
+
+<!--DISPALYING NAME ALSO-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const userName = localStorage.getItem("username") || "Guest"; 
+    const userEmail = localStorage.getItem("email") || "No Email"; 
+
+    // Set the username and email in the dropdown
+    document.getElementById("user-name1").textContent = userName;
+    document.getElementById("user-email").textContent = userEmail;
+});
+</script>
+<!--END SCRIPT-->
+
+<!--SCRIPT FOR DATE PICKER-->
+<script>
+    $(document).ready(function () {
+        $('#dateTimeFrom').datepicker({
+            format: 'yyyy-mm-dd HH:ii',
+            autoclose: true,
+            todayHighlight: true
+        });
+        $('#dateTimeTo').datepicker({
+            format: 'yyyy-mm-dd HH:ii',
+            autoclose: true,
+            todayHighlight: true
+        });
     });
-    </script>
-    <!--END SCRIPT-->
+</script>
+<!--END SCRIPT-->
 
-    <!--SCRIPT FOR DATE PICKER-->
-    <script>
-        $(document).ready(function () {
-            $('#dateTimeFrom').datepicker({
-                format: 'yyyy-mm-dd HH:ii',
-                autoclose: true,
-                todayHighlight: true
-            });
-            $('#dateTimeTo').datepicker({
-                format: 'yyyy-mm-dd HH:ii',
-                autoclose: true,
-                todayHighlight: true
-            });
-        });
-    </script>
-    <!--END SCRIPT-->
+<!--Attachemt crud script-->
+<script>
+    const attachmentsInput = document.getElementById("attachments");
+    const fileList = document.getElementById("fileList");
 
-    <!--Attachemt crud script-->
-    <script>
-        const attachmentsInput = document.getElementById("attachments");
-        const fileList = document.getElementById("fileList");
-
-        attachmentsInput.addEventListener("change", function () {
-            fileList.innerHTML = ""; // Clear previous list
-            for (let i = 0; i < this.files.length; i++) {
-            const li = document.createElement("li");
-            li.textContent = this.files[i].name;
-            fileList.appendChild(li);
-            }
-        });
-    </script>
+    attachmentsInput.addEventListener("change", function () {
+        fileList.innerHTML = ""; // Clear previous list
+        for (let i = 0; i < this.files.length; i++) {
+        const li = document.createElement("li");
+        li.textContent = this.files[i].name;
+        fileList.appendChild(li);
+        }
+    });
+</script>
 </body>
 
 </html>

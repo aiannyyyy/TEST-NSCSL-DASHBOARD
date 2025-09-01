@@ -7,7 +7,7 @@ const fs = require('fs');
 
 // Multer Configuration for file uploads
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'), // Fixed typo: destinatoin -> destination
+    destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
         const uniqueName = Date.now() + "-" + file.originalname;
         cb(null, uniqueName);
@@ -33,6 +33,20 @@ const upload = multer({
     }
 });
 
+// Helper function to format date consistently
+function formatDateForMySQL(date) {
+    if (!date) return null;
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 // Get all IT job orders with better error handling
 router.get("/it-job-order", (req, res) => {
     const query = `
@@ -50,6 +64,7 @@ router.get("/it-job-order", (req, res) => {
             date_resolved,
             tech,
             reason,
+            approved,
             approved_by,
             approved_date,
             action_taken,
@@ -71,13 +86,11 @@ router.get("/it-job-order", (req, res) => {
         // Process results to ensure proper data formatting
         const processedResults = results.map(row => ({
             ...row,
-            // Ensure dates are properly formatted
-            date_issued: row.date_issued ? new Date(row.date_issued).toISOString() : null,
-            date_resolved: row.date_resolved ? new Date(row.date_resolved).toISOString() : null,
-            approved_date: row.approved_date ? new Date(row.approved_date).toISOString() : null,
-            // Ensure work_order_no has a fallback
+            // Keep original date objects for proper timezone handling
+            date_issued: row.date_issued,
+            date_resolved: row.date_resolved,
+            approved_date: row.approved_date,
             work_order_no: row.work_order_no || `WO-${row.id}`,
-            // Convert enum values to proper case
             status: row.status || 'Pending',
             priority: row.priority || 'LOW'
         }));
@@ -86,9 +99,9 @@ router.get("/it-job-order", (req, res) => {
     });
 });
 
-// Get IT job orders filtered by department and status
+// Get IT job orders filtered by department and approved
 router.get("/it-job-order-bydept", (req, res) => {
-    const { department, status } = req.query;
+    const { department, approved } = req.query;
 
     // Base query
     let query = `
@@ -106,6 +119,7 @@ router.get("/it-job-order-bydept", (req, res) => {
             date_resolved,
             tech,
             reason,
+            approved,
             approved_by,
             approved_date,
             action_taken,
@@ -123,10 +137,10 @@ router.get("/it-job-order-bydept", (req, res) => {
         params.push(department);
     }
 
-    // Add status filter if provided
-    if (status) {
-        query += ` AND status = ?`;
-        params.push(status);
+    // Add approved filter if provided
+    if (approved) {
+        query += ` AND approved = ?`;
+        params.push(approved);
     }
 
     query += ` ORDER BY date_issued DESC`;
@@ -143,9 +157,10 @@ router.get("/it-job-order-bydept", (req, res) => {
         // Process results to ensure proper data formatting
         const processedResults = results.map(row => ({
             ...row,
-            date_issued: row.date_issued ? new Date(row.date_issued).toISOString() : null,
-            date_resolved: row.date_resolved ? new Date(row.date_resolved).toISOString() : null,
-            approved_date: row.approved_date ? new Date(row.approved_date).toISOString() : null,
+            // Keep original date objects
+            date_issued: row.date_issued,
+            date_resolved: row.date_resolved,
+            approved_date: row.approved_date,
             work_order_no: row.work_order_no || `WO-${row.id}`,
             status: row.status || "Pending",
             priority: row.priority || "LOW",
@@ -155,102 +170,210 @@ router.get("/it-job-order-bydept", (req, res) => {
     });
 });
 
-
-// Create new job order
-router.post("/add-it-job-order", upload.single('attachment'), (req, res) => {
-    const {
-        title,
-        description,
-        date_issued,
-        requester,
-        department,
-        status = 'Pending',
-        type,
-        priority = 'LOW',
-        date_resolved,
-        tech,
-        reason,
-        approved_by,
-        approved_date,
-        action_taken,
-        time_elapsed
-    } = req.body;
+// Get next work order number (corrected for WORK-YYYY-0000 format)
+router.get("/get-next-work-order-no", (req, res) => {
+    const year = req.query.year || new Date().getFullYear();
     
-    const attachment_path = req.file ? req.file.filename : null;
-    const currentYear = new Date().getFullYear();
-    
-    // First, get the next work order number
-    const getLastWorkOrderQuery = `
+    const query = `
         SELECT work_order_no 
         FROM test_it_job_order 
-        WHERE work_order_no LIKE 'WO-${currentYear}-%' 
-        ORDER BY CAST(SUBSTRING(work_order_no, -3) AS UNSIGNED) DESC 
+        WHERE work_order_no LIKE 'WORK-${year}-%' 
+        ORDER BY CAST(SUBSTRING(work_order_no, -4) AS UNSIGNED) DESC 
         LIMIT 1
     `;
     
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Database error while getting next work order:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        let nextNumber = 1;
+        
+        if (results.length > 0 && results[0].work_order_no) {
+            const lastWorkOrderNo = results[0].work_order_no;
+            const parts = lastWorkOrderNo.split('-');
+            
+            if (parts.length >= 3) {
+                const lastNumber = parseInt(parts[2]);
+                if (!isNaN(lastNumber)) {
+                    nextNumber = lastNumber + 1;
+                }
+            }
+            
+            console.log(`Last work order: ${lastWorkOrderNo}, Next number: ${nextNumber}`);
+        }
+        
+        // Format with 4 digits padding
+        const nextWorkOrderNo = `WORK-${year}-${nextNumber.toString().padStart(4, '0')}`;
+        
+        console.log(`Generated next work order number: ${nextWorkOrderNo}`);
+        res.json({ next_work_order_no: nextWorkOrderNo });
+    });
+});
+
+// CORRECTED create job order route
+router.post("/add-it-job-order", upload.single('attachment'), (req, res) => {
+    console.log('📥 Received job order request');
+    console.log('📋 Request body:', req.body);
+    console.log('📎 File:', req.file);
+    
+    const { 
+        title, 
+        description, 
+        date_issued, 
+        requester, 
+        department, 
+        status, 
+        type, 
+        priority
+    } = req.body;
+    
+    // Validate required fields
+    if (!title || !description || !requester || !department || !type) {
+        console.log('❌ Missing required fields');
+        
+        // Clean up uploaded file if validation fails
+        if (req.file) {
+            fs.unlink(req.file.path, (unlinkErr) => {
+                if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+            });
+        }
+        
+        return res.status(400).json({ 
+            error: 'Missing required fields: title, description, requester, department, and type are required' 
+        });
+    }
+    
+    // Validate allowed values
+    const allowedTypes = ['PRINTER', 'DATABASE UPDATE', 'REPORT GENERATION', 
+                         'ACCESS AND SECURITY', 'LAN AND NETWORKS', 'HARDWARE', 
+                         'SOFTWARE', 'OTHERS'];
+    const allowedPriorities = ['LOW', 'MID', 'HIGH'];
+    const allowedStatuses = ['PENDING', 'QUEUED', 'IN PROGRESS', 'CLOSED'];
+
+    if (!allowedTypes.includes(type.toUpperCase())) {
+        if (req.file) {
+            fs.unlink(req.file.path, (unlinkErr) => {
+                if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+            });
+        }
+        return res.status(400).json({ error: 'Invalid job type' });
+    }
+
+    if (priority && !allowedPriorities.includes(priority.toUpperCase())) {
+        if (req.file) {
+            fs.unlink(req.file.path, (unlinkErr) => {
+                if (unlinkErr) console.error('Error deleting file:', unlinkErr);
+            });
+        }
+        return res.status(400).json({ error: 'Invalid priority level' });
+    }
+    
+    const attachment_path = req.file ? req.file.filename : null;
+    const currentYear = new Date().getFullYear();
+
+    // Get the next work order number
+    const getLastWorkOrderQuery = `
+        SELECT work_order_no 
+        FROM test_it_job_order 
+        WHERE work_order_no LIKE 'WORK-${currentYear}-%' 
+        ORDER BY CAST(SUBSTRING(work_order_no, -4) AS UNSIGNED) DESC 
+        LIMIT 1
+    `;
+
     db.query(getLastWorkOrderQuery, (err, results) => {
         if (err) {
             console.error('Database error while getting last work order:', err);
+            
             // Clean up uploaded file if there's an error
             if (req.file) {
                 fs.unlink(req.file.path, (unlinkErr) => {
                     if (unlinkErr) console.error('Error deleting file:', unlinkErr);
                 });
             }
+            
             return res.status(500).json({ error: 'Failed to generate work order number' });
         }
-        
+
         let nextNumber = 1;
         
         if (results.length > 0 && results[0].work_order_no) {
-            // Extract the number from the last work order (e.g., "WO-2024-001" -> 1)
             const lastWorkOrderNo = results[0].work_order_no;
-            const lastNumber = parseInt(lastWorkOrderNo.split('-')[2]);
-            nextNumber = lastNumber + 1;
+            const parts = lastWorkOrderNo.split('-');
+            
+            if (parts.length >= 3) {
+                const lastNumber = parseInt(parts[2]);
+                if (!isNaN(lastNumber)) {
+                    nextNumber = lastNumber + 1;
+                }
+            }
         }
+
+        // Generate the work order number
+        const work_order_no = `WORK-${currentYear}-${nextNumber.toString().padStart(4, '0')}`;
         
-        // Format the work order number with leading zeros (e.g., WO-2024-001)
-        const work_order_no = `WO-${currentYear}-${nextNumber.toString().padStart(3, '0')}`;
-        
-        // Insert the new job order
+        console.log(`Generated work order number: ${work_order_no}`);
+
+        // FIXED: Insert only initial fields - approved_date stays NULL until approved
         const insertQuery = `
-            INSERT INTO test_it_job_order 
-            (work_order_no, title, description, date_issued, requester, department, status, type, priority, date_resolved, tech, reason, approved_by, approved_date, action_taken, time_elapsed, attachment_path)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO test_it_job_order (
+                work_order_no, 
+                title, 
+                description, 
+                date_issued, 
+                requester, 
+                department, 
+                status, 
+                type, 
+                priority, 
+                approved,
+                attachment_path
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
+
+        // FIXED: Prepare values with proper formatting and defaults
+        const currentDateTime = formatDateForMySQL(date_issued || new Date());
         
         const values = [
-            work_order_no, 
-            title, 
-            description, 
-            date_issued, 
-            requester, 
-            department, 
-            status, 
-            type, 
-            priority, 
-            date_resolved, 
-            tech, 
-            reason, 
-            approved_by, 
-            approved_date, 
-            action_taken, 
-            time_elapsed, 
+            work_order_no,
+            title,
+            description,
+            currentDateTime,
+            requester,
+            department,
+            (status || 'Pending').toUpperCase(),
+            type.toUpperCase(),
+            (priority || 'LOW').toUpperCase(),
+            'NO', // FIXED: Always start as 'NO', ignore any approved parameter
             attachment_path
         ];
-        
+        // REMOVED: approved_date - let it stay NULL until actually approved
+
+        console.log('💾 Inserting with values:', values);
+
         db.query(insertQuery, values, (err, result) => {
             if (err) {
                 console.error('Database error while inserting job order:', err);
+                
                 // Clean up uploaded file if database insert fails
                 if (req.file) {
                     fs.unlink(req.file.path, (unlinkErr) => {
                         if (unlinkErr) console.error('Error deleting file:', unlinkErr);
                     });
                 }
-                return res.status(500).json({ error: 'Failed to create job order' });
+                
+                return res.status(500).json({ 
+                    error: 'Failed to create job order', 
+                    details: err.message 
+                });
             }
-            
+
+            console.log('✅ Job order created successfully:', {
+                id: result.insertId,
+                work_order_no: work_order_no
+            });
+
             res.status(201).json({
                 message: 'Job order created successfully',
                 id: result.insertId,
@@ -260,6 +383,25 @@ router.post("/add-it-job-order", upload.single('attachment'), (req, res) => {
     });
 });
 
+// Test endpoint to verify API is working
+router.get("/test", (req, res) => {
+    res.json({ message: 'API is working', timestamp: new Date() });
+});
+
+// Test database connection
+router.get("/test-db", (req, res) => {
+    db.query('SELECT COUNT(*) as count FROM test_it_job_order', (err, results) => {
+        if (err) {
+            console.error('DB Error:', err);
+            return res.status(500).json({ error: 'Database connection failed', details: err.message });
+        }
+        res.json({ 
+            message: 'Database connected successfully', 
+            recordCount: results[0].count,
+            timestamp: new Date()
+        });
+    });
+});
 
 // Serve uploaded files
 router.get("/uploads/:filename", (req, res) => {
@@ -279,9 +421,9 @@ router.get("/it-job-order-stats", (req, res) => {
     const query = `
         SELECT 
             COUNT(*) as total,
-            SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending,
-            SUM(CASE WHEN status = 'Closed' THEN 1 ELSE 0 END) as closed,
-            SUM(CASE WHEN status = 'Queued' THEN 1 ELSE 0 END) as queued,
+            SUM(CASE WHEN status = 'PENDING' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'CLOSED' THEN 1 ELSE 0 END) as closed,
+            SUM(CASE WHEN status = 'QUEUED' THEN 1 ELSE 0 END) as queued,
             SUM(CASE WHEN priority = 'HIGH' THEN 1 ELSE 0 END) as high_priority,
             AVG(time_elapsed) as avg_time_elapsed
         FROM test_it_job_order
@@ -296,5 +438,168 @@ router.get("/it-job-order-stats", (req, res) => {
         res.json(results[0]);
     });
 });
+
+// FIXED: Update job order approval status
+router.post("/update-approval", (req, res) => {
+    const { work_order_no, approved, approved_by } = req.body;
+
+    if (!work_order_no || approved === undefined) {
+        return res.status(400).json({ error: 'work_order_no and approved status are required' });
+    }
+
+    const query = `
+        UPDATE test_it_job_order 
+        SET approved = ?, approved_by = ?, approved_date = ?
+        WHERE work_order_no = ?
+    `;
+
+    // FIXED: Only set approved_date when actually approving
+    const approvedValue = approved === true || approved === 'true' || approved === 'YES' || approved === 'yes';
+    const approvedString = approvedValue ? 'YES' : 'NO';
+    const approvedDate = approvedValue ? formatDateForMySQL(new Date()) : null;
+
+    const values = [
+        approvedString,
+        approved_by,
+        approvedDate, // NULL if rejecting, current datetime if approving
+        work_order_no
+    ];
+
+    console.log('Updating approval with values:', values);
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Database error while updating approval:', err);
+            return res.status(500).json({ error: 'Failed to update approval status' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Job order not found' });
+        }
+
+        res.json({
+            message: 'Approval status updated successfully',
+            work_order_no: work_order_no,
+            approved: approvedString
+        });
+    });
+});
+
+// Enhanced filtering route
+router.get("/it-job-order-filtered", (req, res) => {
+    const { department, approved, status } = req.query;
+
+    let query = `
+        SELECT 
+            id,
+            work_order_no,
+            title,
+            description,
+            date_issued,
+            requester,
+            department,
+            status,
+            type,
+            priority,
+            date_resolved,
+            tech,
+            reason,
+            approved,
+            approved_by,
+            approved_date,
+            action_taken,
+            time_elapsed,
+            attachment_path
+        FROM test_it_job_order
+        WHERE 1=1
+    `;
+
+    const params = [];
+
+    if (department) {
+        query += ` AND department = ?`;
+        params.push(department);
+    }
+
+    if (approved) {
+        query += ` AND approved = ?`;
+        params.push(approved);
+    }
+
+    if (status) {
+        query += ` AND status = ?`;
+        params.push(status);
+    }
+
+    query += ` ORDER BY date_issued DESC`;
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({
+                error: "Database error occurred",
+                details: process.env.NODE_ENV === "development" ? err.message : undefined,
+            });
+        }
+
+        const processedResults = results.map(row => ({
+            ...row,
+            date_issued: row.date_issued,
+            date_resolved: row.date_resolved,
+            approved_date: row.approved_date,
+            work_order_no: row.work_order_no || `WO-${row.id}`,
+            status: row.status || "Pending",
+            priority: row.priority || "LOW",
+        }));
+
+        res.json(processedResults);
+    });
+});
+
+// FIXED: Update job order mark as dene
+router.post("/work-done", (req, res) => {
+    const { work_order_no, tech, reason, action_taken, time_elapsed } = req.body;
+
+    if (!work_order_no) {
+        return res.status(400).json({ error: 'work_order_no is required' });
+    }
+
+    // set current datetime as "date_resolved"
+    const date_resolved = new Date();
+
+    const query = `
+        UPDATE test_it_job_order 
+        SET date_resolved = ?, tech = ?, reason = ?, action_taken = ?, time_elapsed = ?
+        WHERE work_order_no = ?
+    `;
+
+    const values = [
+        date_resolved,
+        tech || null,
+        reason || null,
+        action_taken || null,
+        time_elapsed || null,
+        work_order_no
+    ];
+
+    console.log("Updating job order with values:", values);
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Database error while updating job order:", err);
+            return res.status(500).json({ error: "Failed to update job order" });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Job order not found" });
+        }
+
+        res.json({
+            message: "Job order updated successfully",
+            work_order_no
+        });
+    });
+});
+
 
 module.exports = router;
