@@ -633,16 +633,26 @@ class ITJobOrderManager {
         return `<span class="priority-badge ${priorityClass}">${priority}</span>`;
     }
 
-    // Get CSS class for priority
+    // Get CSS class for priority - FIXED VERSION
     getPriorityClass(priority) {
+        if (!priority) return 'priority-default';
+        
         const priorityLower = priority.toLowerCase();
+        
+        // Handle variations of HIGH priority
         if (priorityLower.includes('high') || priorityLower.includes('urgent')) {
             return 'priority-high';
-        } else if (priorityLower.includes('medium') || priorityLower.includes('normal')) {
+        } 
+        // Handle variations of MEDIUM priority - FIXED
+        else if (priorityLower.includes('medium') || priorityLower.includes('normal') || 
+                priorityLower.includes('mid') || priorityLower === 'mid') {
             return 'priority-medium';
-        } else if (priorityLower.includes('low')) {
+        } 
+        // Handle variations of LOW priority
+        else if (priorityLower.includes('low')) {
             return 'priority-low';
         }
+        
         return 'priority-default';
     }
 

@@ -23,7 +23,7 @@ async function loadJobOrders() {
     }
 }
 
-// Function to create a table row for each job order
+// Updated createJobOrderRow function to use the new action buttons logic
 function createJobOrderRow(order) {
     const row = document.createElement('tr');
     
@@ -59,14 +59,7 @@ function createJobOrderRow(order) {
         <td>${approvedInfo}</td>
         <td class="text-wrap">${order.action_taken || '-'}</td>
         <td>
-            <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-success" title="Mark as Done" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'done', '${order.date_issued}')">
-                    <i class="bi bi-check-circle"></i> Done
-                </button>
-                <button class="btn btn-sm btn-warning" title="Put on Hold" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'hold', '${order.date_issued}')">
-                    <i class="bi bi-pause-circle"></i> Hold
-                </button>
-            </div>
+            ${createActionButtons(order)}
         </td>
         <td class="fixed-column">
             ${createAttachmentButton(order.work_order_no || `WO-${order.id}`, order.attachment_path)}
@@ -113,11 +106,73 @@ function createStatusBadge(status) {
     return `<span class="${badgeClass} ${statusClass}">${displayText}</span>`;
 }
 
-// Function to create priority badge
+// Updated Priority Badge function with proper handling
 function createPriorityBadge(priority) {
-    const priorityClass = `priority-${priority?.toLowerCase() || 'low'}`;
-    return `<span class="priority-badge ${priorityClass}">${priority || 'LOW'}</span>`;
+    if (!priority) {
+        return '<span class="priority-badge priority-default">LOW</span>';
+    }
+    
+    const priorityLower = priority.toLowerCase();
+    let priorityClass = 'priority-default';
+    let displayText = priority.toUpperCase();
+    
+    // Handle variations of HIGH priority
+    if (priorityLower.includes('high') || priorityLower.includes('urgent')) {
+        priorityClass = 'priority-high';
+    } 
+    // Handle variations of MEDIUM priority - includes "mid"
+    else if (priorityLower.includes('medium') || priorityLower.includes('normal') || 
+             priorityLower.includes('mid') || priorityLower === 'mid') {
+        priorityClass = 'priority-medium';
+    } 
+    // Handle variations of LOW priority
+    else if (priorityLower.includes('low')) {
+        priorityClass = 'priority-low';
+    }
+    
+    return `<span class="priority-badge ${priorityClass}">${displayText}</span>`;
 }
+
+// Function to create action buttons based on status
+function createActionButtons(order) {
+    const status = order.status?.toLowerCase() || 'pending';
+    const workOrderNo = order.work_order_no || `WO-${order.id}`;
+    const orderId = order.id;
+    const dateIssued = order.date_issued;
+    
+    // If status is closed/completed, show blank
+    if (status === 'closed' || status === 'completed') {
+        return '';
+    }
+    
+    // If status is on hold, show only Done button
+    if (status === 'hold' || status === 'on hold') {
+        return `
+            <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-success" title="Mark as Done" onclick="openActionModal('${workOrderNo}', ${orderId}, 'done', '${dateIssued}')">
+                    <i class="bi bi-check-circle"></i> Done
+                </button>
+                <span class="text-warning small ms-2">
+                    <i class="bi bi-pause-circle-fill"></i>
+                    On Hold
+                </span>
+            </div>
+        `;
+    }
+    
+    // For all other statuses (pending, in progress, etc.), show both buttons
+    return `
+        <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-success" title="Mark as Done" onclick="openActionModal('${workOrderNo}', ${orderId}, 'done', '${dateIssued}')">
+                <i class="bi bi-check-circle"></i> Done
+            </button>
+            <button class="btn btn-sm btn-warning" title="Put on Hold" onclick="openActionModal('${workOrderNo}', ${orderId}, 'hold', '${dateIssued}')">
+                <i class="bi bi-pause-circle"></i> Hold
+            </button>
+        </div>
+    `;
+}
+
 
 // Function to create attachment button
 function createAttachmentButton(workOrder, attachmentPath) {
