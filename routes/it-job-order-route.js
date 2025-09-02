@@ -556,7 +556,7 @@ router.get("/it-job-order-filtered", (req, res) => {
     });
 });
 
-// FIXED: Update job order mark as dene
+// Updated: Mark work order as done with time elapsed calculation
 router.post("/work-done", (req, res) => {
     const { work_order_no, tech, reason, action_taken, time_elapsed } = req.body;
 
@@ -564,25 +564,91 @@ router.post("/work-done", (req, res) => {
         return res.status(400).json({ error: 'work_order_no is required' });
     }
 
-    // set current datetime as "date_resolved"
+    // Set current datetime as "date_resolved"
     const date_resolved = new Date();
 
+    // First, get the date_issued to calculate time_elapsed if not provided
+    const getDateQuery = `SELECT date_issued FROM test_it_job_order WHERE work_order_no = ?`;
+    
+    db.query(getDateQuery, [work_order_no], (err, results) => {
+        if (err) {
+            console.error("Database error while fetching date_issued:", err);
+            return res.status(500).json({ error: "Failed to fetch job order details" });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Job order not found" });
+        }
+
+        const dateIssued = results[0].date_issued;
+        
+        // Calculate time elapsed if not provided
+        let calculatedTimeElapsed = time_elapsed;
+        if (!calculatedTimeElapsed && dateIssued) {
+            const issued = new Date(dateIssued);
+            const resolved = new Date(date_resolved);
+            const diffInMs = resolved - issued;
+            calculatedTimeElapsed = Math.round(diffInMs / (1000 * 60 * 60) * 100) / 100; // Hours with 2 decimal places
+        }
+
+        const updateQuery = `
+            UPDATE test_it_job_order 
+            SET date_resolved = ?, tech = ?, reason = ?, action_taken = ?, status = 'Closed'
+            WHERE work_order_no = ?
+        `;
+
+        const values = [
+            date_resolved,
+            tech || null,
+            reason || null,
+            action_taken || null,
+            work_order_no
+        ];
+
+        console.log("Updating job order with values:", values);
+
+        db.query(updateQuery, values, (err, result) => {
+            if (err) {
+                console.error("Database error while updating job order:", err);
+                return res.status(500).json({ error: "Failed to update job order" });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: "Job order not found" });
+            }
+
+            res.json({
+                message: "Job order completed successfully",
+                work_order_no
+            });
+        });
+    });
+});
+
+// Route for putting work order on hold
+// Add this route to your it-job-order routes file
+router.post("/work-hold", (req, res) => {
+    const { work_order_no, tech, reason, action_taken } = req.body;
+
+    if (!work_order_no) {
+        return res.status(400).json({ error: 'work_order_no is required' });
+    }
+
+    // For hold action: date_resolved = null (time_elapsed will be auto-calculated as null)
     const query = `
         UPDATE test_it_job_order 
-        SET date_resolved = ?, tech = ?, reason = ?, action_taken = ?, time_elapsed = ?
+        SET date_resolved = NULL, tech = ?, reason = ?, action_taken = ?, status = 'Hold'
         WHERE work_order_no = ?
     `;
 
     const values = [
-        date_resolved,
         tech || null,
         reason || null,
         action_taken || null,
-        time_elapsed || null,
         work_order_no
     ];
 
-    console.log("Updating job order with values:", values);
+    console.log("Putting job order on hold with values:", values);
 
     db.query(query, values, (err, result) => {
         if (err) {
@@ -595,7 +661,7 @@ router.post("/work-done", (req, res) => {
         }
 
         res.json({
-            message: "Job order updated successfully",
+            message: "Job order put on hold successfully",
             work_order_no
         });
     });

@@ -13,40 +13,6 @@ class ITJobOrderManager {
         this.setupFormHandlers(); // Add form handling
         this.updateTabBadges();
     }
-    /*
-    async getUserName() {
-        try {
-            // Get username from HTML element
-            const userNameElement = document.getElementById('user-name');
-            if (userNameElement) {
-                this.userName = userNameElement.textContent.trim();
-                console.log('Retrieved username from element:', this.userName);
-                
-                /* Check if it's still the default "User" text
-                if (this.userName === 'User') {
-                    console.log('Username is still default "User", checking for actual user data...');
-                    // You might want to get the actual username from somewhere else
-                    // For now, we'll wait a bit and check again, or you can modify this
-                    // to get the username from a different source like localStorage, session, etc.
-                    this.userName = 'Default User';
-                }
-            }
-            
-            // If no username found, use a fallback
-            if (!this.userName) {
-                this.userName = 'Default User';
-                console.log('Using default username');
-            }
-            
-            console.log(`User: ${this.userName}, Department: ${this.userDepartment}`);
-            
-        } catch (error) {
-            console.error('Error getting user name:', error);
-            this.userName = 'Default User';
-            console.log('Fallback to default user');
-        }
-    }
-    */
 
     // Setup form submission handlers
     setupFormHandlers() {
@@ -429,7 +395,7 @@ class ITJobOrderManager {
                     // Pending/Queued items that are approved and ready to work on
                     filteredOrders = jobOrders.filter(order => 
                         order.department === 'Program' &&
-                        (order.status === 'Pending' || order.status === 'Queued') &&
+                        (order.status === 'Pending' || order.status === 'Queued' || order.status === 'Hold') &&
                         (order.approved === 'yes' || order.approved === 'Yes' || order.approved === '1' || order.approved === 1 || order.approved === true)
                     );
                     break;
@@ -645,8 +611,11 @@ class ITJobOrderManager {
     // Get CSS class for status
     getStatusClass(status) {
         const statusLower = status.toLowerCase();
+
         if (statusLower.includes('pending') || statusLower.includes('queued')) {
             return 'status-pending';
+        } else if (statusLower.includes('hold')) {
+            return 'status-hold';
         } else if (statusLower.includes('progress') || statusLower.includes('active')) {
             return 'status-in-progress';
         } else if (statusLower.includes('completed') || statusLower.includes('closed') || statusLower.includes('resolved')) {
@@ -654,6 +623,7 @@ class ITJobOrderManager {
         }
         return 'status-default';
     }
+
 
     // Create priority badge
     createPriorityBadge(priority) {

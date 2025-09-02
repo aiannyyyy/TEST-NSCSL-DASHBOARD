@@ -60,10 +60,10 @@ function createJobOrderRow(order) {
         <td class="text-wrap">${order.action_taken || '-'}</td>
         <td>
             <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-success" title="Mark as Done" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'done')">
+                <button class="btn btn-sm btn-success" title="Mark as Done" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'done', '${order.date_issued}')">
                     <i class="bi bi-check-circle"></i> Done
                 </button>
-                <button class="btn btn-sm btn-warning" title="Put on Hold" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'hold')">
+                <button class="btn btn-sm btn-warning" title="Put on Hold" onclick="openActionModal('${order.work_order_no || `WO-${order.id}`}', ${order.id}, 'hold', '${order.date_issued}')">
                     <i class="bi bi-pause-circle"></i> Hold
                 </button>
             </div>
@@ -78,8 +78,39 @@ function createJobOrderRow(order) {
 
 // Function to create status badge
 function createStatusBadge(status) {
-    const statusClass = `status-${status?.toLowerCase() || 'pending'}`;
-    return `<span class="status-badge ${statusClass}">${status || 'Pending'}</span>`;
+    const statusLower = status?.toLowerCase() || 'pending';
+    const statusClass = `status-${statusLower}`;
+    
+    // Handle different status types with appropriate styling
+    let badgeClass = 'status-badge';
+    let displayText = status || 'Pending';
+    
+    switch (statusLower) {
+        case 'completed':
+        case 'closed':
+            badgeClass += ' bg-success text-white';
+            break;
+        case 'on hold':
+        case 'hold':
+            badgeClass += ' bg-warning text-dark';
+            break;
+        case 'pending':
+        case 'open':
+            badgeClass += ' bg-secondary text-white';
+            break;
+        case 'in progress':
+        case 'assigned':
+            badgeClass += ' bg-primary text-white';
+            break;
+        case 'cancelled':
+        case 'rejected':
+            badgeClass += ' bg-danger text-white';
+            break;
+        default:
+            badgeClass += ' bg-light text-dark';
+    }
+    
+    return `<span class="${badgeClass} ${statusClass}">${displayText}</span>`;
 }
 
 // Function to create priority badge
@@ -121,6 +152,36 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
+// Function to calculate time elapsed in hours
+function calculateTimeElapsed(dateIssued, dateResolved) {
+    if (!dateIssued || !dateResolved) return null;
+    
+    const issued = new Date(dateIssued);
+    const resolved = new Date(dateResolved);
+    const diffInMs = resolved - issued;
+    const diffInHours = Math.round(diffInMs / (1000 * 60 * 60) * 100) / 100; // Round to 2 decimal places
+    
+    return diffInHours;
+}
+
+// Function to get current username (updated with better error handling)
+function getCurrentUsername() {
+    // Try multiple ways to get the username
+    const userNameElement = document.getElementById('user-name');
+    if (userNameElement && userNameElement.textContent.trim()) {
+        return userNameElement.textContent.trim();
+    }
+    
+    // Fallback: check for other common username elements
+    const userDisplayElement = document.querySelector('.user-display, .username, [data-username]');
+    if (userDisplayElement && userDisplayElement.textContent.trim()) {
+        return userDisplayElement.textContent.trim();
+    }
+    
+    // Last resort: prompt user or use default
+    return prompt('Please enter your username:') || 'System User';
+}
+
 // Function to handle attachment viewing (updated)
 function viewAttachment(workOrder, attachmentPath) {
     if (attachmentPath) {
@@ -155,11 +216,14 @@ function showLoadingState() {
     `;
 }
 
-// Open action modal
-function openActionModal(workOrderNo, orderId, action) {
+// Open action modal (updated to include date_issued)
+function openActionModal(workOrderNo, orderId, action, dateIssued = null) {
     currentWorkOrder = workOrderNo;
     currentOrderId = orderId;
     currentAction = action;
+    
+    // Store date_issued for time calculation
+    window.currentDateIssued = dateIssued;
     
     // Update modal content based on action
     const modalTitle = document.getElementById('modalActionTitle');
@@ -196,12 +260,11 @@ function openActionModal(workOrderNo, orderId, action) {
     modal.show();
 }
 
-// Confirm action
+// Confirm action (updated to match backend requirements)
 function confirmAction() {
     const form = document.getElementById('actionForm');
     const reasonInput = document.getElementById('reasonInput');
     const actionTakenInput = document.getElementById('actionTakenInput');
-    const notesInput = document.getElementById('notesInput');
     
     // Validate required fields
     if (!reasonInput.value.trim() || !actionTakenInput.value.trim()) {
@@ -209,24 +272,23 @@ function confirmAction() {
         return;
     }
     
-    // Prepare data to send
+    // Get current username
+    const currentUser = getCurrentUsername();
+    
+    // Prepare data to send (matching backend route structure)
+    // Note: time_elapsed is auto-calculated by database, so we don't send it
     const actionData = {
-        id: currentOrderId,
-        workOrderNo: currentWorkOrder,
-        action: currentAction,
+        work_order_no: currentWorkOrder,
+        tech: currentUser,
         reason: reasonInput.value.trim(),
-        action_taken: actionTakenInput.value.trim(),
-        notes: notesInput.value.trim(),
-        status: currentAction === 'done' ? 'Completed' : 'On Hold',
-        tech: 'Current User', // You should get this from your auth system
-        date_resolved: new Date().toISOString()
+        action_taken: actionTakenInput.value.trim()
     };
     
     // Process the action
     processAction(actionData);
 }
 
-// Process the action (API call to backend)
+// Process the action (updated API call to match backend route)
 async function processAction(actionData) {
     const confirmBtn = document.getElementById('confirmActionBtn');
     const originalText = confirmBtn.innerHTML;
@@ -236,9 +298,23 @@ async function processAction(actionData) {
     confirmBtn.disabled = true;
     
     try {
+        let endpoint;
+        let method;
+        
+        // Determine endpoint based on action
+        if (currentAction === 'done') {
+            endpoint = 'http://localhost:3001/api/work-done';
+            method = 'POST';
+        } else if (currentAction === 'hold') {
+            // You'll need to create a similar route for hold action
+            // For now, using the same endpoint but you should create a separate one
+            endpoint = 'http://localhost:3001/api/work-hold';
+            method = 'POST';
+        }
+        
         // Make API call to update the job order
-        const response = await fetch(`http://localhost:3001/api/it-job-order/${actionData.id}`, {
-            method: 'PUT',
+        const response = await fetch(endpoint, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -246,7 +322,8 @@ async function processAction(actionData) {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to update job order');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update job order');
         }
         
         const result = await response.json();
@@ -256,11 +333,10 @@ async function processAction(actionData) {
         modal.hide();
         
         // Show success toast
-        const toastMessage = document.getElementById('toastMessage');
-        toastMessage.textContent = `Work Order ${actionData.workOrderNo} has been ${actionData.action === 'done' ? 'completed' : 'put on hold'} successfully!`;
-        
-        const toast = new bootstrap.Toast(document.getElementById('successToast'));
-        toast.show();
+        showToast(
+            `Work Order ${actionData.work_order_no} has been ${currentAction === 'done' ? 'completed' : 'put on hold'} successfully!`,
+            'success'
+        );
         
         // Refresh the table to show updated data
         loadJobOrders();
@@ -269,24 +345,11 @@ async function processAction(actionData) {
         console.error('Error processing action:', error);
         
         // Show error toast
-        const toastMessage = document.getElementById('toastMessage');
-        toastMessage.textContent = `Failed to update Work Order ${actionData.workOrderNo}. Please try again.`;
+        showToast(
+            `Failed to update Work Order ${actionData.work_order_no}. Error: ${error.message}`,
+            'error'
+        );
         
-        // Change toast to error style
-        const toastHeader = document.querySelector('#successToast .toast-header');
-        toastHeader.className = 'toast-header bg-danger text-white';
-        toastHeader.querySelector('i').className = 'bi bi-x-circle me-2';
-        toastHeader.querySelector('strong').textContent = 'Error';
-        
-        const toast = new bootstrap.Toast(document.getElementById('successToast'));
-        toast.show();
-        
-        // Reset toast style after showing
-        setTimeout(() => {
-            toastHeader.className = 'toast-header bg-success text-white';
-            toastHeader.querySelector('i').className = 'bi bi-check-circle me-2';
-            toastHeader.querySelector('strong').textContent = 'Success';
-        }, 5000);
     } finally {
         // Reset button
         confirmBtn.innerHTML = originalText;
