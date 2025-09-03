@@ -61,7 +61,7 @@ class ITJobOrderManager {
             } else {
                 // Fallback if API call fails - will be replaced with actual number on submit
                 const workOrderNoInput = document.getElementById('workOrderNo');
-                if (workOrderNoInput) {
+                if (workOrderNoInput) {   
                     workOrderNoInput.value = `WORK-${new Date().getFullYear()}-[AUTO]`;
                 }
             }
@@ -85,7 +85,6 @@ class ITJobOrderManager {
         
         return programDepartmentUsers.includes(requesterName) ? 'Program' : 'Other';
     }
-
 
     // FIXED: Proper datetime formatting for MySQL
     getCurrentDateTime() {
@@ -149,7 +148,7 @@ class ITJobOrderManager {
             formData.append('date_issued', mysqlDateTime);
             formData.append('requester', userName);
             formData.append('department', this.userDepartment);
-            formData.append('status', 'Pending'); // Default status
+            formData.append('status', 'Ongoing'); // Default status
             formData.append('type', type);
             formData.append('priority', priority);
             
@@ -367,7 +366,7 @@ class ITJobOrderManager {
     // Load job orders for all tabs
     async loadJobOrdersForAllTabs() {
         await Promise.all([
-            this.loadJobOrdersForTab('#pending'),
+            this.loadJobOrdersForTab('#ongoing'),
             this.loadJobOrdersForTab('#approved'),
             this.loadJobOrdersForTab('#closed')
         ]);
@@ -391,11 +390,11 @@ class ITJobOrderManager {
             // Filter data based on specific tab requirements - ALL tabs filter by Program department
             let filteredOrders;
             switch (tabId) {
-                case '#pending':
+                case '#ongoing':
                     // Pending/Queued items that are approved and ready to work on
                     filteredOrders = jobOrders.filter(order => 
                         order.department === 'Program' &&
-                        (order.status === 'Pending' || order.status === 'Queued' || order.status === 'Hold') &&
+                        (order.status === 'Ongoing' || order.status === 'Queued' || order.status === 'Hold') &&
                         (order.approved === 'yes' || order.approved === 'Yes' || order.approved === '1' || order.approved === 1 || order.approved === true)
                     );
                     break;
@@ -409,7 +408,7 @@ class ITJobOrderManager {
                             approved: order.approved
                         });
                         return order.department === 'Program' &&
-                               order.status === 'Pending' &&
+                               order.status === 'For Approval' &&
                                (order.approved === 'no' || order.approved === 'No' || 
                                 order.approved === '0' || order.approved === 0 || 
                                 order.approved === false || order.approved === null || 
@@ -541,8 +540,8 @@ class ITJobOrderManager {
                 <td>${this.createStatusBadge(order.status)}</td>
                 <td>${order.type || '-'}</td>
                 <td>${this.createPriorityBadge(order.priority)}</td>
-                <td>${resolvedInfo}</td>
                 <td>${approvedInfo}</td>
+                <td>${resolvedInfo}</td>
                 <td class="text-wrap">${order.action_taken || '-'}</td>
                 <td class="fixed-column">
                     ${this.createAttachmentButton(order)}
@@ -563,8 +562,8 @@ class ITJobOrderManager {
     updateTabBadge(tabId, count) {
         let badgeSelector;
         switch (tabId) {
-            case '#pending':
-                badgeSelector = '#pending-tab .tab-badge';
+            case '#ongoing':
+                badgeSelector = '#ongoing-tab .tab-badge';
                 break;
             case '#approved':
                 badgeSelector = '#approved-tab .tab-badge';
@@ -612,8 +611,10 @@ class ITJobOrderManager {
     getStatusClass(status) {
         const statusLower = status.toLowerCase();
 
-        if (statusLower.includes('pending') || statusLower.includes('queued')) {
-            return 'status-pending';
+        if (statusLower.includes('for approval') || statusLower.includes('queued')) {
+            return 'status-queued';
+        } else if (statusLower.includes('ongoing')) {
+            return 'status-ongoing';
         } else if (statusLower.includes('hold')) {
             return 'status-hold';
         } else if (statusLower.includes('progress') || statusLower.includes('active')) {

@@ -250,10 +250,16 @@
       display: inline-block;
   }
 
-  .status-pending { 
+  .status-queued { 
       background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); 
       color: #856404; 
       border: 1px solid #ffeaa7;
+  }
+
+  .status-ongoing { 
+      background: linear-gradient(135deg, #00ec20 0%, #ffeaa7 100%); 
+      color: #000000; 
+      border: 1px solid #00ec20;
   }
   
   .status-completed { 
@@ -522,8 +528,8 @@
           <!-- Tab Navigation -->
           <ul class="nav nav-tabs" id="jobOrderTabs" role="tablist">
               <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
-                      Pending<span class="tab-badge">2</span>
+                  <button class="nav-link active" id="ongoing-tab" data-bs-toggle="tab" data-bs-target="#ongoing" type="button" role="tab" aria-controls="ongoing" aria-selected="true">
+                      Ongoing<span class="tab-badge">2</span>
                   </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -541,18 +547,18 @@
           <!-- Tab Content -->
           <div class="tab-content" id="jobOrderTabContent">
               <!-- Pending Tab -->
-              <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+              <div class="tab-pane fade show active" id="ongoing" role="tabpanel" aria-labelledby="ongoing-tab">
                   <div class="card">
                       <div class="card-header">
                           <div class="d-flex justify-content-between align-items-center">
-                              <h5><i class="bi bi-clock-history me-2"></i>Pending & Queued Orders</h5>
+                              <h5><i class="bi bi-clock-history me-2"></i>Ongoing & Queued Orders</h5>
                               <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
                                   <i class="bi bi-plus-circle"></i> Add Job Order
                               </button>
                           </div>
                       </div>
                       <div class="card-body p-0">
-                          <div class="table-wrapper">
+                          <div class="table-wrapper" style="height: 500px;">
                               <table class="scrollable-table">
                                   <thead>
                                       <tr>
@@ -564,8 +570,8 @@
                                           <th class="col-status">Status</th>
                                           <th class="col-type">Type</th>
                                           <th class="col-priority">Priority</th>
-                                          <th class="col-resolved">Resolved</th>
                                           <th class="col-approved">Approved</th>
+                                          <th class="col-resolved">Resolved</th>
                                           <th class="col-action">Action Taken</th>
                                           <th class="col-attachment fixed-column">Attachment</th>
                                       </tr>
@@ -577,7 +583,7 @@
                                           <td class="text-wrap">Monitor not displaying properly, showing distorted colors and flickering screen</td>
                                           <td>2024-01-15</td>
                                           <td>Accounting</td>
-                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td><span class="status-badge status-ongoing">Ongoing</span></td>
                                           <td>Hardware</td>
                                           <td><span class="priority-badge priority-high">High</span></td>
                                           <td>-</td>
@@ -595,7 +601,7 @@
                                           <td class="text-wrap">Slow internet connection in marketing department</td>
                                           <td>2024-01-16</td>
                                           <td>Marketing</td>
-                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td><span class="status-badge status-ongoing">Ongoing</span></td>
                                           <td>Network</td>
                                           <td><span class="priority-badge priority-medium">Medium</span></td>
                                           <td>-</td>
@@ -646,7 +652,7 @@
                                           <td class="text-wrap">Install new accounting software on 5 computers</td>
                                           <td>2024-01-14</td>
                                           <td>IT</td>
-                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td><span class="status-badge status-ongoing">Ongoing</span></td>
                                           <td>Software</td>
                                           <td><span class="priority-badge priority-high">High</span></td>
                                           <td>
@@ -671,7 +677,7 @@
                                           <td class="text-wrap">Regular maintenance for office printers</td>
                                           <td>2024-01-13</td>
                                           <td>Admin</td>
-                                          <td><span class="status-badge status-pending">Pending</span></td>
+                                          <td><span class="status-badge status-ongoing">Ongoing</span></td>
                                           <td>Hardware</td>
                                           <td><span class="priority-badge priority-low">Low</span></td>
                                           <td>
@@ -718,8 +724,8 @@
                                           <th class="col-status">Status</th>
                                           <th class="col-type">Type</th>
                                           <th class="col-priority">Priority</th>
-                                          <th class="col-resolved">Resolved</th>
                                           <th class="col-approved">Approved</th>
+                                          <th class="col-resolved">Resolved</th>
                                           <th class="col-action">Action Taken</th>
                                           <th class="col-attachment fixed-column">Attachment</th>
                                       </tr>

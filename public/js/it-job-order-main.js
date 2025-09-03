@@ -43,7 +43,7 @@ function createJobOrderRow(order) {
     // Create approved column (approved_by + date)
     const approvedInfo = order.approved_by ? 
         `${order.approved_by}<br><small>${approvedDate}</small>` : 
-        '<span class="text-muted">Pending approval</span>';
+        '<span class="text-muted">Ongoing approval</span>';
     
     row.innerHTML = `
         <td><strong>${order.work_order_no || `WO-${order.id}`}</strong></td>
@@ -71,12 +71,12 @@ function createJobOrderRow(order) {
 
 // Function to create status badge
 function createStatusBadge(status) {
-    const statusLower = status?.toLowerCase() || 'pending';
+    const statusLower = status?.toLowerCase() || 'ongoing';
     const statusClass = `status-${statusLower}`;
     
     // Handle different status types with appropriate styling
     let badgeClass = 'status-badge';
-    let displayText = status || 'Pending';
+    let displayText = status || 'Ongoing';
     
     switch (statusLower) {
         case 'completed':
@@ -87,7 +87,7 @@ function createStatusBadge(status) {
         case 'hold':
             badgeClass += ' bg-warning text-dark';
             break;
-        case 'pending':
+        case 'ongoing':
         case 'open':
             badgeClass += ' bg-secondary text-white';
             break;
@@ -135,7 +135,7 @@ function createPriorityBadge(priority) {
 
 // Function to create action buttons based on status
 function createActionButtons(order) {
-    const status = order.status?.toLowerCase() || 'pending';
+    const status = order.status?.toLowerCase() || 'ongoing';
     const workOrderNo = order.work_order_no || `WO-${order.id}`;
     const orderId = order.id;
     const dateIssued = order.date_issued;
