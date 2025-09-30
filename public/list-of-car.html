@@ -619,6 +619,69 @@
 
         <div class="main-panel">
             <div class="content-wrapper">
+
+                <!-- Chart Cards Row -->
+                <div class="row mb-4">
+
+                   <!-- Pie Chart Card -->
+                    <div class="col-md-6">
+                        <div class="card card-rounded">
+                            <div class="card-body">
+                                <!-- Title and Filters Row -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Corrective Action Reports</h5>
+                                    
+                                    <!-- Compact Filters on the Right -->
+                                    <div class="d-flex gap-2">
+                                        <select id="chartMonthFilter" class="form-select form-select-sm text-black" style="width: auto; font-size: 0.875rem;">
+                                            <option value="01">January</option>
+                                            <option value="02">February</option>
+                                            <option value="03">March</option>
+                                            <option value="04">April</option>
+                                            <option value="05">May</option>
+                                            <option value="06">June</option>
+                                            <option value="07">July</option>
+                                            <option value="08">August</option>
+                                            <option value="09">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                        
+                                        <select id="chartYearFilter" class="form-select form-select-sm text-black" style="width: auto; font-size: 0.875rem;">
+                                            <!-- Years will be populated by JavaScript -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Chart Container -->
+                                <div class="chart-container" style="position: relative; height: 400px;">
+                                    <canvas id="carPieChart"></canvas>
+                                </div>
+                                
+                                <!-- Chart Stats -->
+                                <div class="mt-3 text-center">
+                                    <small class="text-muted">
+                                        Total Records: <span id="totalRecords" class="fw-bold text-primary">0</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Chart Card -->
+                    <div class="col-md-6">
+                        <div class="card card-rounded">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Cases by Sub Code</h5>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="subCodeBarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card card-rounded">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">

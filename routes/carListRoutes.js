@@ -145,6 +145,48 @@ router.get("/car-list", (req, res) => {
     });
 });
 
+// Get car list grouped by sub_code1 (for pie chart with date range filter)
+router.get("/car-list/grouped", (req, res) => {
+    const { from, to } = req.query;
+
+    let query = `
+        SELECT sub_code1, COUNT(*) as count
+        FROM test_list_car
+    `;
+    const params = [];
+
+    // Add WHERE clause if dates are provided
+    if (from && to) {
+        query += ` WHERE date_endorsed BETWEEN ? AND ?`;
+        params.push(from, to);
+    }
+
+    // Add GROUP BY and ORDER BY
+    query += ` GROUP BY sub_code1 ORDER BY count DESC`;
+
+    console.log('Executing query:', query);
+    console.log('With params:', params);
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error("MySQL query error:", err);
+            return res.status(500).json({ 
+                error: "Database Query Error",
+                message: err.message,
+                code: err.code,
+                sqlMessage: err.sqlMessage
+            });
+        }
+
+        console.log('Query results:', results);
+
+        res.json({
+            success: true,
+            data: results
+        });
+    });
+});
+
 router.post("/add-car", upload.single("attachment"), (req, res) => {
     console.log("\n=== ADD-CAR ROUTE DEBUG START ===");
     console.log("Timestamp:", new Date().toISOString());
