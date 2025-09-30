@@ -485,13 +485,14 @@ function fetchVisits() {
                             ${statusText}
                         </span>
                     </td>
-                    
+                    <!--
                     <td>
                         <button class="btn btn-sm btn-warning" 
                                 onclick="openModal('${visit.id}', '${visit.facility_code}', '${escapedFacilityName}', '${visit.date_visited}', '${visit.province}', '${visit.status}', '${escapedRemarks}')">
                             Edit
                         </button>
                     </td>
+                    --!>
                 </tr>
 `);
         });

@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>NSCSL DASHBOARD </title>
+    <title>NSCSL DASHBOARD</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/feather/feather.css">
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
@@ -452,6 +452,20 @@ table.table-sm td:first-child {
         margin-bottom: 10px;
         display: block;
     }
+
+     .mark-all-read-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .mark-all-read-btn:hover {
+        background: #0056b3;
+    }
     /* End Notification Style */
 
   
@@ -482,7 +496,7 @@ table.table-sm td:first-child {
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
-            <!-- Notification Dropdown -->
+            <!-- Notification Dropdown
               <li class="nav-item notification-dropdown">
                 <button class="notification-bell" id="notificationBell">
                   <i class="mdi mdi-bell-outline"></i>
@@ -495,13 +509,29 @@ table.table-sm td:first-child {
                     </h6>
                 </div>
                 <div id="notificationList">
-                  <!-- Notifications will be populated here -->
                   </div>
                     <div class="notification-footer">
                       <a href="#" class="view-all-link">View All Notifications</a>
                     </div>
                   </div>
                 </li>   
+              !-- End Notification Dropdown -->
+              <li class="nav-item notification-dropdown">
+                  <button class="notification-bell" id="notificationBell">
+                      <i class="mdi mdi-bell-outline"></i>
+                      <span class="notification-badge" id="notificationBadge">3</span>
+                  </button>
+                  <div class="notification-dropdown-menu" id="notificationDropdown">
+                      <div class="notification-header">
+                          <h6>Notifications 
+                              <button class="mark-all-read-btn" id="markAllReadBtn">Mark All as Read</button>
+                          </h6>
+                      </div>
+                      <div id="notificationList">
+                          <!-- Notifications will be populated here (limited to 10) -->
+                      </div>
+                  </div>
+              </li>
 
             <li class="nav-item dropdown d-none d-lg-block user-dropdown">
               <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
@@ -620,30 +650,30 @@ table.table-sm td:first-child {
 
       <div class="main-panel">
         <div class="content-wrapper">
-            <div class="weather-widget" id="weather-widget">
-              <button class="refresh-btn" id="refresh-btn" onclick="refreshWeather()">
-                  <span id="refresh-text">🔄</span>
-              </button>
-              <div class="weather-content">
-                  <div class="current-weather">
-                      <div class="temp-display" id="current-temp">--°C</div>
-                      <div class="weather-icon" id="current-icon">🌤️</div>
-                      <div class="weather-details">
-                          <div class="location-name" id="location-name">Loading...</div>
-                          <div class="weather-condition" id="weather-condition">---</div>
-                      </div>
-                  </div>
-                  
-                  <div class="forecast-compact" id="forecast-container">
-                      <!-- Forecast days will be populated here -->
-                  </div>
-                  
-                  <div class="nav-controls">
-                      <button class="nav-btn" onclick="previousProvince()" id="prev-btn">‹</button>
-                      <div class="province-dots" id="province-dots"></div>
-                      <button class="nav-btn" onclick="nextProvince()" id="next-btn">›</button>
-                  </div>
-              </div>
+          <div class="weather-widget" id="weather-widget">
+            <button class="refresh-btn" id="refresh-btn" onclick="refreshWeather()">
+                <span id="refresh-text">🔄</span>
+            </button>
+            <div class="weather-content">
+                <div class="current-weather">
+                    <div class="temp-display" id="current-temp">--°C</div>
+                    <div class="weather-icon" id="current-icon">🌤️</div>
+                    <div class="weather-details">
+                        <div class="location-name" id="location-name">Loading...</div>
+                        <div class="weather-condition" id="weather-condition">---</div>
+                    </div>
+                </div>
+                
+                <div class="forecast-compact" id="forecast-container">
+                    <!-- Forecast days will be populated here -->
+                </div>
+                
+                <div class="nav-controls">
+                    <button class="nav-btn" onclick="previousProvince()" id="prev-btn">‹</button>
+                    <div class="province-dots" id="province-dots"></div>
+                    <button class="nav-btn" onclick="nextProvince()" id="next-btn">›</button>
+                </div>
+            </div>
           </div>
 
           <!-- Additional row for full-width chart if needed -->
@@ -680,7 +710,9 @@ table.table-sm td:first-child {
                               <th>Remarks</th>
                               <th>Attachment</th>
                               <th>Status</th>
+                              <!--
                               <th>Actions</th>
+                              -->
                             </tr>
                           </thead>
                           <tbody id="visitTable">
@@ -934,7 +966,6 @@ table.table-sm td:first-child {
                     By Percentages
                   </label>
                 </div>
-                
               </div>
             </div>
           </div>
@@ -1077,10 +1108,7 @@ table.table-sm td:first-child {
               </div>
           </div>
         </div>
-        
       </div>
-
-      
         <!-- Search Modal -->
         <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-md modal-dialog-centered">
@@ -1475,6 +1503,7 @@ table.table-sm td:first-child {
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
+    <script src="js/auth.js"></script>
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- endinject -->
@@ -1491,7 +1520,7 @@ table.table-sm td:first-child {
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/event.js"></script>
     <!-- endinject -->
-
+    
     <script src="js/modalManager.js"></script>
     <!--script for pdo visit-->
     <script src="/routes/facilityRoutes.js"></script>
